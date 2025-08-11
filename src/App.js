@@ -1,6 +1,6 @@
 import './App.css';
 import LoginPage from './pages/login/LoginPage';
-import HomePage from './pages/homepage/homepage';
+import HomePage from './pages/homepage/HomePage';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 function ProtectedRoute({ children }) {

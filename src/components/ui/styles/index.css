@@ -1,0 +1,34 @@
+@import 'normalize.css';    /* Normalize css */
+@import 'colors.css';    	/* Base color definitions like gray, red, green, blue shades */
+@import 'brand.css';     	/* Brand colors: primary, success, error, warning palettes */
+
+/*
+	Update brand.css to suit your project’s colors:
+
+	1. Open the file 'brand.css'. This file contains the main color palettes used by the app,
+	 such as the primary brand color, success, error, and warning colors.
+
+	2. In 'brand.css', you’ll see color variables defined for different shades (from light to dark)
+	 using numbers like 50, 100, 200 ... up to 900.
+
+	3. Replace the hex color values with your project’s brand colors.
+	 For example, if your project’s primary color is blue, orange, green, or any other,
+	 update the variables starting with --brand-primary-50, --brand-primary-100, etc.,
+	 with the corresponding shades of your brand color.
+
+	 Note: --brand-primary-500 is the main primary brand color used throughout the app,
+	 so be sure it matches your project’s core brand color.
+
+	4. Similarly, update the success, error, and warning palettes with colors that suit your brand identity.
+
+	5. Make sure to keep the same variable names and the shade structure (50 to 900),
+	 so that the rest of the styles and themes will work correctly without changes.
+
+	This approach lets you customize the look of your app quickly by only changing colors in one place,
+	without touching the theme or other style files.
+*/
+
+@import 'scale.css';       /* Spacing, typography scales, etc */
+@import '_light-theme.css';/* Theme variables using brand colors for light mode */
+@import '_dark-theme.css'; /* Theme variables using brand colors for dark mode */
+@import './global.css';    /* Global resets and common styles */
