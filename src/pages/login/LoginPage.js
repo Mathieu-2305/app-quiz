@@ -1,71 +1,51 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MsLogo from '../../assets/images/ms-symbollockup_signin_light.svg';
+import MsLogoDark from '../../assets/images/ms-symbollockup_signin_dark.svg';
 import RafLogo from '../../assets/images/raflogo.png';
-import * as msal from '@azure/msal-browser';
 import styled from 'styled-components';
 import ToggleThemeSwitch from "../../components/ui/ToggleThemeSwitch";
-
-
-// Configuration de MSAL (Azure AD) MSAL = Bibliothèque d'authentification de Microsoft
-const pca = new msal.PublicClientApplication({
-	auth: {
-		clientId: process.env.REACT_APP_AZURE_CLIENT_ID,
-		authority: 'https://login.microsoftonline.com/' + process.env.REACT_APP_AZURE_TENANT_ID,
-		redirectUri: process.env.REACT_APP_AZURE_REDIRECT_URI,
-	},
-});
+import { useTheme } from "../../context/theme";
+import { useAuth } from "../../context/auth";
+import { isInMsalPopup } from "../../utils/msalPopup";
 
 function LoginPage() {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { theme } = useTheme();
+	const { login } = useAuth();
 
 	// Si déjà connecté et pas sur /home, on redirige
 	useEffect(() => {
+		if (isInMsalPopup()) return; // <--- NE RIEN NAVIGUER DANS LE POPUP
 		const storedUser = localStorage.getItem('user');
 		if (storedUser && location.pathname !== '/home') {
 			navigate('/home', { replace: true });
 		}
-	}, [navigate, location]);
+		}, [navigate, location]);
 
 	// Gestion du clic sur le bouton de connexion
 	const handleLogin = async () => {
 		try {
-			await pca.initialize(); // initialise MSAL
-
-			// Demande de connexion avec les droits User.Read (Permission de lire les infos basiques du profil, les paramètres du compte et les groupes/rôles de l'utilisateur)
-			const loginRequest = { scopes: ['User.Read'] };
-			const loginResponse = await pca.loginPopup(loginRequest);
-			const user = loginResponse.account;
-
-			// Récupération silencieuse du token
-			const tokenResponse = await pca.acquireTokenSilent({
-				scopes: ['User.Read'],
-				account: user,
-			});
-
-			// Stockage du token et des infos du user
-			localStorage.setItem('access_token', tokenResponse.accessToken);
-			localStorage.setItem('user', JSON.stringify(user));
-
-			// Redirection vers l'accueil
+			await login();
 			navigate('/home', { replace: true });
 		} catch (error) {
-			console.error('Login failed:', error);
+			console.error('Échec du login:', error);
 		}
 	};
-
+	
 	return (
-		// Conteneur
 		<Container>
 			<Box>
 				<ToggleThemeSwitch />
 				<Logo src={RafLogo} alt="Rafisa Logo" />
 				<Title>Connexion</Title>
 
-				{/* Bouton Microsoft */}
 				<MicrosoftButton type="button" onClick={handleLogin} aria-label="Se connecter avec Microsoft">
-					<MicrosoftImg src={MsLogo} alt="Microsoft Sign-in" />
+					<MicrosoftImg
+						src={theme === 'dark' ? MsLogoDark : MsLogo}
+						alt="Microsoft Sign-in"
+					/>
 				</MicrosoftButton>
 			</Box>
 		</Container>

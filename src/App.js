@@ -2,6 +2,7 @@ import './App.css';
 import LoginPage from './pages/login/LoginPage';
 import HomePage from './pages/homepage/HomePage';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { isInMsalPopup } from './utils/msalPopup';
 
 function ProtectedRoute({ children }) {
   const user = localStorage.getItem('user');
@@ -12,14 +13,15 @@ function ProtectedRoute({ children }) {
 }
 
 function App() {
+  if (isInMsalPopup()) {
+    return null;
+  }
+
   return (
     <BrowserRouter>
       <Routes>
-        
         <Route path="/" element={<Navigate to="/login" replace />} />
-
         <Route path="/login" element={<LoginPage />} />
-
         <Route
           path="/home"
           element={
@@ -28,7 +30,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
         <Route
           path="/quiz/new"
           element={

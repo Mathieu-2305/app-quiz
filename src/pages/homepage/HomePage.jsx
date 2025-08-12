@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Award, Settings, Search, LogOut, FlaskConical, Plus } from "lucide-react";
 import styled from "styled-components";
 import MyLogo from "../../assets/images/raflogo.png";
 import Sidebar from "../../components/Sidebar";
-import Input from "../../components/ui/Input";
-import ToggleThemeSwitch from "../../components/ui/ToggleThemeSwitch";
 
 export default function HomePage() {
 	const navigate = useNavigate();

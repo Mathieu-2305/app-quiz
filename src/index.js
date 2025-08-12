@@ -5,16 +5,22 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {ThemeProvider} from "./context/theme";
 import './components/ui/styles/index.css'
+import { AuthProvider } from "./context/auth";
+import { isInMsalPopup } from "./utils/msalPopup";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-	<React.StrictMode>
-		<ThemeProvider>
-			<App />
-		</ThemeProvider>
-	</React.StrictMode>
+if (isInMsalPopup()) {
+  ReactDOM.createRoot(document.getElementById("root")).render(<div />);
+} else {
+  ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <ThemeProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </ThemeProvider>
+  </React.StrictMode>
 );
-
+}
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
