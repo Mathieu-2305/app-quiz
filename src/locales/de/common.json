@@ -9,15 +9,46 @@
   "pages": {
     "home": { "title": "Quiz" },
     "settings": { "title": "Einstellungen" },
-    "newQuiz": { 
-      "title": "Erstellen und Bearbeiten eines Quiz",
-      "titleplaceholder": "Quiztitel" 
+    "newQuiz": {
+      "title": "Quiz erstellen und bearbeiten",
+      "titleplaceholder": "Titel des Quiz",
+      "categoriesTitle": "Kategorien",
+      "dragHint": "Zum Bearbeiten in die Mitte ziehen",
+      "newCategory": "Neue Kategorie",
+      "categoryTitlePlaceholder": "Geben Sie hier den Kategorietitel ein",
+      "addDescription": "Beschreibung hinzufügen",
+      "emptyDropHint": "Ziehen Sie eine Fragenvorlage aus der linken Spalte hierher",
+      "field": {
+        "labelTitle": "Bezeichnung",
+        "labelDescription": "Beschreibung (optional)"
+      },
+      "options": {
+        "title": "Optionen",
+        "newOption": "Neue Option"
+      },
+      "delete": "Löschen",
+      "placeholders": {
+        "typeHere": "Hier eingeben"
+      },
+      "questionTypes": {
+        "short": "Kurzantwort",
+        "long": "Lange Antwort",
+        "single": "Einfachauswahl",
+        "multi": "Mehrfachauswahl",
+        "boolean": "Wahr / Falsch"
+      },
+      "defaults": {
+        "option": "Option",
+        "true": "Wahr",
+        "false": "Falsch"
+      }
     }
   },
-  "login": { "title": "Verbindung",
-              "microsoftSignIn": "Melden Sie sich bei Microsoft an",
-              "microsoftAlt": "Microsoft-Anmeldung",
-              "error": "Fehler bei der Anmeldung"
+  "login": {
+    "title": "Anmeldung",
+    "microsoftSignIn": "Mit Microsoft anmelden",
+    "microsoftAlt": "Microsoft-Anmeldung",
+    "error": "Anmeldung fehlgeschlagen"
   },
   "buttons": {
     "newQuiz": "Neues Quiz",
@@ -28,8 +59,8 @@
   "modals": {
     "logout": {
       "title": "Abmelden",
-      "text": "Möchten Sie sich wirklich abmelden ?",
-      "cancel": "Stornieren",
+      "text": "Möchten Sie sich wirklich abmelden?",
+      "cancel": "Abbrechen",
       "confirm": "Ja"
     }
   },
@@ -40,7 +71,5 @@
       "stay": "Bleiben",
       "leave": "Verlassen"
     }
-  
-}
-
+  }
 }
