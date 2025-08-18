@@ -1,0 +1,44 @@
+{
+  "sidebar": {
+    "quiz": "Quiz",
+    "results": "Results",
+    "search": "Search",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "pages": {
+    "home": { "title": "Quiz" },
+    "settings": { "title": "Settings" },
+    "newQuiz": { 
+      "title": "Creating and updating a quiz",
+      "titleplaceholder": "Quiz title" 
+    } 
+  },
+  "login": { "title": "Sign in",
+                "microsoftSignIn": "Sign in with Microsoft",
+                "microsoftAlt": "Microsoft Sign-in",
+                "error": "Login failed"
+  },
+  "buttons": {
+    "newQuiz": "New Quiz",
+    "saveQuiz": "Save changes",
+    "toggleswitchon": "Active",
+    "toggleswitchoff": "Inactive"
+  },
+  "modals": {
+    "logout": {
+      "title": "Logout",
+      "text": "Do you really want to log out?",
+      "cancel": "Cancel",
+      "confirm": "Yes"
+    }
+  },
+  "dialogs": {
+    "unsaved": {
+      "title": "Leave without saving?",
+      "text": "You have unsaved changes.",
+      "stay": "Stay",
+      "leave": "Leave"
+    }
+  }
+}

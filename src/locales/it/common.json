@@ -1,0 +1,44 @@
+{
+  "sidebar": {
+    "quiz": "Quiz",
+    "results": "Risultati",
+    "search": "Ricerca",
+    "settings": "Impostazioni",
+    "logout": "Disconnetti"
+  },
+  "pages": {
+    "home": { "title": "Quiz" },
+    "settings": { "title": "Impostazioni" },
+    "newQuiz": { 
+      "title": "Crea e modifica un quiz",
+      "titleplaceholder": "Titolo del quiz" 
+    }
+  },
+  "login": { "title": "Connessione", 
+                "microsoftSignIn": "Accedi con Microsoft",
+                "microsoftAlt": "Accesso Microsoft",
+                "error": "Accesso non riuscito"
+  },
+  "buttons": {
+    "newQuiz": "Nuovo quiz",
+    "saveQuiz": "Salva modifiche",
+    "toggleswitchon": "Attivo",
+    "toggleswitchoff": "Inattivo"
+  },
+  "modals": {
+    "logout": {
+      "title": "Disconnetti",
+      "text": "Sei sicuro di voler uscire?",
+      "cancel": "Cancellare",
+      "confirm": "SÌ"
+    }
+  },
+  "dialogs": {
+    "unsaved": {
+      "title": "Uscire senza salvare ?",
+      "text": "Ci sono modifiche non salvate.",
+      "stay": "Rimanere",
+      "leave": "Andarsene"
+    }
+  }
+}

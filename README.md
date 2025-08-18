@@ -3,10 +3,10 @@
 
 # TODO 
 
-- Context pour authentification / hooks -> OK (à voir)
-- Adacpt variable colors, spacing etc ... 
+- Context pour authentification / hooks -> OK
+- Adapt variable colors, spacing etc ... -> OK pour l'instant
 - https://react-icons.github.io/react-icons/
-- locales i18n 
+- locales i18n -> OK pour l'instant
 - title + favicon -> OK
 
 https://fikristudio.com/project/trenning

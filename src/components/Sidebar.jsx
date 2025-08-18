@@ -2,7 +2,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import ToggleThemeSwitch from "./ui/ToggleThemeSwitch";
+
 
 export default function Sidebar({ logoSrc, logoAlt = "Logo", itemsTop = [], itemsBottom = [], avatarText }) {
 	// Récupère l'URL actuelle pour savoir quel bouton est actif
@@ -10,7 +10,7 @@ export default function Sidebar({ logoSrc, logoAlt = "Logo", itemsTop = [], item
 
 	// Affiche un élément de la sidebar
 	const renderItem = (item) => {
-		// Détermine si l'élément doit être affiché comme actif
+		// Dit si l'élément doit être affiché comme actif
 		const isActive = (() => {
 			if (item.activePattern instanceof RegExp) return item.activePattern.test(location.pathname);
 			if (item.to) return location.pathname === item.to;
@@ -48,7 +48,9 @@ export default function Sidebar({ logoSrc, logoAlt = "Logo", itemsTop = [], item
 
 				{itemsTop.map(renderItem)}
 			</Stack>
-			<ToggleThemeSwitch />
+
+            
+
 			{/* Partie du bas de la sidebar avec itemsBottom et l'avatar */}
 			<Stack>
 				{itemsBottom.map(renderItem)}
@@ -67,20 +69,17 @@ const Aside = styled.aside`
     justify-content: space-between;
     padding: 12px 0;
     align-items: center;
-    background-color: #ffffff;
+    background-color: var(--color-background);
 `;
-
 const Stack = styled.div`
     display: flex;
     flex-direction: column;
     gap: 16px;
     align-items: center;
 `;
-
 const StyledLink = styled(Link)`
     text-decoration: none;
 `;
-
 const LogoCircle = styled.div`
     width: 36px;
     height: 36px;
@@ -97,7 +96,6 @@ const LogoCircle = styled.div`
         object-fit: contain;
     }
 `;
-
 const IconButton = styled.button`
     border: none;
     background: none;
@@ -108,22 +106,21 @@ const IconButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--gray-500);
 
     /* hover */
     &:hover {
-        background-color: #f3f4f6;
+        background-color: var(--gray-300);
     }
 
     /* active state */
     ${(p) =>
             p.$active &&
             `
-    background-color: #eef2ff;
-    box-shadow: inset 0 0 0 1px #c7d2fe;
+    background-color: var(--gray-300);
     border-radius: 8px;
   `}
 `;
-
 const Avatar = styled.div`
     width: 36px;
     height: 36px;

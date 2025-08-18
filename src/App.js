@@ -1,46 +1,40 @@
 import './App.css';
+import AppLayout from "./components/layout/AppLayout";
 import LoginPage from './pages/login/LoginPage';
 import HomePage from './pages/homepage/HomePage';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import SettingsPage from './pages/settings/Settings';
+import NewQuiz from './pages/quiz_editor/NewQuiz';
+import { RouterProvider, createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { isInMsalPopup } from './utils/msalPopup';
 
 function ProtectedRoute({ children }) {
   const user = localStorage.getItem('user');
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/login" replace />;
   return children;
 }
 
-function App() {
-  if (isInMsalPopup()) {
-    return null;
-  }
+const router = createBrowserRouter([
+  { path: "/", element: <Navigate to="/login" replace /> },
+  { path: "/login", element: <LoginPage /> },
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <AppLayout>
+          <Outlet />
+        </AppLayout>
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: "home", element: <HomePage /> },
+      { path: "quiz/new", element: <NewQuiz /> },
+      { path: "settings", element: <SettingsPage /> },
+      { path: "*", element: <Navigate to="/home" replace /> }
+    ],
+  },
+]);
 
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/quiz/new"
-          element={
-            <ProtectedRoute>
-              <div>Créer un quiz…</div>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
-  );
+export default function App() {
+  if (isInMsalPopup()) return null;
+  return <RouterProvider router={router} />;
 }
-
-export default App;

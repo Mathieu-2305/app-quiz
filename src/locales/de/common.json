@@ -1,0 +1,46 @@
+{
+  "sidebar": {
+    "quiz": "Quiz",
+    "results": "Ergebnisse",
+    "search": "Suchen",
+    "settings": "Einstellungen",
+    "logout": "Abmelden"
+  },
+  "pages": {
+    "home": { "title": "Quiz" },
+    "settings": { "title": "Einstellungen" },
+    "newQuiz": { 
+      "title": "Erstellen und Bearbeiten eines Quiz",
+      "titleplaceholder": "Quiztitel" 
+    }
+  },
+  "login": { "title": "Verbindung",
+              "microsoftSignIn": "Melden Sie sich bei Microsoft an",
+              "microsoftAlt": "Microsoft-Anmeldung",
+              "error": "Fehler bei der Anmeldung"
+  },
+  "buttons": {
+    "newQuiz": "Neues Quiz",
+    "saveQuiz": "Änderungen speichern",
+    "toggleswitchon": "Aktiv",
+    "toggleswitchoff": "Inaktiv"
+  },
+  "modals": {
+    "logout": {
+      "title": "Abmelden",
+      "text": "Möchten Sie sich wirklich abmelden ?",
+      "cancel": "Stornieren",
+      "confirm": "Ja"
+    }
+  },
+  "dialogs": {
+    "unsaved": {
+      "title": "Ohne Speichern verlassen?",
+      "text": "Es gibt nicht gespeicherte Änderungen.",
+      "stay": "Bleiben",
+      "leave": "Verlassen"
+    }
+  
+}
+
+}

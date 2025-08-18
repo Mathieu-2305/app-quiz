@@ -7,6 +7,7 @@ import {ThemeProvider} from "./context/theme";
 import './components/ui/styles/index.css'
 import { AuthProvider } from "./context/auth";
 import { isInMsalPopup } from "./utils/msalPopup";
+import "./i18n";
 
 if (isInMsalPopup()) {
   ReactDOM.createRoot(document.getElementById("root")).render(<div />);
