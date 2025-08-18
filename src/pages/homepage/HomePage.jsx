@@ -4,6 +4,7 @@ import { Award, Settings, Search, LogOut, FlaskConical, Plus } from "lucide-reac
 import styled from "styled-components";
 import MyLogo from "../../assets/images/raflogo.png";
 import Sidebar from "../../components/Sidebar";
+import QuizCard from "../../components/QuizCard";
 
 export default function HomePage() {
 	const navigate = useNavigate();
@@ -69,7 +70,8 @@ export default function HomePage() {
 						</NewQuizButton>
 					</Header>
 					<Content>
-						<Placeholder />
+						<QuizCard title={"Card"} tags={["tag1", "tag2"]} date={"2025-08-18 14:26:50"} modified={false} imgURL={"https://avatars.githubusercontent.com/u/190352311?v=4"}/>
+						{/* <Placeholder /> */}
 					</Content>
 				</Main>
 			</Container>
