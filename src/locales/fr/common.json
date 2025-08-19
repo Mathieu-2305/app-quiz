@@ -1,0 +1,75 @@
+{
+  "sidebar": {
+    "quiz": "Quiz",
+    "results": "Résultats",
+    "search": "Recherche",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "pages": {
+    "home": { "title": "Quiz" },
+    "settings": { "title": "Paramètres" },
+    "newQuiz": {
+      "title": "Créer et éditer un quiz",
+      "titleplaceholder": "Titre du quiz",
+      "categoriesTitle": "Catégories",
+      "dragHint": "Glissez-déposez au centre",
+      "newCategory": "Nouvelle Catégorie",
+      "categoryTitlePlaceholder": "Tapez le titre de la catégorie ici",
+      "addDescription": "Ajouter une description",
+      "emptyDropHint": "Glissez un template de question depuis la colonne de gauche ici",
+      "field": {
+        "labelTitle": "Intitulé",
+        "labelDescription": "Description (facultatif)"
+      },
+      "options": {
+        "title": "Options",
+        "newOption": "Nouvelle option"
+      },
+      "delete": "Supprimer",
+      "placeholders": {
+        "typeHere": "Tapez ici"
+      },
+      "questionTypes": {
+        "short": "Réponse courte",
+        "long": "Réponse longue",
+        "single": "Choix unique",
+        "multi": "Choix multiples",
+        "boolean": "Vrai / Faux"
+      },
+      "defaults": {
+        "option": "Option",
+        "true": "Vrai",
+        "false": "Faux"
+      }
+    }
+  },
+  "login": {
+    "title": "Connexion",
+    "microsoftSignIn": "Se connecter avec Microsoft",
+    "microsoftAlt": "Connexion Microsoft",
+    "error": "Échec du login"
+  },
+  "buttons": {
+    "newQuiz": "Nouveau Quiz",
+    "saveQuiz": "Enregistrer les modifications",
+    "toggleswitchon": "Actif",
+    "toggleswitchoff": "Inactif"
+  },
+  "modals": {
+    "logout": {
+      "title": "Déconnexion",
+      "text": "Voulez-vous vraiment vous déconnecter ?",
+      "cancel": "Annuler",
+      "confirm": "Oui"
+    }
+  },
+  "dialogs": {
+    "unsaved": {
+      "title": "Quitter sans enregistrer ?",
+      "text": "Vous avez des modifications non sauvegardées.",
+      "stay": "Rester",
+      "leave": "Quitter"
+    }
+  }
+}

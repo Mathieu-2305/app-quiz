@@ -1,113 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Award, Settings, Search, LogOut, FlaskConical, Plus } from "lucide-react";
+import { FlaskConical, Plus } from "lucide-react";
 import styled from "styled-components";
-import MyLogo from "../../assets/images/raflogo.png";
-import Sidebar from "../../components/Sidebar";
 import QuizCard from "../../components/QuizCard";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../../components/buttons/LanguageSwitcher";
 
 export default function HomePage() {
 	const navigate = useNavigate();
-	const [user, setUser] = useState(null);
-	const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-	useEffect(() => {
-		const stored = localStorage.getItem("user");
-		if (!stored) {
-			navigate("/login", { replace: true });
-			return;
-		}
-		try {
-			setUser(JSON.parse(stored));
-		} catch {
-			navigate("/login", { replace: true });
-		}
-	}, [navigate]);
-
-	// Suppression user et access token du local storage puis retour au login
-	const handleLogoutClick = () => {
-		setShowLogoutModal(true);
-	};
-
-	// Confirmation Logout
-	const confirmLogout = () => {
-		localStorage.removeItem("access_token");
-		localStorage.removeItem("user");
-		navigate("/login", { replace: true });
-	};
-
-	// Boutons de la sidebar + redirections
-	const itemsTop = [
-		{ key: "quiz", title: "Quiz", icon: <FlaskConical size={24} />, to: "/home" },
-		{ key: "results", title: "Résultats", icon: <Award size={24} />, to: "/results" },
-		{ key: "search", title: "Recherche", icon: <Search size={24} />, to: "/search" },
-	];
-
-	const itemsBottom = [
-		{ key: "settings", title: "Paramètres", icon: <Settings size={24} />, to: "/settings" },
-		{ key: "logout", title: "Logout", icon: <LogOut size={24} color="#ef4444" />, onClick: handleLogoutClick },
-	];
+	const { t } = useTranslation();
 
 	return (
-		<>
-			{/* Sidebar et header */}
-			<Container>
-				<Sidebar
-					logoSrc={MyLogo}
-					logoAlt="Rafisa"
-					itemsTop={itemsTop}
-					itemsBottom={itemsBottom}
-					avatarText={(user && (user.username || user.name || user.localAccountId)) ? (user.username?.slice(0,2) || "AB") : "AB"}
-				/>
-
-				<Main>
-					<Header>
-						<Title>
-							<FlaskConical size={24} /> Quiz
-						</Title>
-						<NewQuizButton onClick={() => navigate("/quiz/new")}>
-							<Plus size={16} /> Nouveau Quiz
-						</NewQuizButton>
-					</Header>
-					<Content>
-						<QuizCard title={"Card"} tags={["tag1", "tag2"]} date={"2025-08-18 14:26:50"} modified={false} imgURL={"https://avatars.githubusercontent.com/u/190352311?v=4"}/>
-						{/* <Placeholder /> */}
-					</Content>
-				</Main>
-			</Container>
-
-			{/* Modal de confirmation */}
-			{showLogoutModal && (
-				<ModalOverlay>
-					<ModalBox>
-						<ModalTitle>Déconnexion</ModalTitle>
-						<ModalText>Voulez-vous vraiment vous déconnecter ?</ModalText>
-						<ModalButton>
-							<CancelButton onClick={() => setShowLogoutModal(false)}>Annuler</CancelButton>
-							<ConfirmButton onClick={confirmLogout}>Oui</ConfirmButton>
-						</ModalButton>
-					</ModalBox>
-				</ModalOverlay>
-			)}
-		</>
+		// Header
+		<Main>
+			<Header>
+				<Title>
+					<FlaskConical size={24} /> {t("pages.home.title")}
+				</Title>
+				<Controls>
+					<LanguageSwitcher />
+					<NewQuizButton onClick={() => navigate("/quiz/new")}>
+						<Plus size={16} /> {t("buttons.newQuiz")}
+					</NewQuizButton>
+				</Controls>
+			</Header>
+			<Content>
+				<QuizCard title={"Card"} tags={["tag1", "tag2"]} date={"2025-08-18 14:26:50"} modified={false} imgURL={"https://avatars.githubusercontent.com/u/190352311?v=4"}/>
+			</Content>
+		</Main>
 	);
 }
 
-/* CSS */
-const Container = styled.div`
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    background: #fff;
-    color: #333;
-    font-family: Arial, sans-serif;
-`;
 
 const Main = styled.main`
     flex: 1;
     display: flex;
     flex-direction: column;
-	width: 100%;
+    width: 100%;
+    background-color: var(--color-background);
 `;
 
 const Header = styled.header`
@@ -117,6 +47,7 @@ const Header = styled.header`
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
+    background-color: var(--color-background);
 `;
 
 const Title = styled.h1`
@@ -126,6 +57,12 @@ const Title = styled.h1`
     display: flex;
     align-items: center;
     gap: 8px;
+`;
+
+const Controls = styled.div`
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
 `;
 
 const NewQuizButton = styled.button`
@@ -150,63 +87,4 @@ const NewQuizButton = styled.button`
 const Content = styled.section`
     flex: 1;
     padding: 24px;
-`;
-
-const Placeholder = styled.div`
-    height: 100%;
-    width: 100%;
-    border: 2px dashed #d1d5db;
-    border-radius: 12px;
-    background-color: white;
-`;
-
-const ModalOverlay = styled.div`
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
-const ModalBox = styled.div`
-    background: white;
-    padding: 20px 24px;
-    border-radius: 8px;
-    max-width: 320px;
-    width: 100%;
-    text-align: center;
-`;
-
-const ModalTitle = styled.h2`
-    margin: 0 0 8px;
-    font-size: 18px;
-`;
-
-const ModalText = styled.p`
-    margin: 0 0 16px;
-    color: #555;
-`;
-
-const ModalButton = styled.div`
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-`;
-
-const CancelButton = styled.button`
-    padding: 8px;
-    background: #e5e7eb;
-`;
-
-const ConfirmButton = styled.button`
-    background: #ef4444;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    &:hover {
-        background: #dc2626;
-    }
 `;

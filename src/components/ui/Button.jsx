@@ -102,33 +102,34 @@ const disabledStyles = css`
 `;
 
 const StyledButton = styled.button`
-  font-family: inherit;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.15s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  user-select: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  text-decoration: none;
-  line-height: var(--line-height);
-  will-change: transform;
-  outline-offset: 2px;
-
-  /* Size */
-  ${({ size }) => sizes[size] || sizes.m}
-
-  /* Variant */
-  ${({ $variant }) => variants[$variant] || variants.primary}
-
-  /* Disabled */
-  ${({ disabled }) => disabled && disabledStyles}
-
-  /* Remove blue highlight on mobile tap */
-  &:focus:not(:focus-visible) {
-    outline: none;
-  }
+	font-family: inherit;
+	font-weight: 600;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.2s ease, box-shadow 0.15s ease;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	text-decoration: none;
+	line-height: var(--line-height);
+	will-change: transform;
+	outline-offset: 2px;
+	gap: var(--spacing-2xs);
+	
+	/* Size */
+	${({ size }) => sizes[size] || sizes.m}
+	
+	/* Variant */
+	${({ $variant }) => variants[$variant] || variants.primary}
+	
+	/* Disabled */
+	${({ disabled }) => disabled && disabledStyles}
+	
+	/* Remove blue highlight on mobile tap */
+	&:focus:not(:focus-visible) {
+		outline: none;
+	}
 `;

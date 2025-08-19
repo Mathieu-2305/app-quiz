@@ -4,25 +4,33 @@ import MsLogo from '../../assets/images/ms-symbollockup_signin_light.svg';
 import MsLogoDark from '../../assets/images/ms-symbollockup_signin_dark.svg';
 import RafLogo from '../../assets/images/raflogo.png';
 import styled from 'styled-components';
-import ToggleThemeSwitch from "../../components/ui/ToggleThemeSwitch";
 import { useTheme } from "../../context/theme";
 import { useAuth } from "../../context/auth";
 import { isInMsalPopup } from "../../utils/msalPopup";
+import LanguageSwitcher from "../../components/buttons/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 function LoginPage() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { theme } = useTheme();
 	const { login } = useAuth();
+    const { t, i18n } = useTranslation();
+
+    // Normalement ça fait en sorte que la langue reste la même quand on passe sur la HomePage
+    useEffect(() => {
+        document.documentElement.dir = i18n.dir();
+    }, [i18n.resolvedLanguage, i18n]);
 
 	// Si déjà connecté et pas sur /home, on redirige
 	useEffect(() => {
-		if (isInMsalPopup()) return; // <--- NE RIEN NAVIGUER DANS LE POPUP
+		if (isInMsalPopup()) return; // <--- Pas de navigation dans le popup microsoft
 		const storedUser = localStorage.getItem('user');
 		if (storedUser && location.pathname !== '/home') {
 			navigate('/home', { replace: true });
 		}
 		}, [navigate, location]);
+
 
 	// Gestion du clic sur le bouton de connexion
 	const handleLogin = async () => {
@@ -30,21 +38,23 @@ function LoginPage() {
 			await login();
 			navigate('/home', { replace: true });
 		} catch (error) {
-			console.error('Échec du login:', error);
+			console.error(`${t("login.error")}:`, error);
 		}
 	};
-	
+
+
 	return (
 		<Container>
 			<Box>
-				<ToggleThemeSwitch />
+                <LanguageSwitcher />
+				{/* <ToggleThemeSwitch /> */}
 				<Logo src={RafLogo} alt="Rafisa Logo" />
-				<Title>Connexion</Title>
+				<Title>{t("login.title")}</Title>
 
-				<MicrosoftButton type="button" onClick={handleLogin} aria-label="Se connecter avec Microsoft">
+				<MicrosoftButton type="button" onClick={handleLogin} aria-label={t("login.microsoftSignIn")}>
 					<MicrosoftImg
 						src={theme === 'dark' ? MsLogoDark : MsLogo}
-						alt="Microsoft Sign-in"
+						alt={t("login.microsoftAlt")}
 					/>
 				</MicrosoftButton>
 			</Box>
@@ -54,7 +64,7 @@ function LoginPage() {
 
 export default LoginPage;
 
-/* CSS */
+
 const Container = styled.div`
     display: flex;
     justify-content: center;
@@ -77,7 +87,6 @@ const Logo = styled.img`
     width: 40px;
     height: auto;
     object-fit: contain;
-
 `;
 
 const Title = styled.h2`

@@ -3,11 +3,27 @@
 
 # TODO 
 
-- Context pour authentification / hooks -> OK (à voir)
-- Adacpt variable colors, spacing etc ... 
-- https://react-icons.github.io/react-icons/
-- locales i18n 
-- title + favicon -> OK
+- LoginPage.js, ajouter un background
+- LoginPage.js, ajouter un titre 
+- LoginPage.js, choix de la langue en haut a droit de l'ecran 
+- LoginPage.js, ajouter le theme switcher en haut a droit de l'ecran 
+- LoginPage.js, commentaire en anglais 
+  
+
+- NewQuiz.js, commentaire en anglais 
+- NewQuiz.js, style comme pour button a récuperer le composant Button existant et le modifié si besoin
+- NewQuiz.js, color en fonction des variables 
+
+
+- Translation, arranger page common.json et renommer a translations.json 
+
+- Corriger erreur dans la console concernant logo192.png 
+
+- ~~Demo done todo~~
+
+
+
+### Tools
 
 https://fikristudio.com/project/trenning
 
