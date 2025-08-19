@@ -8,33 +8,33 @@ import { RouterProvider, createBrowserRouter, Navigate, Outlet } from 'react-rou
 import { isInMsalPopup } from './utils/msalPopup';
 
 function ProtectedRoute({ children }) {
-  const user = localStorage.getItem('user');
-  if (!user) return <Navigate to="/login" replace />;
-  return children;
+	const user = localStorage.getItem('user');
+	if (!user) return <Navigate to="/login" replace />;
+	return children;
 }
 
 const router = createBrowserRouter([
-  { path: "/", element: <Navigate to="/login" replace /> },
-  { path: "/login", element: <LoginPage /> },
-  {
-    path: "/",
-    element: (
-      <ProtectedRoute>
-        <AppLayout>
-          <Outlet />
-        </AppLayout>
-      </ProtectedRoute>
-    ),
-    children: [
-      { path: "home", element: <HomePage /> },
-      { path: "quiz/new", element: <NewQuiz /> },
-      { path: "settings", element: <SettingsPage /> },
-      { path: "*", element: <Navigate to="/home" replace /> }
-    ],
-  },
+	{ path: "/", element: <Navigate to="/login" replace /> },
+	{ path: "/login", element: <LoginPage /> },
+	{
+		path: "/",
+		element: (
+			<ProtectedRoute>
+				<AppLayout>
+					<Outlet />
+				</AppLayout>
+			</ProtectedRoute>
+		),
+		children: [
+			{ path: "home", element: <HomePage /> },
+			{ path: "quiz/new", element: <NewQuiz /> },
+			{ path: "settings", element: <SettingsPage /> },
+			{ path: "*", element: <Navigate to="/home" replace /> }
+		],
+	},
 ]);
 
 export default function App() {
-  if (isInMsalPopup()) return null;
-  return <RouterProvider router={router} />;
+	if (isInMsalPopup()) return null;
+	return <RouterProvider router={router} />;
 }

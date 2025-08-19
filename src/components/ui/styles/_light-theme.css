@@ -33,7 +33,7 @@
   --color-surface: #ffffff;                           /* Background for primary surfaces (cards, modals, main containers that are white) */
   --color-background-elevated: var(--gray-100);       /* Background for elevated elements relative to the base background, e.g. dropdowns, tooltips, floating menus */
   --color-background-overlay: rgba(15, 23, 42, 0.4);  /* Semi-transparent overlay background (modals, menus that block the background) */
-  --color-background-input: var(--gray-100);          /* Background for input fields and form elements */
+  --color-background-input: var(--gray-200);          /* Background for input fields and form elements */
   --color-background-input-focused: #ffffff;          /* Background for input fields and form elements when focused */
   --color-border: var(--gray-300);                    /* Color for borders, dividers, and separators */
 }

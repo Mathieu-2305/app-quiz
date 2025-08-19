@@ -31,6 +31,7 @@ function LoginPage() {
 		}
 		}, [navigate, location]);
 
+
 	// Gestion du clic sur le bouton de connexion
 	const handleLogin = async () => {
 		try {
@@ -40,7 +41,8 @@ function LoginPage() {
 			console.error(`${t("login.error")}:`, error);
 		}
 	};
-	
+
+
 	return (
 		<Container>
 			<Box>
@@ -62,7 +64,7 @@ function LoginPage() {
 
 export default LoginPage;
 
-// CSS 
+
 const Container = styled.div`
     display: flex;
     justify-content: center;
@@ -71,6 +73,7 @@ const Container = styled.div`
     height: 100vh;
     background-color: var(--color-background);
 `;
+
 const Box = styled.div`
     background-color: var(--color-background-elevated);
     padding: 2rem;
@@ -79,17 +82,20 @@ const Box = styled.div`
     text-align: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 `;
+
 const Logo = styled.img`
     width: 40px;
     height: auto;
     object-fit: contain;
 `;
+
 const Title = styled.h2`
     margin: 0 0 1rem 0;
     font-weight: 600;
     color: var(--color-text);
     font-size: 1.25rem;
 `;
+
 const MicrosoftButton = styled.div`
     width: 100%;
     padding: 0.6rem;
@@ -111,6 +117,7 @@ const MicrosoftButton = styled.div`
         transform: translateY(1px);
     }
 `;
+
 const MicrosoftImg = styled.img`
     width: 100%;
     height: auto;
