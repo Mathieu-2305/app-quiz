@@ -2,11 +2,11 @@ import React, { useMemo, useRef, useState } from 'react';
 import { FilePenLine, Save, Plus, Trash2, Edit3 } from "lucide-react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import LanguageSwitcher from "../../components/buttons/LanguageSwitcher";
 import UnsavedChangesGuard from "../../components/UnsavedChangesGuard";
 import ToggleSwitch from "../../components/buttons/ToggleSwitchButton";
 import LanguageSelector from "../../components/ui/LanguageSelector";
 import Button from "../../components/ui/Button";
+import Header from "../../components/layout/Header";
 
 export default function NewQuiz() {
   	// Translation function
@@ -35,11 +35,11 @@ export default function NewQuiz() {
 
   	// Questions templates list
 	const QUESTION_TEMPLATES = useMemo(() => ([
-		{ type: "short",  label: t("pages.newQuiz.questionTypes.short") },
-		{ type: "long",   label: t("pages.newQuiz.questionTypes.long") },
-		{ type: "single", label: t("pages.newQuiz.questionTypes.single") },
-		{ type: "multi",  label: t("pages.newQuiz.questionTypes.multi") },
-		{ type: "boolean",label: t("pages.newQuiz.questionTypes.boolean") }
+		{ type: "short",  label: t("quiz.types.short") },
+		{ type: "long",   label: t("quiz.types.long") },
+		{ type: "single", label: t("quiz.types.single") },
+		{ type: "multi",  label: t("quiz.types.multi") },
+		{ type: "boolean",label: t("quiz.types.boolean") }
 	]), [t]);
 
   	// Create an empty question
@@ -48,17 +48,17 @@ export default function NewQuiz() {
 		const base = { id, type, title: "", description: "", required: false };
 
 		if (type === "single") {
-			const o = t("pages.newQuiz.defaults.option");
+			const o = t("quiz.defaults.option");
 			return { ...base, options: [`${o} 1`, `${o} 2`, `${o} 3`], correctIndex: null };
 		}
 		if (type === "multi") {
-			const o = t("pages.newQuiz.defaults.option");
+			const o = t("quiz.defaults.option");
 			return { ...base, options: [`${o} 1`, `${o} 2`, `${o} 3`], correctIndices: [] };
 		}
 		if (type === "boolean") {
 			return {
 				...base,
-				options: [t("pages.newQuiz.defaults.true"), t("pages.newQuiz.defaults.false")],
+				options: [t("quiz.defaults.true"), t("quiz.defaults.false")],
 				correctIndex: null
 			};
 		}
@@ -121,7 +121,7 @@ export default function NewQuiz() {
 		setQuestions(prev =>
 			prev.map(q => {
 				if (q.id !== id) return q;
-				const base = t("pages.newQuiz.defaults.option");
+				const base = t("quiz.defaults.option");
 				const nextLen = (q.options?.length ?? 0) + 1;
 				return { ...q, options: [...(q.options ?? []), `${base} ${nextLen}`] };
 			})
@@ -188,41 +188,39 @@ export default function NewQuiz() {
 	return (
 		<Main>
 			<UnsavedChangesGuard when={isDirty} />
-
-			<Header>
-				<Title>
-					<FilePenLine size={24} /> {t("pages.newQuiz.title")}
-				</Title>
-				<Controls>
-					<ToggleSwitch
-						checked={active}
-						onChange={setActive}
-						onLabel={t("buttons.toggleswitchon")}
-						offLabel={t("buttons.toggleswitchoff")}
-						onColor="#22c55e"
-						offColor="#e5e7eb"
-					/>
-					<LanguageSwitcher />
-					<LanguageSelector />
-					<SaveButton onClick={onSave}>
-						<Save size={16} />{t("buttons.saveQuiz")}
-					</SaveButton>
-				</Controls>
-			</Header>
-
+			<Header
+				title={t("quiz.title")}
+				icon={<FilePenLine size={20}/>}
+				actions={[
+					<Controls>
+						<ToggleSwitch
+							checked={active}
+							onChange={setActive}
+							onLabel={t("common.active")}
+              				offLabel={t("common.inactive")}
+							onColor="#22c55e"
+							offColor="#e5e7eb"
+						/>
+						<LanguageSelector />
+						<SaveButton onClick={onSave}>
+							<Save size={16} />{t("actions.saveChanges")}
+						</SaveButton>
+					</Controls>
+				]}
+			/>
 			<Body>
 				<LeftPanel>
-					<LeftTitle>{t("pages.newQuiz.categoriesTitle")}</LeftTitle>
+					<LeftTitle>{t("quiz.sections.categories")}</LeftTitle>
 					<TemplateList>
 						{QUESTION_TEMPLATES.map((tpl) => (
 							<TemplateCard
 								key={tpl.type}
 								draggable
 								onDragStart={(e) => onTemplateDragStart(e, tpl.type)}
-								title={t("pages.newQuiz.dragHint")}
+								title={t("quiz.hints.dragCenter")}
 							>
-								<TemplateBadge>{t(`pages.newQuiz.questionTypes.${tpl.type}`)}</TemplateBadge>
-								<TemplateLabel>{tpl.label}</TemplateLabel>
+								<TemplateBadge>{t(`quiz.types.${tpl.type}`)}</TemplateBadge>
+                				<TemplateLabel>{tpl.label}</TemplateLabel>
 							</TemplateCard>
 						))}
 					</TemplateList>
@@ -238,60 +236,61 @@ export default function NewQuiz() {
 						<EditorTitle
 							value={title}
 							onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
-							placeholder={t("pages.newQuiz.titleplaceholder")}
+							placeholder={t("quiz.placeholders.title")}
+              				aria-label={t("quiz.placeholders.title")}
 						/>
-						<SmallAction type="button" onClick={toggleDesc}>
-							<Edit3 size={16} /> <span>{t("pages.newQuiz.addDescription")}</span>
+						<SmallAction type="button" onClick={toggleDesc} title={t("quiz.sections.descriptionAdd")}>
+							<Edit3 size={16} /> <span>{t("quiz.sections.descriptionAdd")}</span>
 						</SmallAction>
 					</EditorHeader>
 
 					{showDescription && (
 						<Field>
-							<FieldLabel>{t("pages.newQuiz.field.labelDescription")}</FieldLabel>
-							<TextArea
-								ref={descRef}
-								value={description}
-								onChange={(e) => { setDescription(e.target.value); setIsDirty(true); }}
-								placeholder={t("pages.newQuiz.placeholders.typeHere")}
-								rows={3}
+						<FieldLabel>{t("quiz.fields.description")}</FieldLabel>
+						<TextArea
+							ref={descRef}
+							value={description}
+							onChange={(e) => { setDescription(e.target.value); setIsDirty(true); }}
+							placeholder={t("common.placeholders.typeHere")}
+							rows={3}
 							/>
 						</Field>
 					)}
 
 					{questions.length === 0 ? (
 						<DropPlaceholder>
-							{t("pages.newQuiz.emptyDropHint")}
+							{t("quiz.hints.emptyDrop")}
 						</DropPlaceholder>
 					) : (
 						<QuestionList>
 							{questions.map((q) => (
 								<QuestionCard key={q.id}>
 									<QuestionHeader>
-										<Badge>{t(`pages.newQuiz.questionTypes.${q.type}`)}</Badge>
+										<Badge>{t(`quiz.types.${q.type}`)}</Badge>
 										<DeleteBtn
 											onClick={() => removeQuestion(q.id)}
-											title={t("pages.newQuiz.delete")}
-											aria-label={t("pages.newQuiz.delete")}
+											title={t("actions.delete")}
+                      						aria-label={t("actions.delete")}
 										>
 											<Trash2 size={16} />
 										</DeleteBtn>
 									</QuestionHeader>
 
 									<Field>
-										<FieldLabel>{t("pages.newQuiz.field.labelTitle")}</FieldLabel>
+										<FieldLabel>{t("quiz.fields.title")}</FieldLabel>
 										<Input
 											value={q.title}
 											onChange={(e) => updateQuestion(q.id, { title: e.target.value })}
-											placeholder={t("pages.newQuiz.placeholders.typeHere")}
+											placeholder={t("common.placeholders.typeHere")}
 										/>
 									</Field>
 
 									<Field>
-										<FieldLabel>{t("pages.newQuiz.field.labelDescription")}</FieldLabel>
+										<FieldLabel>{t("quiz.fields.description")}</FieldLabel>
 										<TextArea
 											value={q.description}
 											onChange={(e) => updateQuestion(q.id, { description: e.target.value })}
-											placeholder={t("pages.newQuiz.placeholders.typeHere")}
+											placeholder={t("common.placeholders.typeHere")}
 											rows={3}
 										/>
 									</Field>
@@ -299,7 +298,7 @@ export default function NewQuiz() {
 									{(q.type === "single" || q.type === "multi" || q.type === "boolean") && (
 										<>
 											<Divider />
-											<OptionsHeader>{t("pages.newQuiz.options.title")}</OptionsHeader>
+											<OptionsHeader>{t("quiz.sections.options")}</OptionsHeader>
 
 											{(q.options || []).map((opt, idx) => (
 												<OptionRow key={idx}>
@@ -308,7 +307,7 @@ export default function NewQuiz() {
 															type="checkbox"
 															checked={(q.correctIndices ?? []).includes(idx)}
 															onChange={() => toggleCorrectMulti(q.id, idx)}
-															aria-label={`${t("pages.newQuiz.options.title")} #${idx + 1}`}
+															aria-label={`${t("quiz.sections.options")} #${idx + 1}`}
 														/>
 													) : (
 														
@@ -317,7 +316,7 @@ export default function NewQuiz() {
 															name={`q-${q.id}`}
 															checked={q.correctIndex === idx}
 															onChange={() => setCorrectSingle(q.id, idx)}
-															aria-label={`${t("pages.newQuiz.options.title")} #${idx + 1}`}
+															aria-label={`${t("quiz.sections.options")} #${idx + 1}`}
 														/>
 													)}
 
@@ -329,8 +328,8 @@ export default function NewQuiz() {
 													{(q.type === "single" || q.type === "multi") && (
 														<RemoveOpt
 															onClick={() => removeOption(q.id, idx)}
-															title={t("pages.newQuiz.delete")}
-															aria-label={t("pages.newQuiz.delete")}
+															title={t("actions.delete")}
+                              								aria-label={t("actions.delete")}
 														>
 															<Trash2 size={16} />
 														</RemoveOpt>
@@ -340,7 +339,7 @@ export default function NewQuiz() {
 
 											{(q.type === "single" || q.type === "multi") && (
 												<AddOption type="button" onClick={() => addOption(q.id)}>
-													<Plus size={16} /> {t("pages.newQuiz.options.newOption")}
+													<Plus size={16} /> {t("quiz.options.new")}
 												</AddOption>
 											)}
 										</>
@@ -363,34 +362,18 @@ const Main = styled.main`
     background-color: var(--color-background);
 `;
 
-const Header = styled.header`
-    height: 64px;
-    border-bottom: 1px solid var(--color-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 0 24px;
-    background-color: var(--color-background);
-`;
-
 const Controls = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 12px;
 `;
 
-const Title = styled.h1`
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-`;
-
 const SaveButton = styled(Button)`
     background-color: var(--color-success-bg);
+	&:hover {
+		&:hover {
+        background-color: #134e4a;
+    }
 `;
 
 const Body = styled.div`

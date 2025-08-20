@@ -68,6 +68,7 @@ const DropdownContainer = styled.div`
     position: relative;
     width: var(--spacing-6xl);
     user-select: none;
+    color: var(--color-text);
 `;
 
 const DropdownHeader = styled.div`
@@ -120,7 +121,6 @@ const DropdownItem = styled.li`
     align-items: center;
     gap: var(--spacing-xs);
     font-size: var(--font-size);
-
     &:hover {
         background-color: ${({ disabled }) => (disabled ? 'inherit' : 'var(--color-primary-bg-hover)')};
     }

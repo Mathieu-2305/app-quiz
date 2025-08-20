@@ -50,7 +50,7 @@ function LoginPage() {
 			await login();
 			navigate('/home', { replace: true });
 		} catch (error) {
-			console.error(`${t("login.error")}:`, error);
+			console.error(`${t("pages.login.error")}:`, error);
 		}
 	};
 
@@ -69,12 +69,12 @@ function LoginPage() {
                     <PageTitle>Rafisa Quiz</PageTitle>
                     <Box>
                         <Logo src={RafLogo} alt="Rafisa Logo" />
-                        <Title>{t("login.title")}</Title>
+                        <Title>{t("pages.login.title")}</Title>
 
-                        <MicrosoftButton type="button" onClick={handleLogin} aria-label={t("login.microsoftSignIn")}>
+                        <MicrosoftButton type="button" onClick={handleLogin} aria-label={t("pages.login.microsoftSignIn")}>
                             <MicrosoftImg
                                 src={theme === 'dark' ? MsLogoDark : MsLogo}
-                                alt={t("login.microsoftAlt")}
+                                alt={t("pages.login.microsoftAlt")}
                             />
                         </MicrosoftButton>
                     </Box>

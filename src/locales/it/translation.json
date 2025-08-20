@@ -1,0 +1,101 @@
+{
+  "app": {
+    "name": "Rafisa App"
+  },
+  "nav": {
+    "quiz": "Quiz",
+    "results": "Risultati",
+    "search": "Cerca",
+    "settings": "Impostazioni",
+    "logout": "Disconnettersi"
+  },
+  "actions": {
+    "newQuiz": "Nuovo Quiz",
+    "save": "Salva",
+    "saveChanges": "Salva modifiche",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "delete": "Elimina"
+  },
+  "common": {
+    "active": "Attivo",
+    "inactive": "Inattivo",
+    "yes": "Sì",
+    "no": "No",
+    "placeholders": {
+      "typeHere": "Scrivi qui"
+    },
+    "state": {
+      "on": "Attivo",
+      "off": "Disattivo"
+    }
+  },
+  "quiz": {
+    "title": "Crea e modifica un quiz",
+    "placeholders": {
+      "title": "Titolo del quiz",
+      "categoryTitle": "Scrivi qui il titolo della categoria"
+    },
+    "sections": {
+      "categories": "Categorie",
+      "options": "Opzioni",
+      "descriptionAdd": "Aggiungi una descrizione"
+    },
+    "hints": {
+      "dragCenter": "Trascina e rilascia al centro",
+      "emptyDrop": "Trascina qui un modello di domanda dalla colonna di sinistra"
+    },
+    "fields": {
+      "title": "Titolo",
+      "description": "Descrizione (facoltativa)"
+    },
+    "category": {
+      "new": "Nuova Categoria"
+    },
+    "options": {
+      "new": "Nuova Opzione"
+    },
+    "types": {
+      "short": "Risposta breve",
+      "long": "Risposta lunga",
+      "single": "Scelta singola",
+      "multi": "Scelte multiple",
+      "boolean": "Vero / Falso"
+    },
+    "defaults": {
+      "option": "Opzione",
+      "true": "Vero",
+      "false": "Falso"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Quiz"
+    },
+    "settings": {
+      "title": "Impostazioni"
+    },
+    "login": {
+      "title": "Accesso",
+      "microsoftSignIn": "Accedi con Microsoft",
+      "microsoftAlt": "Accesso Microsoft",
+      "error": "Accesso non riuscito"
+    }
+  },
+  "modals": {
+    "logout": {
+      "title": "Disconnessione",
+      "text": "Vuoi davvero disconnetterti?",
+      "cancel": "Annulla",
+      "confirm": "Sì"
+    }
+  },
+  "dialogs": {
+    "unsaved": {
+      "title": "Uscire senza salvare?",
+      "text": "Hai modifiche non salvate.",
+      "stay": "Rimani",
+      "leave": "Esci"
+    }
+  }
+}

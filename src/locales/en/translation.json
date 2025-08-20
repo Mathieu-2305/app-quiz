@@ -1,0 +1,101 @@
+{
+  "app": {
+    "name": "Rafisa App"
+  },
+  "nav": {
+    "quiz": "Quiz",
+    "results": "Results",
+    "search": "Search",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "actions": {
+    "newQuiz": "New Quiz",
+    "save": "Save",
+    "saveChanges": "Save changes",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete"
+  },
+  "common": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "yes": "Yes",
+    "no": "No",
+    "placeholders": {
+      "typeHere": "Type here"
+    },
+    "state": {
+      "on": "On",
+      "off": "Off"
+    }
+  },
+  "quiz": {
+    "title": "Create and edit a quiz",
+    "placeholders": {
+      "title": "Quiz title",
+      "categoryTitle": "Type the category title here"
+    },
+    "sections": {
+      "categories": "Categories",
+      "options": "Options",
+      "descriptionAdd": "Add a description"
+    },
+    "hints": {
+      "dragCenter": "Drag and drop in the center",
+      "emptyDrop": "Drag a question template from the left column here"
+    },
+    "fields": {
+      "title": "Title",
+      "description": "Description (optional)"
+    },
+    "category": {
+      "new": "New Category"
+    },
+    "options": {
+      "new": "New Option"
+    },
+    "types": {
+      "short": "Short answer",
+      "long": "Long answer",
+      "single": "Single choice",
+      "multi": "Multiple choice",
+      "boolean": "True / False"
+    },
+    "defaults": {
+      "option": "Option",
+      "true": "True",
+      "false": "False"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Quiz"
+    },
+    "settings": {
+      "title": "Settings"
+    },
+    "login": {
+      "title": "Login",
+      "microsoftSignIn": "Sign in with Microsoft",
+      "microsoftAlt": "Microsoft login",
+      "error": "Login failed"
+    }
+  },
+  "modals": {
+    "logout": {
+      "title": "Logout",
+      "text": "Do you really want to log out?",
+      "cancel": "Cancel",
+      "confirm": "Yes"
+    }
+  },
+  "dialogs": {
+    "unsaved": {
+      "title": "Leave without saving?",
+      "text": "You have unsaved changes.",
+      "stay": "Stay",
+      "leave": "Leave"
+    }
+  }
+}
