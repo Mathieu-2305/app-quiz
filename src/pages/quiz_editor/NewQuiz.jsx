@@ -9,18 +9,31 @@ import LanguageSelector from "../../components/ui/LanguageSelector";
 import Button from "../../components/ui/Button";
 
 export default function NewQuiz() {
+  	// Translation function
 	const { t } = useTranslation();
+
+  	// Let the user know if the app detects unsaved modifications
 	const [isDirty, setIsDirty] = useState(false);
+
+  	// Quiz's status (unused for now)
 	const [active, setActive] = useState(true);
 
+  	// Quiz's title
 	const [title, setTitle] = useState("");
+
+  	// Show the description if needed
 	const [showDescription, setShowDescription] = useState(false);
+
+  	// Description content
 	const [description, setDescription] = useState("");
+
+  	// Give focus to the description field when showed
 	const descRef = useRef(null);
 
-	// Questions
+	// Questions table
 	const [questions, setQuestions] = useState([]);
 
+  	// Questions templates list
 	const QUESTION_TEMPLATES = useMemo(() => ([
 		{ type: "short",  label: t("pages.newQuiz.questionTypes.short") },
 		{ type: "long",   label: t("pages.newQuiz.questionTypes.long") },
@@ -29,6 +42,7 @@ export default function NewQuiz() {
 		{ type: "boolean",label: t("pages.newQuiz.questionTypes.boolean") }
 	]), [t]);
 
+  	// Create an empty question
 	const makeQuestion = (type) => {
 		const id = `q_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 		const base = { id, type, title: "", description: "", required: false };
@@ -50,7 +64,7 @@ export default function NewQuiz() {
 		}
 		return base;
 	};
-// Single/boolean
+  	// Single/boolean
 	const setCorrectSingle = (id, idx) => {
 		setQuestions(prev =>
 			prev.map(q => (q.id === id ? { ...q, correctIndex: idx } : q))
@@ -58,7 +72,7 @@ export default function NewQuiz() {
 		setIsDirty(true);
 	};
 
-// Plusieurs bons choix (multi)
+  	// Multiple choices
 	const toggleCorrectMulti = (id, idx) => {
 		setQuestions(prev =>
 			prev.map(q => {
@@ -70,19 +84,23 @@ export default function NewQuiz() {
 		);
 		setIsDirty(true);
 	};
+
+  	//Simulate the save process
 	const onSave = () => {
 		console.log("tkt c'est save", { active, title, description, questions });
 		setIsDirty(false);
 	};
 
-	/* ====== Drag & Drop depuis templates ====== */
+	// Visual state while the drag and drop is active and the user is above the drop zone
 	const [isDragOver, setIsDragOver] = useState(false);
 
+  	// Starts the drag and drop
 	const onTemplateDragStart = (e, type) => {
 		e.dataTransfer.setData("application/x-quiz-template", type);
 		e.dataTransfer.effectAllowed = "copy";
 	};
 
+  	// Read the question type and generate one after the drop
 	const onCanvasDrop = (e) => {
 		e.preventDefault();
 		const type = e.dataTransfer.getData("application/x-quiz-template");
@@ -92,12 +110,13 @@ export default function NewQuiz() {
 		setIsDragOver(false);
 	};
 
-	/* ====== Edition questions ====== */
+	// Partially updates (merge) a question targeted by id with patch
 	const updateQuestion = (id, patch) => {
 		setQuestions(prev => prev.map(q => q.id === id ? { ...q, ...patch } : q));
 		setIsDirty(true);
 	};
 
+  	// Add an option to the single/multi question template
 	const addOption = (id) => {
 		setQuestions(prev =>
 			prev.map(q => {
@@ -110,6 +129,7 @@ export default function NewQuiz() {
 		setIsDirty(true);
 	};
 
+  	// Update an option's text (idx)
 	const updateOption = (id, idx, value) => {
 		setQuestions(prev =>
 			prev.map(q => {
@@ -122,6 +142,7 @@ export default function NewQuiz() {
 		setIsDirty(true);
 	};
 
+  	// Supress an option and adjust things like correctIndex or correctIndices
 	const removeOption = (id, idx) => {
 		setQuestions(prev =>
 			prev.map(q => {
@@ -129,7 +150,7 @@ export default function NewQuiz() {
 
 				const newOptions = (q.options ?? []).filter((_, i) => i !== idx);
 
-				// Corriger l’index correct pour single/boolean
+				// Corrects the correct index for single/boolean
 				if (q.type === "single" || q.type === "boolean") {
 					let nextCorrect = q.correctIndex;
 					if (nextCorrect === idx) nextCorrect = null;
@@ -137,7 +158,7 @@ export default function NewQuiz() {
 					return { ...q, options: newOptions, correctIndex: nextCorrect };
 				}
 
-				// Corriger les indexes pour multi
+				// Corrects the multi indexes
 				if (q.type === "multi") {
 					const next = (q.correctIndices ?? [])
 						.filter(i => i !== idx)
@@ -151,12 +172,13 @@ export default function NewQuiz() {
 		setIsDirty(true);
 	};
 
+  	// Remove a whole question
 	const removeQuestion = (id) => {
 		setQuestions(prev => prev.filter(q => q.id !== id));
 		setIsDirty(true);
 	};
 
-	// UI
+	// Show or not the description and marks the page as modified then give the focus to descRef
 	const toggleDesc = () => {
 		setShowDescription(s => !s);
 		setIsDirty(true);
@@ -289,7 +311,7 @@ export default function NewQuiz() {
 															aria-label={`${t("pages.newQuiz.options.title")} #${idx + 1}`}
 														/>
 													) : (
-														// single ou boolean -> radio group par question
+														
 														<FakeRadio
 															type="radio"
 															name={`q-${q.id}`}
@@ -332,8 +354,6 @@ export default function NewQuiz() {
 		</Main>
 	);
 }
-
-/* ===== styled-components (1 prop par ligne + dark-mode vars) ===== */
 
 const Main = styled.main`
     flex: 1;

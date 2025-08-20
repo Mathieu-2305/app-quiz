@@ -3,28 +3,40 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MsLogo from '../../assets/images/ms-symbollockup_signin_light.svg';
 import MsLogoDark from '../../assets/images/ms-symbollockup_signin_dark.svg';
 import RafLogo from '../../assets/images/raflogo.png';
+import bgLight from '../../assets/images/background-login.jpg';
+import bgDark from '../../assets/images/background-login.jpg';
 import styled from 'styled-components';
 import { useTheme } from "../../context/theme";
 import { useAuth } from "../../context/auth";
 import { isInMsalPopup } from "../../utils/msalPopup";
-import LanguageSwitcher from "../../components/buttons/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
+import ToggleThemeSwitch from "../../components/ui/ToggleThemeSwitch";
+import LanguageSelector from "../../components/ui/LanguageSelector";
 
 function LoginPage() {
+    // Create a navigate() function that allows us to move between pages
 	const navigate = useNavigate();
+
+    // Gives the current URL
 	const location = useLocation();
+
+    // Retrieve the current theme and is used to know which one should be used, it is the same for the background image
 	const { theme } = useTheme();
+
+    // Retrieve the login() function and allow us to connect with Microsoft
 	const { login } = useAuth();
+
+    // Used to translate the page in the available languages
     const { t, i18n } = useTranslation();
 
-    // Normalement ça fait en sorte que la langue reste la même quand on passe sur la HomePage
+    // Update the dir attribute to know in which direction the text should be read (R -> L / L -> R)
     useEffect(() => {
         document.documentElement.dir = i18n.dir();
     }, [i18n.resolvedLanguage, i18n]);
 
-	// Si déjà connecté et pas sur /home, on redirige
+	// Redirect the user on /home if he's already in the localStorage except if he's in the MSAL popup
 	useEffect(() => {
-		if (isInMsalPopup()) return; // <--- Pas de navigation dans le popup microsoft
+		if (isInMsalPopup()) return; // <--- Navigation in the Microsoft popup is forbidden
 		const storedUser = localStorage.getItem('user');
 		if (storedUser && location.pathname !== '/home') {
 			navigate('/home', { replace: true });
@@ -32,7 +44,7 @@ function LoginPage() {
 		}, [navigate, location]);
 
 
-	// Gestion du clic sur le bouton de connexion
+	// Redirect to /home unless a error occurs (the error is translated)
 	const handleLogin = async () => {
 		try {
 			await login();
@@ -42,28 +54,46 @@ function LoginPage() {
 		}
 	};
 
+    // Use a different image depending on the current theme but there is only one image as those lines are written
+    const bg = theme === 'dark' ? bgDark : bgLight;
 
 	return (
-		<Container>
-			<Box>
-                <LanguageSwitcher />
-				{/* <ToggleThemeSwitch /> */}
-				<Logo src={RafLogo} alt="Rafisa Logo" />
-				<Title>{t("login.title")}</Title>
+        <>
+            <Header>
+                <LanguageSelector />
+                <ToggleThemeSwitch />
+            </Header>
+                    
+            <Container $bg={bg}>
+                <Content>
+                    <PageTitle>Rafisa Quiz</PageTitle>
+                    <Box>
+                        <Logo src={RafLogo} alt="Rafisa Logo" />
+                        <Title>{t("login.title")}</Title>
 
-				<MicrosoftButton type="button" onClick={handleLogin} aria-label={t("login.microsoftSignIn")}>
-					<MicrosoftImg
-						src={theme === 'dark' ? MsLogoDark : MsLogo}
-						alt={t("login.microsoftAlt")}
-					/>
-				</MicrosoftButton>
-			</Box>
-		</Container>
+                        <MicrosoftButton type="button" onClick={handleLogin} aria-label={t("login.microsoftSignIn")}>
+                            <MicrosoftImg
+                                src={theme === 'dark' ? MsLogoDark : MsLogo}
+                                alt={t("login.microsoftAlt")}
+                            />
+                        </MicrosoftButton>
+                    </Box>
+                </Content>
+            </Container>
+        </>
 	);
 }
 
 export default LoginPage;
 
+const Header = styled.div`
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 1rem;
+    z-index: 10;
+`;
 
 const Container = styled.div`
     display: flex;
@@ -71,7 +101,28 @@ const Container = styled.div`
     align-items: center;
 	width: 100vw;
     height: 100vh;
+
+    background-image: url(${p => p.$bg});
+    background-size: cover;
+    background-position: 65% 35%;
+    background-repeat: no-repeat;
+
     background-color: var(--color-background);
+`;
+
+const Content = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+`;
+
+const PageTitle = styled.h1`
+    font-size: 2rem;
+    font-weight: 700;
+    color: black;
+    text-align: center;
+    margin: 0;
 `;
 
 const Box = styled.div`

@@ -4,6 +4,7 @@ import { Settings } from "lucide-react"
 import { useTranslation } from "react-i18next";
 
 export default function SettingsPage() {
+    // Translation function
     const { t } = useTranslation();
   return (
     <Main>

@@ -4,25 +4,25 @@ import { FlaskConical, Plus } from "lucide-react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/buttons/LanguageSwitcher";
+import Header from "../../components/layout/Header";
 
 export default function HomePage() {
+    // Gives the navigate() function to change pages with the React Router
 	const navigate = useNavigate();
+
+    // Translation function
 	const { t } = useTranslation();
 
 	return (
-		// Header
 		<Main>
-			<Header>
-				<Title>
-					<FlaskConical size={24} /> {t("pages.home.title")}
-				</Title>
-				<Controls>
-					<LanguageSwitcher />
-					<NewQuizButton onClick={() => navigate("/quiz/new")}>
-						<Plus size={16} /> {t("buttons.newQuiz")}
-					</NewQuizButton>
-				</Controls>
-			</Header>
+			<Header
+				title={t("pages.home.title")}
+                icon={<FlaskConical size={20} />}
+                actions={[
+                    <LanguageSwitcher key="lang" />,
+                    <NewQuizButton key="new" onClick={() => navigate("/quiz/new")}><Plus size={16}/> {t("buttons.newQuiz")}</NewQuizButton>
+                ]}
+            />
 			<Content>
 				<Placeholder />
 			</Content>
@@ -30,38 +30,12 @@ export default function HomePage() {
 	);
 }
 
-
 const Main = styled.main`
     flex: 1;
     display: flex;
     flex-direction: column;
     width: 100%;
     background-color: var(--color-background);
-`;
-
-const Header = styled.header`
-    height: 64px;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    background-color: var(--color-background);
-`;
-
-const Title = styled.h1`
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-`;
-
-const Controls = styled.div`
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
 `;
 
 const NewQuizButton = styled.button`

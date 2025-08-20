@@ -3,21 +3,21 @@
 
 # TODO 
 
-- LoginPage.js, ajouter un background
-- LoginPage.js, ajouter un titre 
-- LoginPage.js, choix de la langue en haut a droit de l'ecran 
-- LoginPage.js, ajouter le theme switcher en haut a droit de l'ecran 
-- LoginPage.js, commentaire en anglais 
+- ~~LoginPage.js, ajouter un background~~
+- ~~LoginPage.js, ajouter un titre ~~
+- ~~LoginPage.js, choix de la langue en haut a droit de l'ecran ~~
+- ~~LoginPage.js, ajouter le theme switcher en haut a droit de l'ecran ~~
+- ~~LoginPage.js, commentaire en anglais ~~
   
 
-- NewQuiz.js, commentaire en anglais 
-- NewQuiz.js, style comme pour button a récuperer le composant Button existant et le modifié si besoin
-- NewQuiz.js, color en fonction des variables 
+- ~~NewQuiz.js, commentaire en anglais ~~
+- ~~NewQuiz.js, style comme pour button a récuperer le composant Button existant et le modifié si besoin~~
+- ~~NewQuiz.js, color en fonction des variables ~~
 
 
-- Translation, arranger page common.json et renommer a translations.json 
+- ~~Translation, arranger page common.json et renommer a translations.json ~~
 
-- Corriger erreur dans la console concernant logo192.png 
+- ~~Corriger erreur dans la console concernant logo192.png ~~
 
 - ~~Demo done todo~~
 

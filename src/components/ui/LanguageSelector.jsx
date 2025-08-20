@@ -8,6 +8,7 @@ const languages = [
     { code: 'en', label: 'English', countryCode: 'US' },
     { code: 'fr', label: 'Français', countryCode: 'FR' },
     { code: 'de', label: 'Deutsch', countryCode: 'DE' },
+    { code: 'it', label: 'Italiano', countryCode: 'IT' },
     // add more languages here
 ];
 
