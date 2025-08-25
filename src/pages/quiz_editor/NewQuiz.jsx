@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { FilePenLine, Save, Plus, Trash2, Edit3 } from "lucide-react";
+import { FilePenLine, Save, Plus, Trash2 } from "lucide-react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import UnsavedChangesGuard from "../../components/UnsavedChangesGuard";
@@ -9,114 +9,77 @@ import Button from "../../components/ui/Button";
 import Header from "../../components/layout/Header";
 
 export default function NewQuiz() {
-  	// Translation function
+	// Translation
 	const { t } = useTranslation();
 
-  	// Let the user know if the app detects unsaved modifications
+	// Principal states
 	const [isDirty, setIsDirty] = useState(false);
-
-  	// Quiz's status (unused for now)
 	const [active, setActive] = useState(true);
-
-  	// Quiz's title
 	const [title, setTitle] = useState("");
-
-  	// Show the description if needed
-	const [showDescription, setShowDescription] = useState(false);
-
-  	// Description content
 	const [description, setDescription] = useState("");
-
-  	// Give focus to the description field when showed
-	const descRef = useRef(null);
-
-	// Questions table
 	const [questions, setQuestions] = useState([]);
 
-  	// Questions templates list
-	const QUESTION_TEMPLATES = useMemo(() => ([
-		{ type: "short",  label: t("quiz.types.short") },
-		{ type: "long",   label: t("quiz.types.long") },
-		{ type: "single", label: t("quiz.types.single") },
-		{ type: "multi",  label: t("quiz.types.multi") },
-		{ type: "boolean",label: t("quiz.types.boolean") }
-	]), [t]);
+	const questionRefs = useRef({});
 
-  	// Create an empty question
-	const makeQuestion = (type) => {
+	// Label if there's no title
+	const untitled = useMemo(
+		() => t("quiz.placeholders.untitled") || t("common.untitled") || "Sans titre",
+		[t]
+	);
+
+	// Create a question of "single" type (the effective type will be derived from the number of correct answers)
+	const makeQuestion = () => {
 		const id = `q_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-		const base = { id, type, title: "", description: "", required: false };
-
-		if (type === "single") {
-			const o = t("quiz.defaults.option");
-			return { ...base, options: [`${o} 1`, `${o} 2`, `${o} 3`], correctIndex: null };
-		}
-		if (type === "multi") {
-			const o = t("quiz.defaults.option");
-			return { ...base, options: [`${o} 1`, `${o} 2`, `${o} 3`], correctIndices: [] };
-		}
-		if (type === "boolean") {
-			return {
-				...base,
-				options: [t("quiz.defaults.true"), t("quiz.defaults.false")],
-				correctIndex: null
-			};
-		}
-		return base;
+		const baseLabel = t("quiz.defaults.option");
+		return {
+			id,
+			type: "single", // kept for compatibility, display type is derived from correctIndices length
+			title: "",
+			description: "",
+			required: false,
+			options: [`${baseLabel} 1`, `${baseLabel} 2`, `${baseLabel} 3`],
+			correctIndices: [] // 0 or 1 -> single; >=2 -> multi
+		};
 	};
-  	// Single/boolean
-	const setCorrectSingle = (id, idx) => {
-		setQuestions(prev =>
-			prev.map(q => (q.id === id ? { ...q, correctIndex: idx } : q))
-		);
+
+	// Adds a question
+	const addSingleQuestion = () => {
+		const q = makeQuestion();
+		setQuestions(prev => [...prev, q]);
 		setIsDirty(true);
+
+		// Scrolls to the new question
+		setTimeout(() => {
+			questionRefs.current[q.id]?.scrollIntoView({ behavior: "smooth", block: "start" });
+		}, 0);
 	};
 
-  	// Multiple choices
-	const toggleCorrectMulti = (id, idx) => {
+	// Toggle correct index (handles single/multi automatically via derived type)
+	const toggleCorrect = (id, idx) => {
 		setQuestions(prev =>
 			prev.map(q => {
 				if (q.id !== id) return q;
-				const set = new Set(q.correctIndices ?? []);
-				set.has(idx) ? set.delete(idx) : set.add(idx);
-				return { ...q, correctIndices: Array.from(set).sort((a, b) => a - b) };
+				const s = new Set(q.correctIndices || []);
+				s.has(idx) ? s.delete(idx) : s.add(idx);
+				return { ...q, correctIndices: Array.from(s).sort((a, b) => a - b) };
 			})
 		);
 		setIsDirty(true);
 	};
 
-  	//Simulate the save process
+	// Simulates the save
 	const onSave = () => {
 		console.log("tkt c'est save", { active, title, description, questions });
 		setIsDirty(false);
 	};
 
-	// Visual state while the drag and drop is active and the user is above the drop zone
-	const [isDragOver, setIsDragOver] = useState(false);
-
-  	// Starts the drag and drop
-	const onTemplateDragStart = (e, type) => {
-		e.dataTransfer.setData("application/x-quiz-template", type);
-		e.dataTransfer.effectAllowed = "copy";
-	};
-
-  	// Read the question type and generate one after the drop
-	const onCanvasDrop = (e) => {
-		e.preventDefault();
-		const type = e.dataTransfer.getData("application/x-quiz-template");
-		if (!type) return;
-		setQuestions(prev => [...prev, makeQuestion(type)]);
-		setIsDirty(true);
-		setIsDragOver(false);
-	};
-
-	// Partially updates (merge) a question targeted by id with patch
+	// Partial update of a question
 	const updateQuestion = (id, patch) => {
 		setQuestions(prev => prev.map(q => q.id === id ? { ...q, ...patch } : q));
 		setIsDirty(true);
 	};
 
-  	// Add an option to the single/multi question template
+	// Add an option
 	const addOption = (id) => {
 		setQuestions(prev =>
 			prev.map(q => {
@@ -129,7 +92,7 @@ export default function NewQuiz() {
 		setIsDirty(true);
 	};
 
-  	// Update an option's text (idx)
+	// Update an option
 	const updateOption = (id, idx, value) => {
 		setQuestions(prev =>
 			prev.map(q => {
@@ -142,62 +105,49 @@ export default function NewQuiz() {
 		setIsDirty(true);
 	};
 
-  	// Supress an option and adjust things like correctIndex or correctIndices
+	// Delete an option (and fix correct indices accordingly)
 	const removeOption = (id, idx) => {
 		setQuestions(prev =>
 			prev.map(q => {
 				if (q.id !== id) return q;
-
 				const newOptions = (q.options ?? []).filter((_, i) => i !== idx);
-
-				// Corrects the correct index for single/boolean
-				if (q.type === "single" || q.type === "boolean") {
-					let nextCorrect = q.correctIndex;
-					if (nextCorrect === idx) nextCorrect = null;
-					else if (typeof nextCorrect === "number" && nextCorrect > idx) nextCorrect = nextCorrect - 1;
-					return { ...q, options: newOptions, correctIndex: nextCorrect };
-				}
-
-				// Corrects the multi indexes
-				if (q.type === "multi") {
-					const next = (q.correctIndices ?? [])
-						.filter(i => i !== idx)
-						.map(i => (i > idx ? i - 1 : i));
-					return { ...q, options: newOptions, correctIndices: next };
-				}
-
-				return { ...q, options: newOptions };
+				const nextCorrect = (q.correctIndices ?? [])
+					.filter(i => i !== idx)
+					.map(i => (i > idx ? i - 1 : i));
+				return { ...q, options: newOptions, correctIndices: nextCorrect };
 			})
 		);
 		setIsDirty(true);
 	};
 
-  	// Remove a whole question
+	// Delete a question
 	const removeQuestion = (id) => {
 		setQuestions(prev => prev.filter(q => q.id !== id));
 		setIsDirty(true);
 	};
 
-	// Show or not the description and marks the page as modified then give the focus to descRef
-	const toggleDesc = () => {
-		setShowDescription(s => !s);
-		setIsDirty(true);
-		setTimeout(() => descRef.current?.focus(), 0);
+	// Scroll to a question from the left card
+	const scrollToQuestion = (id) => {
+		questionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
 	};
+
+	// Infers the display type for the badge based on selected correct answers
+	const getTypeLabel = (q) =>
+		(q.correctIndices?.length ?? 0) > 1 ? t("quiz.types.multi") : t("quiz.types.single");
 
 	return (
 		<Main>
 			<UnsavedChangesGuard when={isDirty} />
 			<Header
 				title={t("quiz.title")}
-				icon={<FilePenLine size={20}/>}
+				icon={<FilePenLine size={20} />}
 				actions={[
-					<Controls>
+					<Controls key="controls">
 						<ToggleSwitch
 							checked={active}
 							onChange={setActive}
 							onLabel={t("common.active")}
-              				offLabel={t("common.inactive")}
+							offLabel={t("common.inactive")}
 							onColor="#22c55e"
 							offColor="#e5e7eb"
 						/>
@@ -210,67 +160,60 @@ export default function NewQuiz() {
 			/>
 			<Body>
 				<LeftPanel>
-					<LeftTitle>{t("quiz.sections.categories")}</LeftTitle>
-					<TemplateList>
-						{QUESTION_TEMPLATES.map((tpl) => (
-							<TemplateCard
-								key={tpl.type}
-								draggable
-								onDragStart={(e) => onTemplateDragStart(e, tpl.type)}
-								title={t("quiz.hints.dragCenter")}
+					<LeftTitle>{t("quiz.sections.questions")}</LeftTitle>
+
+					<AddQuestionButton type="button" onClick={addSingleQuestion}>
+						<Plus size={16} /> {t("actions.addQuestion") || "Ajouter une question"}
+					</AddQuestionButton>
+
+					<LeftList>
+						{questions.map((q, idx) => (
+							<LeftCard
+								key={q.id}
+								onClick={() => scrollToQuestion(q.id)}
+								title={t("quiz.hints.goToQuestion") || "Aller à la question"}
 							>
-								<TemplateBadge>{t(`quiz.types.${tpl.type}`)}</TemplateBadge>
-                				<TemplateLabel>{tpl.label}</TemplateLabel>
-							</TemplateCard>
+								<LeftCardIndex>{idx + 1}</LeftCardIndex>
+								<LeftCardTitle>{q.title?.trim() ? q.title : untitled}</LeftCardTitle>
+							</LeftCard>
 						))}
-					</TemplateList>
+					</LeftList>
 				</LeftPanel>
 
-				<CenterPanel
-					onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
-					onDragLeave={() => setIsDragOver(false)}
-					onDrop={onCanvasDrop}
-					$over={isDragOver}
-				>
+				<CenterPanel>
 					<EditorHeader>
 						<EditorTitle
 							value={title}
 							onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
 							placeholder={t("quiz.placeholders.title")}
-              				aria-label={t("quiz.placeholders.title")}
+							aria-label={t("quiz.placeholders.title")}
 						/>
-						<SmallAction type="button" onClick={toggleDesc} title={t("quiz.sections.descriptionAdd")}>
-							<Edit3 size={16} /> <span>{t("quiz.sections.descriptionAdd")}</span>
-						</SmallAction>
 					</EditorHeader>
 
-					{showDescription && (
-						<Field>
+					<Field>
 						<FieldLabel>{t("quiz.fields.description")}</FieldLabel>
 						<TextArea
-							ref={descRef}
 							value={description}
 							onChange={(e) => { setDescription(e.target.value); setIsDirty(true); }}
 							placeholder={t("common.placeholders.typeHere")}
 							rows={3}
-							/>
-						</Field>
-					)}
+						/>
+					</Field>
 
 					{questions.length === 0 ? (
 						<DropPlaceholder>
-							{t("quiz.hints.emptyDrop")}
+							{t("quiz.hints.emptyDrop") || "Ajoutez votre première question avec le bouton à gauche."}
 						</DropPlaceholder>
 					) : (
 						<QuestionList>
 							{questions.map((q) => (
-								<QuestionCard key={q.id}>
+								<QuestionCard key={q.id} ref={(el) => (questionRefs.current[q.id] = el)}>
 									<QuestionHeader>
-										<Badge>{t(`quiz.types.${q.type}`)}</Badge>
+										<Badge>{getTypeLabel(q)}</Badge>
 										<DeleteBtn
 											onClick={() => removeQuestion(q.id)}
 											title={t("actions.delete")}
-                      						aria-label={t("actions.delete")}
+											aria-label={t("actions.delete")}
 										>
 											<Trash2 size={16} />
 										</DeleteBtn>
@@ -295,55 +238,36 @@ export default function NewQuiz() {
 										/>
 									</Field>
 
-									{(q.type === "single" || q.type === "multi" || q.type === "boolean") && (
-										<>
-											<Divider />
-											<OptionsHeader>{t("quiz.sections.options")}</OptionsHeader>
+									<Divider />
+									<OptionsHeader>{t("quiz.sections.options")}</OptionsHeader>
 
-											{(q.options || []).map((opt, idx) => (
-												<OptionRow key={idx}>
-													{q.type === "multi" ? (
-														<FakeCheck
-															type="checkbox"
-															checked={(q.correctIndices ?? []).includes(idx)}
-															onChange={() => toggleCorrectMulti(q.id, idx)}
-															aria-label={`${t("quiz.sections.options")} #${idx + 1}`}
-														/>
-													) : (
-														
-														<FakeRadio
-															type="radio"
-															name={`q-${q.id}`}
-															checked={q.correctIndex === idx}
-															onChange={() => setCorrectSingle(q.id, idx)}
-															aria-label={`${t("quiz.sections.options")} #${idx + 1}`}
-														/>
-													)}
+									{(q.options || []).map((opt, idx) => (
+										<OptionRow key={idx}>
+											<FakeCheck
+												type="checkbox"
+												checked={(q.correctIndices ?? []).includes(idx)}
+												onChange={() => toggleCorrect(q.id, idx)}
+												aria-label={`${t("quiz.sections.options")} #${idx + 1}`}
+											/>
 
-													<OptionInput
-														value={opt}
-														onChange={(e) => updateOption(q.id, idx, e.target.value)}
-													/>
+											<OptionInput
+												value={opt}
+												onChange={(e) => updateOption(q.id, idx, e.target.value)}
+											/>
 
-													{(q.type === "single" || q.type === "multi") && (
-														<RemoveOpt
-															onClick={() => removeOption(q.id, idx)}
-															title={t("actions.delete")}
-                              								aria-label={t("actions.delete")}
-														>
-															<Trash2 size={16} />
-														</RemoveOpt>
-													)}
-												</OptionRow>
-											))}
+											<RemoveOpt
+												onClick={() => removeOption(q.id, idx)}
+												title={t("actions.delete")}
+												aria-label={t("actions.delete")}
+											>
+												<Trash2 size={16} />
+											</RemoveOpt>
+										</OptionRow>
+									))}
 
-											{(q.type === "single" || q.type === "multi") && (
-												<AddOption type="button" onClick={() => addOption(q.id)}>
-													<Plus size={16} /> {t("quiz.options.new")}
-												</AddOption>
-											)}
-										</>
-									)}
+									<AddOption type="button" onClick={() => addOption(q.id)}>
+										<Plus size={16} /> {t("quiz.options.new")}
+									</AddOption>
 								</QuestionCard>
 							))}
 						</QuestionList>
@@ -355,285 +279,272 @@ export default function NewQuiz() {
 }
 
 const Main = styled.main`
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    background-color: var(--color-background);
+	flex:1;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	background-color: var(--color-background);
 `;
 
 const Controls = styled.div`
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
+	display:inline-flex;
+	align-items:center;
+	gap:12px;
 `;
 
 const SaveButton = styled(Button)`
-    background-color: var(--color-success-bg);
-	&:hover {
-		&:hover {
-        background-color: #134e4a;
-    }
+	background-color:var(--color-success-bg);
+	&:hover{
+		background-color:#134e4a;
+	}
 `;
 
 const Body = styled.div`
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 16px;
-    height: calc(100vh - 64px);
-    padding: 16px 16px 24px 16px;
-    background-color: var(--color-background);
+	display:grid;
+	grid-template-columns:280px 1fr;
+	gap:16px;
+	height:calc(100vh - 64px);
+	padding:16px 16px 24px 16px;
+	background-color:var(--color-background);
 `;
 
 const LeftPanel = styled.aside`
-    border-right: 1px solid #e5e7eb;
-    padding-right: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    background-color: var(--color-background);
-    color: var(--color-text);
+	border-right:1px solid #e5e7eb;
+	padding-right:16px;
+	display:flex;
+	flex-direction:column;
+	gap:12px;
+	background-color:var(--color-background);
+	color:var(--color-text);
+	overflow:auto;
 `;
 
 const LeftTitle = styled.h2`
-    font-size: 14px;
-    font-weight: 700;
-    margin: 0;
+	font-size:14px;
+	font-weight:700;
+	margin:0;
 `;
 
-const TemplateList = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+const AddQuestionButton = styled(Button)`
+	display:inline-flex;
+	align-items:center;
+	gap:8px;
+	background-color:#2563eb;
+	border:1px solid #e5e7eb;
+	border-radius:10px;
+	padding:10px 12px;
+	cursor:pointer;
+	color:#fff;
+	font-weight:600;
+	&:hover{
+		background-color:#1e40af;
+	}
 `;
 
-const TemplateCard = styled.div`
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    background-color: var(--color-background-elevated);
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: grab;
-    &:active {
-        cursor: grabbing;
-    }
-    &:hover {
-        filter: brightness(0.98);
-    }
+const LeftList = styled.div`
+	display:flex;
+	flex-direction:column;
+	gap:8px;
 `;
 
-const TemplateBadge = styled.span`
-    font-size: 10px;
-    text-transform: uppercase;
-    background-color: var(--color-background);
-    border: 1px solid #c7d2fe;
-    padding: 2px 6px;
-    border-radius: 999px;
+const LeftCard = styled(Button)`
+	display:grid;
+	grid-template-columns:28px 1fr;
+	align-items:center;
+	gap:8px;
+	border:1px solid #e5e7eb;
+	border-radius:10px;
+	background-color:var(--color-background-elevated);
+	color:var(--color-text);
+	padding:8px 10px;
+	cursor:pointer;
+	text-align:left;
+	&:hover{
+		filter:brightness(0.98);
+	}
 `;
 
-const TemplateLabel = styled.span`
-    font-size: 14px;
+const LeftCardIndex = styled.span`
+	display:inline-grid;
+	place-items:center;
+	width:24px;
+	height:24px;
+	font-size:12px;
+	border-radius:999px;
+	border:1px solid #c7d2fe;
+	background:var(--color-background);
+`;
+
+const LeftCardTitle = styled.span`
+	font-size:14px;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
 `;
 
 const CenterPanel = styled.section`
-    padding-left: 8px;
-    overflow: auto;
-    min-height: 100%;
-    border-radius: 12px;
-    transition: box-shadow 0.2s, background 0.2s;
-    background-color: var(--color-background);
-    ${(p) =>
-            p.$over &&
-            `
-    background-color: var(--color-background-elevated);
-    box-shadow: inset 0 0 0 2px #c7d2fe;
-  `}
+	padding-left:8px;
+	overflow:auto;
+	min-height:100%;
+	border-radius:12px;
+	background-color:var(--color-background);
 `;
 
 const EditorHeader = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 12px;
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	gap:10px;
+	margin-bottom:12px;
 `;
 
 const EditorTitle = styled.input`
-    flex: 1;
-    height: 40px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 0 12px;
-    font-size: 16px;
-    background-color: var(--color-background-elevated);
-    color: var(--color-text);
-    &:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-    }
-`;
-
-const SmallAction = styled.button`
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid #e5e7eb;
-    background-color: #2563eb;
-    border-radius: 8px;
-    padding: 8px 10px;
-    cursor: pointer;
-    &:hover {
-        background-color: #1e40af;
-    }
+	flex:1;
+	height:40px;
+	border:1px solid #e5e7eb;
+	border-radius:8px;
+	padding:0 12px;
+	font-size:16px;
+	background-color:var(--color-background-elevated);
+	color:var(--color-text);
 `;
 
 const Field = styled.div`
-    display: grid;
-    gap: 6px;
-    margin-bottom: 10px;
+	display:grid;
+	gap:6px;
+	margin-bottom:10px;
 `;
 
 const FieldLabel = styled.label`
-    font-size: 12px;
-    color: var(--color-text);
+	font-size:12px;
+	color:var(--color-text);
 `;
 
 const Input = styled.input`
-    height: 38px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 0 10px;
-    background-color: var(--color-background-elevated);
-    color: var(--color-text);
-    &:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-    }
+	height:38px;
+	border:1px solid #e5e7eb;
+	border-radius:8px;
+	padding:0 10px;
+	background-color:var(--color-background-elevated);
+	color:var(--color-text);
 `;
 
 const TextArea = styled.textarea`
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 8px 10px;
-    resize: vertical;
-    background-color: var(--color-background-elevated);
-    color: var(--color-text);
-    &:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-    }
+	border:1px solid #e5e7eb;
+	border-radius:8px;
+	padding:8px 10px;
+	resize:vertical;
+	background-color:var(--color-background-elevated);
+	color:var(--color-text);
 `;
 
 const DropPlaceholder = styled.div`
-    height: 160px;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    color: #64748b;
-    background-color: var(--color-background-elevated);
+	height:160px;
+	border:2px dashed #cbd5e1;
+	border-radius:12px;
+	display:grid;
+	place-items:center;
+	color:#64748b;
+	background-color:var(--color-background-elevated);
 `;
 
 const QuestionList = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+	display:flex;
+	flex-direction:column;
+	gap:12px;
 `;
 
 const QuestionCard = styled.div`
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    background-color: var(--color-background-elevated);
-    padding: 12px;
+	border:1px solid #e5e7eb;
+	border-radius:12px;
+	background-color:var(--color-background-elevated);
+	padding:12px;
 `;
 
 const QuestionHeader = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	margin-bottom:10px;
 `;
 
 const Badge = styled.span`
-    font-size: 12px;
-    border: 1px solid #c7d2fe;
-    border-radius: 999px;
-    padding: 3px 8px;
-    font-weight: 600;
-    background-color: var(--color-background);
-    color: var(--color-text);
+	font-size:12px;
+	border:1px solid #c7d2fe;
+	border-radius:999px;
+	padding:3px 8px;
+	font-weight:600;
+	background-color:var(--color-background);
+	color:var(--color-text);
 `;
 
 const DeleteBtn = styled.button`
-    border: none;
-    background: transparent;
-    color: #6b7280;
-    cursor: pointer;
-    &:hover {
-        color: #ef4444;
-    }
+	border:none;
+	background:transparent;
+	color:#6b7280;
+	cursor:pointer;
+	&:hover{
+		color:#ef4444;
+	}
 `;
 
 const OptionsHeader = styled.div`
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--color-text);
+	font-size:14px;
+	font-weight:600;
+	margin-bottom:8px;
+	color:var(--color-text);
 `;
 
 const OptionRow = styled.div`
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background-color: var(--color-background-elevated);
-    margin-bottom: 8px;
+	display:grid;
+	grid-template-columns:auto 1fr auto;
+	align-items:center;
+	gap:8px;
+	padding:6px 8px;
+	border:1px solid #e5e7eb;
+	border-radius:8px;
+	background-color:var(--color-background-elevated);
+	margin-bottom:8px;
 `;
 
-const FakeRadio = styled.input``;
 const FakeCheck = styled.input``;
 
 const OptionInput = styled.input`
-    height: 34px;
-    border: none;
-    background: transparent;
-    outline: none;
-    color: var(--color-text);
+	height:34px;
+	border:none;
+	background:transparent;
+	outline:none;
+	color:var(--color-text);
 `;
 
 const RemoveOpt = styled.button`
-    border: none;
-    background: transparent;
-    color: #6b7280;
-    cursor: pointer;
-    &:hover {
-        color: #ef4444;
-    }
+	border:none;
+	background:transparent;
+	color:#6b7280;
+	cursor:pointer;
+	&:hover{
+		color:#ef4444;
+	}
 `;
 
 const AddOption = styled.button`
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background-color: #2563eb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 8px 10px;
-    cursor: pointer;
-    font-weight: 500;
-    color: #fff;
-    &:hover {
-        background-color: #1e40af;
-    }
+	display:inline-flex;
+	align-items:center;
+	gap:6px;
+	background-color:#2563eb;
+	border:1px solid #e5e7eb;
+	border-radius:8px;
+	padding:8px 10px;
+	cursor:pointer;
+	font-weight:500;
+	color:#fff;
+	&:hover{
+		background-color:#1e40af;
+	}
 `;
 
 const Divider = styled.hr`
-    margin: 10px 0;
-    border: none;
-    border-top: 1px solid #e5e7eb;
+	margin:10px 0;
+	border:none;
+	border-top:1px solid #e5e7eb;
 `;

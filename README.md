@@ -3,7 +3,7 @@
 
 # TODO 
 
-- ~~LoginPage.js, ajouter un background~~
+- ~~LoginPage.js, ajouter un background~~ (Trouver un meilleur background que l'actuel)
 - ~~LoginPage.js, ajouter un titre ~~
 - ~~LoginPage.js, choix de la langue en haut a droit de l'ecran ~~
 - ~~LoginPage.js, ajouter le theme switcher en haut a droit de l'ecran ~~
@@ -19,13 +19,14 @@
 
 - ~~Corriger erreur dans la console concernant logo192.png ~~
 
-- ~~Demo done todo~~
+- 
 
 
 
 ### Tools
 
 https://fikristudio.com/project/trenning
+~~Demo done todo~~ <- (ne pas supprimer)
 
 # .env.example
 

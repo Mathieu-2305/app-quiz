@@ -15,13 +15,15 @@
     "saveChanges": "Änderungen speichern",
     "cancel": "Abbrechen",
     "confirm": "Bestätigen",
-    "delete": "Löschen"
+    "delete": "Löschen",
+    "addQuestion": "Fügen Sie eine Frage hinzu"
   },
   "common": {
     "active": "Aktiv",
     "inactive": "Inaktiv",
     "yes": "Ja",
     "no": "Nein",
+    "untitled": "Ohne Titel",
     "placeholders": {
       "typeHere": "Hier eingeben"
     },
@@ -34,20 +36,22 @@
     "title": "Ein Quiz erstellen und bearbeiten",
     "placeholders": {
       "title": "Titel des Quiz",
-      "categoryTitle": "Kategorie-Titel hier eingeben"
+      "categoryTitle": "Kategorie-Titel hier eingeben",
+      "untitled": "Ohne Titel"
     },
     "sections": {
       "categories": "Kategorien",
       "options": "Optionen",
-      "descriptionAdd": "Beschreibung hinzufügen"
+      "descriptionAdd": "Beschreibung hinzufügen",
+      "questions": "Fragen"
     },
     "hints": {
       "dragCenter": "Ziehen und in der Mitte ablegen",
-      "emptyDrop": "Eine Fragenschablone aus der linken Spalte hierher ziehen"
+      "emptyDrop": "Fügen Sie Ihre erste Frage mit der Schaltfläche links hinzu"
     },
     "fields": {
       "title": "Titel",
-      "description": "Beschreibung (optional)"
+      "description": "Beschreibung"
     },
     "category": {
       "new": "Neue Kategorie"

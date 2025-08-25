@@ -15,13 +15,15 @@
     "saveChanges": "Salva modifiche",
     "cancel": "Annulla",
     "confirm": "Conferma",
-    "delete": "Elimina"
+    "delete": "Elimina",
+    "addQuestion": "Aggiungi una domanda"
   },
   "common": {
     "active": "Attivo",
     "inactive": "Inattivo",
     "yes": "Sì",
     "no": "No",
+    "untitled": "Senza titolo",
     "placeholders": {
       "typeHere": "Scrivi qui"
     },
@@ -34,20 +36,22 @@
     "title": "Crea e modifica un quiz",
     "placeholders": {
       "title": "Titolo del quiz",
-      "categoryTitle": "Scrivi qui il titolo della categoria"
+      "categoryTitle": "Scrivi qui il titolo della categoria",
+      "untitled": "Senza titolo"
     },
     "sections": {
       "categories": "Categorie",
       "options": "Opzioni",
-      "descriptionAdd": "Aggiungi una descrizione"
+      "descriptionAdd": "Aggiungi una descrizione",
+      "questions": "Domande"
     },
     "hints": {
       "dragCenter": "Trascina e rilascia al centro",
-      "emptyDrop": "Trascina qui un modello di domanda dalla colonna di sinistra"
+      "emptyDrop": "Aggiungi la tua prima domanda con il pulsante a sinistra"
     },
     "fields": {
       "title": "Titolo",
-      "description": "Descrizione (facoltativa)"
+      "description": "Descrizione"
     },
     "category": {
       "new": "Nuova Categoria"

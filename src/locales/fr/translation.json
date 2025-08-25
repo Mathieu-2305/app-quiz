@@ -15,13 +15,15 @@
     "saveChanges": "Enregistrer les modifications",
     "cancel": "Annuler",
     "confirm": "Confirmer",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "addQuestion": "Ajouter une question"
   },
   "common": {
     "active": "Actif",
     "inactive": "Inactif",
     "yes": "Oui",
     "no": "Non",
+    "untitled": "Sans titre",
     "placeholders": {
       "typeHere": "Tapez ici"
     },
@@ -34,20 +36,22 @@
     "title": "Créer et éditer un quiz",
     "placeholders": {
       "title": "Titre du quiz",
-      "categoryTitle": "Tapez le titre de la catégorie ici"
+      "categoryTitle": "Tapez le titre de la catégorie ici",
+      "untitled": "Sans titre"
     },
     "sections": {
       "categories": "Catégories",
       "options": "Options",
-      "descriptionAdd": "Ajouter une description"
+      "descriptionAdd": "Ajouter une description",
+      "questions": "Questions"
     },
     "hints": {
       "dragCenter": "Glissez-déposez au centre",
-      "emptyDrop": "Glissez un template de question depuis la colonne de gauche ici"
+      "emptyDrop": "Ajoutez votre première question avec le bouton à gauche"
     },
     "fields": {
       "title": "Intitulé",
-      "description": "Description (facultatif)"
+      "description": "Description"
     },
     "category": {
       "new": "Nouvelle Catégorie"
