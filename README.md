@@ -3,23 +3,28 @@
 
 # TODO 
 
+
+
+- NewQuiz.jsx, Gestion des scrollbars 
+- NewQuiz.jsx, Gerer max-width du content
+- NewQuiz.jsx, rajouter drag&drop pour la position des questions
+- NewQuiz.jsx, dans la colonne de gauche avoir title + single ou multi choice info 
+- NewQuiz.jsx, Gerer les Inputs, Textarea etc... pour en faire ou utiliser des componsants 
+- NewQuiz.jsx, Harmoniser le style pour correspondre au design de base 
+
+
+25.08.2025
 - ~~LoginPage.js, ajouter un background~~ (Trouver un meilleur background que l'actuel)
-- ~~LoginPage.js, ajouter un titre ~~
-- ~~LoginPage.js, choix de la langue en haut a droit de l'ecran ~~
-- ~~LoginPage.js, ajouter le theme switcher en haut a droit de l'ecran ~~
-- ~~LoginPage.js, commentaire en anglais ~~
-  
-
-- ~~NewQuiz.js, commentaire en anglais ~~
+- ~~LoginPage.js, ajouter un titre~~
+- ~~LoginPage.js, choix de la langue en haut a droit de l'ecran~~
+- ~~LoginPage.js, ajouter le theme switcher en haut a droit de l'ecran~~
+- ~~LoginPage.js, commentaire en anglais~~
+- ~~NewQuiz.js, commentaire en anglais~~
 - ~~NewQuiz.js, style comme pour button a récuperer le composant Button existant et le modifié si besoin~~
-- ~~NewQuiz.js, color en fonction des variables ~~
+- ~~NewQuiz.js, color en fonction des variables~~
+- ~~Translation, arranger page common.json et renommer a translations.json~~
+- ~~Corriger erreur dans la console concernant logo192.png~~
 
-
-- ~~Translation, arranger page common.json et renommer a translations.json ~~
-
-- ~~Corriger erreur dans la console concernant logo192.png ~~
-
-- 
 
 
 
