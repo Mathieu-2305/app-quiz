@@ -1,11 +1,11 @@
 import './App.css';
 import AppLayout from "./components/layout/AppLayout";
-import LoginPage from './pages/login/LoginPage';
 import HomePage from './pages/homepage/HomePage';
 import SettingsPage from './pages/settings/Settings';
 import NewQuiz from './pages/quiz_editor/NewQuiz';
 import { RouterProvider, createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { isInMsalPopup } from './utils/msalPopup';
+import LoginPage from "./pages/login/LoginPage";
 
 function ProtectedRoute({ children }) {
 	const user = localStorage.getItem('user');
