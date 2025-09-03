@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { FilePenLine, Save, Plus, Trash2 } from "lucide-react";
+import { FilePenLine, Save, Plus, Trash2, GripVertical } from "lucide-react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import UnsavedChangesGuard from "../../components/UnsavedChangesGuard";
@@ -18,6 +18,11 @@ export default function NewQuiz() {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [questions, setQuestions] = useState([]);
+
+	// Drag and Drop State
+	const [draggingId, setDraggingId] = useState(null);
+	const [dragOverIndex, setDragOverIndex] = useState(null);
+	const [dragOverPosition, setDragOverPosition] = useState(null);
 
 	const questionRefs = useRef({});
 
@@ -135,29 +140,100 @@ export default function NewQuiz() {
 	const getTypeLabel = (q) =>
 		(q.correctIndices?.length ?? 0) > 1 ? t("quiz.types.multi") : t("quiz.types.single");
 
+	// Move helper
+	const move = (arr, from, to) => {
+    const copy = arr.slice();
+    const [item] = copy.splice(from, 1);
+    copy.splice(to, 0, item);
+    return copy;
+  };
+  
+  const handleDragStart = (id) => (e) => {
+    setDraggingId(id);
+    e.stopPropagation();
+    try {
+      e.dataTransfer.setData("text/plain", id);
+      e.dataTransfer.effectAllowed = "move";
+    } catch {}
+  };
+  
+  const handleDragOver = (index) => (e) => {
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const pos = y < rect.height / 2 ? "before" : "after";
+    if (dragOverIndex !== index || dragOverPosition !== pos) {
+      setDragOverIndex(index);
+      setDragOverPosition(pos);
+    }
+  };
+  
+  const handleDrop = (index) => (e) => {
+    e.preventDefault();
+    const from = questions.findIndex((q) => q.id === draggingId);
+    if (from < 0) return handleDragEnd();
+    let to = dragOverPosition === "before" ? index : index + 1;
+    if (from < to) to -= 1;
+    if (from !== to) {
+      setQuestions((prev) => move(prev, from, to));
+      setIsDirty(true);
+    }
+    handleDragEnd();
+  };
+  
+  const handleDragEnd = () => {
+    setDraggingId(null);
+    setDragOverIndex(null);
+    setDragOverPosition(null);
+  };
+
 	return (
 		<Main>
 			<UnsavedChangesGuard when={isDirty} />
-			<Header
-				title={t("quiz.title")}
-				icon={<FilePenLine size={20} />}
-				actions={[
+			<DesktopHeaderWrap>
+				<Header
+					title={t("quiz.title")}
+					icon={<FilePenLine size={20} />}
+					actions={[
 					<Controls key="controls">
-						<ToggleSwitch
-							checked={active}
-							onChange={setActive}
-							onLabel={t("common.active")}
-							offLabel={t("common.inactive")}
-							onColor="#22c55e"
-							offColor="#e5e7eb"
-						/>
-						<LanguageSelector />
-						<SaveButton onClick={onSave}>
-							<Save size={16} />{t("actions.saveChanges")}
-						</SaveButton>
+					<ToggleSwitch 
+						checked={active} 
+						onChange={setActive} 
+						onLabel={t("common.active")} 
+						offLabel={t("common.inactive")} 
+						onColor="#22c55e" 
+						offColor="#e5e7eb" 
+					/>
+					<LanguageSelector />
+					<SaveButton onClick={onSave}>
+						<Save size={16} />{t("actions.saveChanges")}
+					</SaveButton>
 					</Controls>
 				]}
-			/>
+				showBurger
+				/>
+			</DesktopHeaderWrap>
+		
+			<MobileHeader>
+				<MobileTitleRow>
+				<FilePenLine size={18} />
+				<MobileTitle>{t("quiz.title")}</MobileTitle>
+				</MobileTitleRow>
+				<MobileControlsRow>
+					<ToggleSwitch 
+						checked={active} 
+						onChange={setActive} 
+						onLabel={t("common.active")} 
+						offLabel={t("common.inactive")} 
+						onColor="#22c55e" 
+						offColor="#e5e7eb" 
+					/>
+					<LanguageSelector />
+				</MobileControlsRow>
+				<MobileSaveButton onClick={onSave}>
+				<Save size={16} />{t("actions.saveChanges")}
+				</MobileSaveButton>
+			</MobileHeader>
 			<Body>
 				<LeftPanel>
 					<LeftTitle>{t("quiz.sections.questions")}</LeftTitle>
@@ -168,29 +244,52 @@ export default function NewQuiz() {
 
 					<LeftList>
 						{questions.map((q, idx) => (
-							<LeftCard
+							<LeftRow
 								key={q.id}
-								onClick={() => scrollToQuestion(q.id)}
-								title={t("quiz.hints.goToQuestion") || "Aller à la question"}
+								onDragOver={handleDragOver(idx)}
+								onDrop={handleDrop(idx)}
+								data-drop-pos={dragOverIndex === idx ? dragOverPosition : undefined}
 							>
-								<LeftCardIndex>{idx + 1}</LeftCardIndex>
-								<LeftCardTitle>{q.title?.trim() ? q.title : untitled}</LeftCardTitle>
-							</LeftCard>
+								<DragDock
+								draggable
+								onDragStart={handleDragStart(q.id)}
+								onDragEnd={handleDragEnd}
+								onClick={(e) => e.stopPropagation()}
+								aria-label={t("actions.reorder")}
+								title={t("actions.reorder")}
+								data-dragging={draggingId === q.id ? "true" : undefined}
+								>
+								<GripVertical size={16} />
+								</DragDock>
+								<LeftCard
+									onClick={() => scrollToQuestion(q.id)}
+									title={t("quiz.hints.goToQuestion") || "Aller à la question"}
+								>
+									<LeftCardIndex>{idx + 1}</LeftCardIndex>
+									<LeftCardTitle>{q.title?.trim() ? q.title : untitled}</LeftCardTitle>
+									<LeftCardMain>
+										<LeftCardTitle>{q.title?.trim() ? q.title : untitled}</LeftCardTitle>
+							            	<TypePill>
+							              		{getTypeLabel(q)}
+							            	</TypePill>
+									</LeftCardMain>
+								</LeftCard>
+							</LeftRow>
 						))}
 					</LeftList>
 				</LeftPanel>
-
 				<CenterPanel>
-					<EditorHeader>
+					<CenterInner>
+						<EditorHeader>
 						<EditorTitle
 							value={title}
 							onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
 							placeholder={t("quiz.placeholders.title")}
 							aria-label={t("quiz.placeholders.title")}
 						/>
-					</EditorHeader>
-
-					<Field>
+						</EditorHeader>
+			
+						<Field>
 						<FieldLabel>{t("quiz.fields.description")}</FieldLabel>
 						<TextArea
 							value={description}
@@ -198,7 +297,8 @@ export default function NewQuiz() {
 							placeholder={t("common.placeholders.typeHere")}
 							rows={3}
 						/>
-					</Field>
+						</Field>
+					</CenterInner>
 
 					{questions.length === 0 ? (
 						<DropPlaceholder>
@@ -284,12 +384,19 @@ const Main = styled.main`
 	flex-direction: column;
 	width: 100%;
 	background-color: var(--color-background);
+	min-height: 100vh;
+	min-height: 100dvh;
+	overflow: hidden;
 `;
 
 const Controls = styled.div`
 	display:inline-flex;
 	align-items:center;
 	gap:12px;
+	display:inline-flex;
+	align-items:center;
+	gap:12px;
+	flex-wrap:wrap;
 `;
 
 const SaveButton = styled(Button)`
@@ -302,13 +409,34 @@ const SaveButton = styled(Button)`
 const Body = styled.div`
 	display:grid;
 	grid-template-columns:280px 1fr;
+	grid-template-areas:"sidebar main";
 	gap:16px;
 	height:calc(100vh - 64px);
+	flex: 1;
+	min-height: 0;
 	padding:16px 16px 24px 16px;
 	background-color:var(--color-background);
+	overflow:hidden;
+
+	@media (max-width: 1024px){
+    	grid-template-columns:240px 1fr;
+    	gap:12px;
+  	}	
+	@media (max-width: 768px){
+		grid-template-columns:1fr;
+		grid-template-areas:
+		"sidebar"
+		"main";
+		height:auto;
+		min-height:calc(100vh - 64px);
+		overflow:visible;
+		gap:12px;
+		padding:12px;
+	}
 `;
 
 const LeftPanel = styled.aside`
+	grid-area: sidebar;
 	border-right:1px solid #e5e7eb;
 	padding-right:16px;
 	display:flex;
@@ -317,6 +445,16 @@ const LeftPanel = styled.aside`
 	background-color:var(--color-background);
 	color:var(--color-text);
 	overflow:auto;
+	min-height: 0;
+
+	@media (max-width: 768px){
+    	border-right:none;
+	    border-bottom:1px solid #e5e7eb;
+    	padding-right:0;
+	    padding-bottom:12px;
+		max-height:40vh;   
+ 	    overflow:auto;
+	}
 `;
 
 const LeftTitle = styled.h2`
@@ -339,13 +477,47 @@ const AddQuestionButton = styled(Button)`
 	&:hover{
 		background-color:#1e40af;
 	}
+
+	@media (max-width: 768px){
+		width:100%;
+		justify-content:center;
+	}
 `;
 
 const LeftList = styled.div`
 	display:flex;
 	flex-direction:column;
 	gap:8px;
+	user-select:none;
+
+	@media (max-width: 768px){
+		gap:6px;
+	}
 `;
+
+const LeftRow = styled.div`
+    display:grid;
+    grid-template-columns:24px 1fr; 
+    align-items:center;
+    gap:6px;
+    position:relative; 
+    &::before{
+      content:"";
+      position:absolute;
+      left:0; right:0;
+      height:2px;
+      background:#3b82f6;
+      border-radius:1px;
+      opacity:0;
+      transition:opacity .1s ease;
+    }
+    &[data-drop-pos="before"]::before{ top:-3px; opacity:1; }
+    &[data-drop-pos="after"]::before{ bottom:-3px; opacity:1; }
+
+	@media (max-width: 768px){
+		grid-template-columns:28px 1fr;
+	}
+  `;
 
 const LeftCard = styled(Button)`
 	display:grid;
@@ -359,8 +531,63 @@ const LeftCard = styled(Button)`
 	padding:8px 10px;
 	cursor:pointer;
 	text-align:left;
+	   position:relative;     /* pour l'indicateur drop */
+	   cursor:grab;
+	   &[data-dragging="true"] {
+	     opacity:0.6;
+	     cursor:grabbing;
+	   }
+	   &::before {
+	     content:"";
+	     position:absolute;
+	     left:8px; right:8px;
+	     height:2px;
+	     background:#3b82f6;
+	     border-radius:1px;
+	     opacity:0;
+	     transition:opacity .1s ease;
+	     top:auto; bottom:auto;
+	   }
+	   &[data-drop-pos="before"]::before {
+	     top:-1px; bottom:auto; opacity:1;
+	   }
+	   &[data-drop-pos="after"]::before {
+	     bottom:-1px; top:auto; opacity:1;
+	   }
 	&:hover{
 		filter:brightness(0.98);
+	}
+
+	@media (max-width: 768px){
+		padding:10px; /* touche plus grande */
+	}
+`;
+
+const LeftCardMain = styled.div`
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	gap:8px;
+	min-width:0;
+`;
+
+const DragDock = styled.div`
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:32px;
+    color:#94a3b8;
+    cursor:grab;
+    &:hover{ color:#64748b; }
+    &[data-dragging="true"]{
+      opacity:.7;
+      cursor:grabbing;
+    }
+
+	@media (max-width: 768px){
+		width:28px;
+		height:36px;
 	}
 `;
 
@@ -376,18 +603,49 @@ const LeftCardIndex = styled.span`
 `;
 
 const LeftCardTitle = styled.span`
+	flex:1;
 	font-size:14px;
 	overflow:hidden;
 	white-space:nowrap;
 	text-overflow:ellipsis;
 `;
 
+const TypePill = styled.span`
+	font-size:11px;
+	line-height:1;
+	border:1px solid #c7d2fe;
+	border-radius:999px;
+	padding:3px 6px;
+	font-weight:600;
+	background-color:var(--color-background);
+	color:var(--color-text);
+	white-space:nowrap;
+`;
+
 const CenterPanel = styled.section`
+	grid-area: main;
 	padding-left:8px;
-	overflow:auto;
-	min-height:100%;
+	display:flex;
+	flex-direction:column;
+	overflow:hidden;
+	min-height:0;
 	border-radius:12px;
 	background-color:var(--color-background);
+	--content-width: clamp(900px, 48vw, 560px);
+
+	@media (max-width: 768px){
+		padding-left:0;
+	}
+`;
+
+const CenterInner = styled.div `
+	width:100%;
+	max-width:var(--content-width);
+	margin:0 auto 12px auto;
+
+	@media (max-width: 768px){
+		margin:0 auto 10px auto;
+	}
 `;
 
 const EditorHeader = styled.div`
@@ -400,13 +658,22 @@ const EditorHeader = styled.div`
 
 const EditorTitle = styled.input`
 	flex:1;
+	width:100%;
 	height:40px;
 	border:1px solid #e5e7eb;
-	border-radius:8px;
+	border-radius: 8px;
+	margin-top: 10px;
 	padding:0 12px;
 	font-size:16px;
 	background-color:var(--color-background-elevated);
+	background-clip: padding-box;
+	-webkit-appearance: none;
+	appearance: none;
 	color:var(--color-text);
+	&:focus{
+		outline:none;
+		box-shadow:0 0 0 2px rgba(37,99,235,0.15);
+	}
 `;
 
 const Field = styled.div`
@@ -446,12 +713,28 @@ const DropPlaceholder = styled.div`
 	place-items:center;
 	color:#64748b;
 	background-color:var(--color-background-elevated);
+	width:100%;
+	max-width:var(--content-width);
+	margin:0 auto;
+
+	@media (max-width: 768px){
+		height:140px;
+	}
 `;
 
 const QuestionList = styled.div`
 	display:flex;
 	flex-direction:column;
 	gap:12px;
+	flex:1;
+	min-height:0;
+	overflow-y:auto;
+	padding:0 12px;
+	align-items:center;
+
+	@media (max-width: 768px){
+	    padding:0 8px;
+	}
 `;
 
 const QuestionCard = styled.div`
@@ -459,6 +742,13 @@ const QuestionCard = styled.div`
 	border-radius:12px;
 	background-color:var(--color-background-elevated);
 	padding:12px;
+	width:100%;
+	max-width:var(--content-width);
+	margin: 0 auto;
+
+	@media (max-width: 768px){
+		padding:10px;
+	}
 `;
 
 const QuestionHeader = styled.div`
@@ -547,4 +837,60 @@ const Divider = styled.hr`
 	margin:10px 0;
 	border:none;
 	border-top:1px solid #e5e7eb;
+`;
+
+const DesktopHeaderWrap = styled.div`
+  @media (max-width: 768px){
+    display:none;
+  }
+`;
+
+const MobileHeader = styled.div`
+	display:none;
+
+	@media (max-width: 768px){
+		display:grid;
+		grid-template-rows:auto auto auto;
+		gap:8px;
+		padding:12px 12px 0;
+		background:var(--color-background);
+	}
+`;
+
+const MobileTitleRow = styled.div`
+	display:flex;
+	align-items:center;
+	gap:8px;
+	color:var(--color-text);
+`;
+
+const MobileTitle = styled.h1`
+	margin:0;
+	flex:1;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	font-weight:700;
+	font-size:clamp(16px, 5.5vw, 20px);
+	line-height:1.2;
+`;
+
+const MobileControlsRow = styled.div`
+	display:flex;
+	align-items:center;
+	gap:10px;
+
+	@media (max-width: 420px){
+		flex-wrap:wrap;
+		gap:8px;
+	}
+`;
+
+const MobileSaveButton = styled(SaveButton)`
+	width:100%;
+	justify-content:center;
+
+	@media (max-width: 420px){
+		padding:10px 12px;
+	}
 `;
