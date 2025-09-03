@@ -14,11 +14,11 @@
 
 
 25.08.2025
-- ~~LoginPage.js, ajouter un background~~ (Trouver un meilleur background que l'actuel)
-- ~~LoginPage.js, ajouter un titre~~
-- ~~LoginPage.js, choix de la langue en haut a droit de l'ecran~~
-- ~~LoginPage.js, ajouter le theme switcher en haut a droit de l'ecran~~
-- ~~LoginPage.js, commentaire en anglais~~
+- ~~LoginPage.jsx, ajouter un background~~ (Trouver un meilleur background que l'actuel)
+- ~~LoginPage.jsx, ajouter un titre~~
+- ~~LoginPage.jsx, choix de la langue en haut a droit de l'ecran~~
+- ~~LoginPage.jsx, ajouter le theme switcher en haut a droit de l'ecran~~
+- ~~LoginPage.jsx, commentaire en anglais~~
 - ~~NewQuiz.js, commentaire en anglais~~
 - ~~NewQuiz.js, style comme pour button a récuperer le composant Button existant et le modifié si besoin~~
 - ~~NewQuiz.js, color en fonction des variables~~
