@@ -6,7 +6,9 @@ import UnsavedChangesGuard from "../../components/UnsavedChangesGuard";
 import ToggleSwitch from "../../components/buttons/ToggleSwitchButton";
 import LanguageSelector from "../../components/ui/LanguageSelector";
 import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
 import Header from "../../components/layout/Header";
+import TextArea from "../../components/ui/TextArea";
 
 export default function NewQuiz() {
 	// Translation
@@ -321,7 +323,7 @@ export default function NewQuiz() {
 
 									<Field>
 										<FieldLabel>{t("quiz.fields.title")}</FieldLabel>
-										<Input
+										<MyInput
 											value={q.title}
 											onChange={(e) => updateQuestion(q.id, { title: e.target.value })}
 											placeholder={t("common.placeholders.typeHere")}
@@ -656,13 +658,12 @@ const EditorHeader = styled.div`
 	margin-bottom:12px;
 `;
 
-const EditorTitle = styled.input`
+const EditorTitle = styled(Input)`
 	flex:1;
 	width:100%;
 	height:40px;
 	border:1px solid #e5e7eb;
 	border-radius: 8px;
-	margin-top: 10px;
 	padding:0 12px;
 	font-size:16px;
 	background-color:var(--color-background-elevated);
@@ -687,20 +688,11 @@ const FieldLabel = styled.label`
 	color:var(--color-text);
 `;
 
-const Input = styled.input`
+const MyInput = styled(Input)`
 	height:38px;
 	border:1px solid #e5e7eb;
 	border-radius:8px;
 	padding:0 10px;
-	background-color:var(--color-background-elevated);
-	color:var(--color-text);
-`;
-
-const TextArea = styled.textarea`
-	border:1px solid #e5e7eb;
-	border-radius:8px;
-	padding:8px 10px;
-	resize:vertical;
 	background-color:var(--color-background-elevated);
 	color:var(--color-text);
 `;
@@ -768,7 +760,7 @@ const Badge = styled.span`
 	color:var(--color-text);
 `;
 
-const DeleteBtn = styled.button`
+const DeleteBtn = styled(Button)`
 	border:none;
 	background:transparent;
 	color:#6b7280;
@@ -797,9 +789,11 @@ const OptionRow = styled.div`
 	margin-bottom:8px;
 `;
 
-const FakeCheck = styled.input``;
+const FakeCheck = styled(Input)`
 
-const OptionInput = styled.input`
+`;
+
+const OptionInput = styled(Input)`
 	height:34px;
 	border:none;
 	background:transparent;
@@ -807,7 +801,7 @@ const OptionInput = styled.input`
 	color:var(--color-text);
 `;
 
-const RemoveOpt = styled.button`
+const RemoveOpt = styled(Button)`
 	border:none;
 	background:transparent;
 	color:#6b7280;
@@ -817,7 +811,7 @@ const RemoveOpt = styled.button`
 	}
 `;
 
-const AddOption = styled.button`
+const AddOption = styled(Button)`
 	display:inline-flex;
 	align-items:center;
 	gap:6px;

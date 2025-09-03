@@ -4,26 +4,26 @@ import styled from "styled-components";
 
 
 export default function Sidebar({ logoSrc, logoAlt = "Logo", itemsTop = [], itemsBottom = [], avatarText }) {
-	// Récupère l'URL actuelle pour savoir quel bouton est actif
+	// Get the current URL to know which button is active
 	const location = useLocation();
 
-	// Affiche un élément de la sidebar
+	// Displays a sidebar's element
 	const renderItem = (item) => {
-		// Dit si l'élément doit être affiché comme actif
+		// Tells if the element is displayed as active
 		const isActive = (() => {
 			if (item.activePattern instanceof RegExp) return item.activePattern.test(location.pathname);
 			if (item.to) return location.pathname === item.to;
 			return false;
 		})();
 
-		// boutons avec styles dynamiques  selon $active
+		// Buttons with dynamic styles according to $active
 		const Btn = (
 			<IconButton title={item.title} $active={isActive} onClick={item.onClick} aria-label={item.title}>
 				{item.icon}
 			</IconButton>
 		);
 
-		// Si l'élément a une route "to", on l'entoure avec un <Link>
+		// If the element has a "to" route, we surround it with a <Link>
 		return item.to ? (
 			<StyledLink to={item.to} key={item.key}>
 				{Btn}
@@ -35,7 +35,7 @@ export default function Sidebar({ logoSrc, logoAlt = "Logo", itemsTop = [], item
 
 	return (
 		<Aside>
-			{/* Partie du haut de la sidebar avec logo et itemsTop */}
+			{/* Sidebar's upper part with the logo and itemsTop */}
 			<Stack>
 				{logoSrc ? (
 					<LogoCircle title={logoAlt} aria-label={logoAlt}>
@@ -50,7 +50,7 @@ export default function Sidebar({ logoSrc, logoAlt = "Logo", itemsTop = [], item
 
             
 
-			{/* Partie du bas de la sidebar avec itemsBottom et l'avatar */}
+			{/* Down part of the sidebar with itemsBottom and the avatar */}
 			<Stack>
 				{itemsBottom.map(renderItem)}
 				{avatarText ? <Avatar title="User">{avatarText}</Avatar> : null}
@@ -59,7 +59,6 @@ export default function Sidebar({ logoSrc, logoAlt = "Logo", itemsTop = [], item
 	);
 }
 
-// CSS
 const Aside = styled.aside`
     width: 64px;
     border-right: 1px solid #e5e7eb;
