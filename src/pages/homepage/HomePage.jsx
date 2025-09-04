@@ -4,8 +4,6 @@ import { FlaskConical, Plus } from "lucide-react";
 import styled from "styled-components";
 import QuizCard from "../../components/QuizCard";
 import { useTranslation } from "react-i18next";
-import LanguageSwitcher from "../../components/buttons/LanguageSwitcher";
-import QuizCard2 from "../../components/QuizCard2";
 import LanguageSelector from "../../components/ui/LanguageSelector";
 import Header from "../../components/layout/Header";
 import Button from "../../components/ui/Button";
@@ -56,7 +54,7 @@ export default function HomePage() {
 		},
 		{
 			title: "React Fundamentals",
-			tags: ["react", "frontend", "hooks"],
+			tags: ["react", "frontend", "hooks","react", "frontend", "hooks"],
 			imgURL: "https://wallpapercave.com/wp/wp4923981.jpg",
 			date: "2025-02-01",
 			modified: "2025-02-05",
@@ -83,13 +81,12 @@ export default function HomePage() {
 				]}
 			/>
 			<Content>
-				<QuizCard title={"Card"} tags={["tag1", "tag2"]} date={"2025-08-18 14:26:50"} modified={false} imgURL={"https://avatars.githubusercontent.com/u/190352311?v=4"}/>
+				<QuizGrid>
+					{quizItems.map((item, index) => (
+						<QuizCard key={index} {...item} />
+					))}
+				</QuizGrid>
 			</Content>
-			<QuizGrid>
-				{quizItems.map((item, index) => (
-					<QuizCard2 key={index} {...item} />
-				))}
-			</QuizGrid>
 		</Main>
 	);
 }

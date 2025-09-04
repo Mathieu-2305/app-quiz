@@ -4,6 +4,10 @@ body.dark-mode {
 	--color-primary-bg-hover: var(--brand-primary-500);
 	--color-primary-muted: var(--brand-primary-800);
 
+    --color-secondary-text: var(--gray-100);
+    --color-secondary-bg: var(--gray-800);
+    --color-secondary-border: var(--gray-700);
+
 	--color-success-text: var(--brand-success-100);
 	--color-success-bg: var(--brand-success-800);
 	--color-success-bg-hover: var(--brand-success-600);
