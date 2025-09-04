@@ -2,10 +2,10 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-import enCommon from "./locales/en/common.json";
-import frCommon from "./locales/fr/common.json";
-import deCommon from "./locales/de/common.json";
-import itCommon from "./locales/it/common.json";
+import enCommon from "./locales/en/translation.json";
+import frCommon from "./locales/fr/translation.json";
+import deCommon from "./locales/de/translation.json";
+import itCommon from "./locales/it/translation.json";
 
 i18n
 	.use(LanguageDetector)

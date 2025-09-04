@@ -1,0 +1,105 @@
+{
+  "app": {
+    "name": "Rafisa App"
+  },
+  "nav": {
+    "quiz": "Quiz",
+    "results": "Résultats",
+    "search": "Recherche",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "actions": {
+    "newQuiz": "Nouveau Quiz",
+    "save": "Enregistrer",
+    "saveChanges": "Enregistrer les modifications",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "addQuestion": "Ajouter une question"
+  },
+  "common": {
+    "active": "Actif",
+    "inactive": "Inactif",
+    "yes": "Oui",
+    "no": "Non",
+    "untitled": "Sans titre",
+    "placeholders": {
+      "typeHere": "Tapez ici"
+    },
+    "state": {
+      "on": "Activé",
+      "off": "Désactivé"
+    }
+  },
+  "quiz": {
+    "title": "Créer et éditer un quiz",
+    "placeholders": {
+      "title": "Titre du quiz",
+      "categoryTitle": "Tapez le titre de la catégorie ici",
+      "untitled": "Sans titre"
+    },
+    "sections": {
+      "categories": "Catégories",
+      "options": "Options",
+      "descriptionAdd": "Ajouter une description",
+      "questions": "Questions"
+    },
+    "hints": {
+      "dragCenter": "Glissez-déposez au centre",
+      "emptyDrop": "Ajoutez votre première question avec le bouton à gauche"
+    },
+    "fields": {
+      "title": "Intitulé",
+      "description": "Description"
+    },
+    "category": {
+      "new": "Nouvelle Catégorie"
+    },
+    "options": {
+      "new": "Nouvelle option"
+    },
+    "types": {
+      "short": "Réponse courte",
+      "long": "Réponse longue",
+      "single": "Choix unique",
+      "multi": "Choix multiples",
+      "boolean": "Vrai / Faux"
+    },
+    "defaults": {
+      "option": "Option",
+      "true": "Vrai",
+      "false": "Faux"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Quiz"
+    },
+    "settings": {
+      "title": "Paramètres"
+    },
+    "login": {
+      "title": "Connexion",
+      "microsoftSignIn": "Se connecter avec Microsoft",
+      "microsoftAlt": "Connexion Microsoft",
+      "error": "Échec du login"
+    }
+  },
+  "modals": {
+    "logout": {
+      "title": "Déconnexion",
+      "text": "Voulez-vous vraiment vous déconnecter ?",
+      "cancel": "Annuler",
+      "confirm": "Oui"
+    }
+  },
+  "dialogs": {
+    "unsaved": {
+      "title": "Quitter sans enregistrer ?",
+      "text": "Vous avez des modifications non sauvegardées.",
+      "stay": "Rester",
+      "leave": "Quitter"
+    }
+  }
+}

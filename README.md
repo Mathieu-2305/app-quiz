@@ -3,29 +3,35 @@
 
 # TODO 
 
-- LoginPage.js, ajouter un background
-- LoginPage.js, ajouter un titre 
-- LoginPage.js, choix de la langue en haut a droit de l'ecran 
-- LoginPage.js, ajouter le theme switcher en haut a droit de l'ecran 
-- LoginPage.js, commentaire en anglais 
-  
-
-- NewQuiz.js, commentaire en anglais 
-- NewQuiz.js, style comme pour button a récuperer le composant Button existant et le modifié si besoin
-- NewQuiz.js, color en fonction des variables 
 
 
-- Translation, arranger page common.json et renommer a translations.json 
+- NewQuiz.jsx, Gestion des scrollbars 
+- NewQuiz.jsx, Gerer max-width du content
+- NewQuiz.jsx, rajouter drag&drop pour la position des questions
+- NewQuiz.jsx, dans la colonne de gauche avoir title + single ou multi choice info 
+- NewQuiz.jsx, Gerer les Inputs, Textarea etc... pour en faire ou utiliser des componsants 
+- NewQuiz.jsx, Harmoniser le style pour correspondre au design de base 
 
-- Corriger erreur dans la console concernant logo192.png 
 
-- ~~Demo done todo~~
+25.08.2025
+- ~~LoginPage.jsx, ajouter un background~~ (Trouver un meilleur background que l'actuel)
+- ~~LoginPage.jsx, ajouter un titre~~
+- ~~LoginPage.jsx, choix de la langue en haut a droit de l'ecran~~
+- ~~LoginPage.jsx, ajouter le theme switcher en haut a droit de l'ecran~~
+- ~~LoginPage.jsx, commentaire en anglais~~
+- ~~NewQuiz.js, commentaire en anglais~~
+- ~~NewQuiz.js, style comme pour button a récuperer le composant Button existant et le modifié si besoin~~
+- ~~NewQuiz.js, color en fonction des variables~~
+- ~~Translation, arranger page common.json et renommer a translations.json~~
+- ~~Corriger erreur dans la console concernant logo192.png~~
+
 
 
 
 ### Tools
 
 https://fikristudio.com/project/trenning
+~~Demo done todo~~ <- (ne pas supprimer)
 
 # .env.example
 

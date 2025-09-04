@@ -8,6 +8,7 @@ const languages = [
     { code: 'en', label: 'English', countryCode: 'US' },
     { code: 'fr', label: 'Français', countryCode: 'FR' },
     { code: 'de', label: 'Deutsch', countryCode: 'DE' },
+    { code: 'it', label: 'Italiano', countryCode: 'IT' },
     // add more languages here
 ];
 
@@ -67,6 +68,7 @@ const DropdownContainer = styled.div`
     position: relative;
     width: var(--spacing-6xl);
     user-select: none;
+    color: var(--color-text);
 `;
 
 const DropdownHeader = styled.div`
@@ -119,7 +121,6 @@ const DropdownItem = styled.li`
     align-items: center;
     gap: var(--spacing-xs);
     font-size: var(--font-size);
-
     &:hover {
         background-color: ${({ disabled }) => (disabled ? 'inherit' : 'var(--color-primary-bg-hover)')};
     }

@@ -1,0 +1,105 @@
+{
+  "app": {
+    "name": "Rafisa App"
+  },
+  "nav": {
+    "quiz": "Quiz",
+    "results": "Ergebnisse",
+    "search": "Suche",
+    "settings": "Einstellungen",
+    "logout": "Abmelden"
+  },
+  "actions": {
+    "newQuiz": "Neues Quiz",
+    "save": "Speichern",
+    "saveChanges": "Änderungen speichern",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "delete": "Löschen",
+    "addQuestion": "Fügen Sie eine Frage hinzu"
+  },
+  "common": {
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "yes": "Ja",
+    "no": "Nein",
+    "untitled": "Ohne Titel",
+    "placeholders": {
+      "typeHere": "Hier eingeben"
+    },
+    "state": {
+      "on": "Ein",
+      "off": "Aus"
+    }
+  },
+  "quiz": {
+    "title": "Ein Quiz erstellen und bearbeiten",
+    "placeholders": {
+      "title": "Titel des Quiz",
+      "categoryTitle": "Kategorie-Titel hier eingeben",
+      "untitled": "Ohne Titel"
+    },
+    "sections": {
+      "categories": "Kategorien",
+      "options": "Optionen",
+      "descriptionAdd": "Beschreibung hinzufügen",
+      "questions": "Fragen"
+    },
+    "hints": {
+      "dragCenter": "Ziehen und in der Mitte ablegen",
+      "emptyDrop": "Fügen Sie Ihre erste Frage mit der Schaltfläche links hinzu"
+    },
+    "fields": {
+      "title": "Titel",
+      "description": "Beschreibung"
+    },
+    "category": {
+      "new": "Neue Kategorie"
+    },
+    "options": {
+      "new": "Neue Option"
+    },
+    "types": {
+      "short": "Kurze Antwort",
+      "long": "Lange Antwort",
+      "single": "Einfachauswahl",
+      "multi": "Mehrfachauswahl",
+      "boolean": "Wahr / Falsch"
+    },
+    "defaults": {
+      "option": "Option",
+      "true": "Wahr",
+      "false": "Falsch"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Quiz"
+    },
+    "settings": {
+      "title": "Einstellungen"
+    },
+    "login": {
+      "title": "Anmeldung",
+      "microsoftSignIn": "Mit Microsoft anmelden",
+      "microsoftAlt": "Microsoft-Anmeldung",
+      "error": "Anmeldung fehlgeschlagen"
+    }
+  },
+  "modals": {
+    "logout": {
+      "title": "Abmelden",
+      "text": "Möchten Sie sich wirklich abmelden?",
+      "cancel": "Abbrechen",
+      "confirm": "Ja"
+    }
+  },
+  "dialogs": {
+    "unsaved": {
+      "title": "Ohne Speichern verlassen?",
+      "text": "Sie haben ungespeicherte Änderungen.",
+      "stay": "Bleiben",
+      "leave": "Verlassen"
+    }
+  }
+}
