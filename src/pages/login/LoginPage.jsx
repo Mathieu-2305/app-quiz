@@ -5,29 +5,25 @@ import MsLogoDark from '../../assets/images/ms-symbollockup_signin_dark.svg';
 import RafLogo from '../../assets/images/raflogo.png';
 import bgLight from '../../assets/images/background-login.jpg';
 import bgDark from '../../assets/images/background-login.jpg';
+import loginBackground from '../../assets/images/login_background.png';
 import styled from 'styled-components';
+import {LogIn} from "lucide-react";
 import { useTheme } from "../../context/theme";
 import { useAuth } from "../../context/auth";
 import { isInMsalPopup } from "../../utils/msalPopup";
 import { useTranslation } from "react-i18next";
 import ToggleThemeSwitch from "../../components/ui/ToggleThemeSwitch";
 import LanguageSelector from "../../components/ui/LanguageSelector";
+import Button from "../../components/ui/Button";
 
 function LoginPage() {
-    // Create a navigate() function that allows us to move between pages
-	const navigate = useNavigate();
 
-    // Gives the current URL
+	const { t, i18n } = useTranslation();
+	const navigate = useNavigate();
 	const location = useLocation();
 
-    // Retrieve the current theme and is used to know which one should be used, it is the same for the background image
-	const { theme } = useTheme();
-
-    // Retrieve the login() function and allow us to connect with Microsoft
-	const { login } = useAuth();
-
-    // Used to translate the page in the available languages
-    const { t, i18n } = useTranslation();
+	const { isAuthenticated, login } = useAuth();
+    const { theme } = useTheme();
 
     // Update the dir attribute to know in which direction the text should be read (R -> L / L -> R)
     useEffect(() => {
@@ -36,13 +32,12 @@ function LoginPage() {
 
 	// Redirect the user on /home if he's already in the localStorage except if he's in the MSAL popup
 	useEffect(() => {
-		if (isInMsalPopup()) return; // <--- Navigation in the Microsoft popup is forbidden
-		const storedUser = localStorage.getItem('user');
-		if (storedUser && location.pathname !== '/home') {
-			navigate('/home', { replace: true });
+		if (isInMsalPopup()) return;
+		// If user is authenticated, *and* they came to /login manually (not from logout)
+		if (isAuthenticated && location.pathname === "/login" && !location.state?.fromLogout) {
+			//navigate("/home", { replace: true });
 		}
-		}, [navigate, location]);
-
+	}, [isAuthenticated, navigate, location]);
 
 	// Redirect to /home unless a error occurs (the error is translated)
 	const handleLogin = async () => {
@@ -59,25 +54,27 @@ function LoginPage() {
 
 	return (
         <>
-            <Header>
-                <LanguageSelector />
-                <ToggleThemeSwitch />
-            </Header>
-                    
-            <Container $bg={bg}>
+            <Container $bg={loginBackground}>
                 <Content>
-                    <PageTitle>Rafisa Quiz</PageTitle>
-                    <Box>
-                        <Logo src={RafLogo} alt="Rafisa Logo" />
-                        <Title>{t("pages.login.title")}</Title>
+					<RightContent>
+						<RightContentTop>
+							<LanguageSelector />
+							<ToggleThemeSwitch />
+						</RightContentTop>
 
-                        <MicrosoftButton type="button" onClick={handleLogin} aria-label={t("pages.login.microsoftSignIn")}>
-                            <MicrosoftImg
-                                src={theme === 'dark' ? MsLogoDark : MsLogo}
-                                alt={t("pages.login.microsoftAlt")}
-                            />
-                        </MicrosoftButton>
-                    </Box>
+						<RightContentContent>
+							<Title>{import.meta.env.VITE_APP_TITLE}</Title>
+							<Subtitle>{t("login.description")}</Subtitle>
+							<Button variant={"tertiary"} onClick={handleLogin} style={{marginLeft: "auto"}}>
+								<LogIn size={24} />
+								{t("login.sign_in")}
+							</Button>
+						</RightContentContent>
+					</RightContent>
+
+					<LeftContent $background={loginBackground}>
+						<Logo src={RafLogo} alt="Rafisa Logo" />
+					</LeftContent>
                 </Content>
             </Container>
         </>
@@ -86,52 +83,40 @@ function LoginPage() {
 
 export default LoginPage;
 
-const Header = styled.div`
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    display: flex;
-    gap: 1rem;
-    z-index: 10;
-`;
-
 const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
 	width: 100vw;
     height: 100vh;
-
-    background-image: url(${p => p.$bg});
-    background-size: cover;
-    background-position: 65% 35%;
-    background-repeat: no-repeat;
-
-    background-color: var(--color-background);
+    background: var(--gradient-primary);
+    //background: url(${props => props.$bg}) no-repeat center;
 `;
 
 const Content = styled.div`
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: var(--spacing-s);
+    border-radius: var(--border-radius-xl);
+    width: var(--spacing-12xl);
+	max-height: 90vh;
+	gap: var(--spacing-s);
+    background: var(--liquidglass-bg);
+    backdrop-filter: var(--liquidglass-blur);
+    -webkit-backdrop-filter: var(--liquidglass-blur);
+    box-shadow: var(--liquidglass-shadow);
+    min-height: 600px;
 `;
 
-const PageTitle = styled.h1`
-    font-size: 2rem;
-    font-weight: 700;
-    color: black;
-    text-align: center;
-    margin: 0;
-`;
-
-const Box = styled.div`
-    background-color: var(--color-background-elevated);
-    padding: 2rem;
-    border-radius: 8px;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+const LeftContent = styled.div`
+    flex: 1;
+    width: 50%;
+    background-size: cover;
+    background: url(${props => props.$background}) no-repeat center;
+    border-radius: var(--border-radius-l);
+    padding: var(--spacing);
+    position: relative;
 `;
 
 const Logo = styled.img`
@@ -140,37 +125,50 @@ const Logo = styled.img`
     object-fit: contain;
 `;
 
-const Title = styled.h2`
-    margin: 0 0 1rem 0;
+const RightContent = styled.div`
+	width: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	position: relative;
+`;
+
+const RightContentContent = styled.div`
+	width: 100%;
+    padding: var(--spacing-3xl);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	position: relative;
+	flex: 1;
+`;
+
+const Title = styled.h1`
+    width: 100%;
+    font-size: var(--font-size-5xl);
     font-weight: 600;
     color: var(--color-text);
-    font-size: 1.25rem;
+	margin: 0 0 var(--spacing-l);
 `;
 
-const MicrosoftButton = styled.div`
+const Subtitle = styled.h2`
     width: 100%;
-    padding: 0.6rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: var(--font-size);
+	line-height: var(--line-height-l);
+    margin-bottom: var(--spacing-l);
+`;
 
-    display: inline-flex;
+const RightContentTop = styled.div`
+    width: 100%;
+    display: flex;
     align-items: center;
-    justify-content: center;
-
-    transition: transform 0.06s ease, box-shadow 0.2s ease;
-
-    &:hover {
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    &:active {
-        transform: translateY(1px);
-    }
-`;
-
-const MicrosoftImg = styled.img`
-    width: 100%;
-    height: auto;
-    display: block;
+	justify-content: flex-end;
+	bottom: 0;
+	right: 0;
+	gap: var(--spacing-xs);
+	padding: var(--spacing-xs);
 `;

@@ -1,29 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import {ThemeProvider} from "./context/theme";
+import {AuthProvider} from "./context/auth";
 import './components/ui/styles/index.css'
-import { AuthProvider } from "./context/auth";
-import { isInMsalPopup } from "./utils/msalPopup";
-import "./i18n";
+import './i18n';
+import App from './App.jsx'
 
-if (isInMsalPopup()) {
-  ReactDOM.createRoot(document.getElementById("root")).render(<div />);
-} else {
-  ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <ThemeProvider>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </ThemeProvider>
-  </React.StrictMode>
-);
-}
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
-
+createRoot(document.getElementById('root')).render(
+	<StrictMode>
+		<AuthProvider>
+			<ThemeProvider>
+				<App />
+			</ThemeProvider>
+		</AuthProvider>
+	</StrictMode>,
+)

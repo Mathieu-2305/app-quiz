@@ -1,89 +1,92 @@
-// src/context/auth/AuthProvider.jsx
-import React from "react";
+import { useState, useEffect } from "react";
 import * as msal from "@azure/msal-browser";
 import { AuthContext } from "./AuthContext";
 
+const redirectUri = import.meta.env.VITE_AZURE_REDIRECT_URI || window.location.origin;
+
+const pca = new msal.PublicClientApplication({
+	auth: {
+		clientId: import.meta.env.VITE_AZURE_CLIENT_ID,
+		authority: `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID}`,
+		redirectUri: redirectUri,
+	},
+});
+
 export function AuthProvider({ children }) {
-	const redirectUri = import.meta.env.VITE_AZURE_REDIRECT_URI || window.location.origin;
+	const [user, setUser] = useState(null);
+	const [token, setToken] = useState(null);
+	const [isInitialized, setIsInitialized] = useState(false);
+	const [isReady, setIsReady] = useState(false); // ensures initialize is finished
 
-	const pca = React.useMemo(() => new msal.PublicClientApplication({
-		auth: {
-			clientId: import.meta.env.VITE_AZURE_CLIENT_ID,
-			authority: `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID}`,
-			redirectUri: redirectUri,
-		},
-		cache: { cacheLocation: "localStorage" }
-	}), []);
+	useEffect(() => {
+		const initAuth = async () => {
+			try {
+				await pca.initialize();
+				setIsReady(true); // mark MSAL as ready
 
-	const [account, setAccount] = React.useState(null);
-
-	// Init + restore session
-	React.useEffect(() => {
-		let mounted = true;
-		(async () => {
-			await pca.initialize();
-			const accs = pca.getAllAccounts();
-			if (mounted && accs.length) setAccount(accs[0]);
-		})();
-
-		const cbId = pca.addEventCallback((e) => {
-			if (e.eventType === msal.EventType.LOGIN_SUCCESS && e.payload?.account) {
-				setAccount(e.payload.account);
+				const accounts = pca.getAllAccounts();
+				if (accounts.length > 0) {
+					setUser(accounts[0]);
+					try {
+						const tokenResponse = await pca.acquireTokenSilent({
+							scopes: ["User.Read"],
+							account: accounts[0],
+						});
+						setToken(tokenResponse.accessToken);
+					} catch (silentErr) {
+						console.warn("Silent token acquisition failed:", silentErr);
+					}
+				}
+			} catch (err) {
+				console.error("Auth init failed:", err);
+			} finally {
+				setIsInitialized(true);
 			}
-			if (e.eventType === msal.EventType.ACCOUNT_REMOVED) {
-				const accs = pca.getAllAccounts();
-				setAccount(accs[0] || null);
-			}
-		});
-
-		return () => {
-			mounted = false;
-			if (cbId) pca.removeEventCallback(cbId);
 		};
-	}, [pca]);
+		initAuth();
+	}, []);
 
 	const login = async () => {
-		const loginResponse = await pca.loginPopup({ scopes: ["User.Read"] });
-		const user = loginResponse.account;
-		const tokenResponse = await pca.acquireTokenSilent({ scopes: ["User.Read"], account: user });
+		if (!isReady) {
+			console.error("MSAL not initialized yet");
+			return;
+		}
 
-		localStorage.setItem("access_token", tokenResponse.accessToken);
-		localStorage.setItem("user", JSON.stringify(user));
-		setAccount(user);
-		return { user, accessToken: tokenResponse.accessToken };
-	};
-
-	const getToken = async (scopes = ["User.Read"]) => {
-		if (!account) return null;
-		const res = await pca.acquireTokenSilent({ scopes, account });
-		return res.accessToken;
-	};
-
-	const logout = async () => {
 		try {
-			await pca.logoutPopup({
-				mainWindowRedirectUri: "/login",
-				postLogoutRedirectUri: process.env.REACT_APP_AZURE_REDIRECT_URI,
+			const loginResponse = await pca.loginPopup({ scopes: ["User.Read"] });
+			setUser(loginResponse.account);
+
+			const tokenResponse = await pca.acquireTokenSilent({
+				scopes: ["User.Read"],
+				account: loginResponse.account,
 			});
-		} catch (e) {
-			await pca.logoutRedirect({
-				postLogoutRedirectUri: process.env.REACT_APP_AZURE_REDIRECT_URI,
-			});
-		} finally {
-			localStorage.removeItem("access_token");
-			localStorage.removeItem("user");
-			setAccount(null);
-			pca.setActiveAccount(undefined);
+			setToken(tokenResponse.accessToken);
+		} catch (err) {
+			console.error("Login failed", err);
 		}
 	};
 
-	const value = {
-		account,
-		isAuthenticated: !!account,
-		login,
-		logout,
-		getToken,
+	const logout = async () => {
+		if (!isReady) {
+			console.error("MSAL not initialized yet");
+			return;
+		}
+
+		try {
+			await pca.logoutPopup();
+			setUser(null);
+			setToken(null);
+			localStorage.clear();
+		} catch (err) {
+			console.error("Error logging out:", err);
+		}
 	};
 
-	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+	if (!isInitialized) return null;
+
+	return (
+		<AuthContext.Provider value={{ user, token, login, logout, isInitialized }}>
+			{children}
+		</AuthContext.Provider>
+	);
 }

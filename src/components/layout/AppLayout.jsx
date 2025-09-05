@@ -5,11 +5,12 @@ import { Award, Settings as SettingsIcon, Search, LogOut, FlaskConical } from "l
 import { useTranslation } from "react-i18next";
 import Sidebar from "../../components/Sidebar";
 import MyLogo from "../../assets/images/raflogo.png";
+import {useAuth} from "../../context/auth";
 
 export default function AppLayout({ children }) {
-	const navigate = useNavigate();
 	const { t } = useTranslation();
 	const [showLogoutModal, setShowLogoutModal] = useState(false);
+	const { logout } = useAuth();
 
 	const user = useMemo(() => {
 		try {
@@ -22,11 +23,12 @@ export default function AppLayout({ children }) {
 
 	const handleLogoutClick = () => setShowLogoutModal(true);
 
-	const confirmLogout = () => {
-		localStorage.removeItem("access_token");
-		localStorage.removeItem("user");
-		setShowLogoutModal(false);
-		navigate("/login", { replace: true });
+	const confirmLogout = async () => {
+		try {
+			await logout();
+		} catch (error) {
+			console.error(`Error logging out:`, error);
+		}
 	};
 
 	const itemsTop = useMemo(() => ([
