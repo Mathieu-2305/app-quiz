@@ -51,7 +51,8 @@ function LoginPage() {
             <Container $bg={loginBackground}>
                 <Content>
 					<LeftContent $background={loginBackground}>
-						<Logo src={RafLogo} alt="Rafisa Logo" />
+						<Logo src={RafLogo} alt={t("app.name")} />
+						<Copyrights>{t("login.copyright")}</Copyrights>
 					</LeftContent>
 
 					<RightContent>
@@ -61,7 +62,7 @@ function LoginPage() {
 						</RightContentTop>
 
 						<RightContentContent>
-							<Title>{import.meta.env.VITE_APP_TITLE}</Title>
+							<Title>{t("app.name")}</Title>
 							<Subtitle>{t("login.description")}</Subtitle>
 							<Button variant={"tertiary"} onClick={handleLogin} style={{marginLeft: "auto"}}>
 								<LogIn size={24} />
@@ -107,12 +108,25 @@ const Content = styled.div`
 const LeftContent = styled.div`
     flex: 1;
     width: 50%;
-    background-size: cover;
-    background: url(${props => props.$background}) no-repeat center;
+    background: url(${props => props.$background}) center center / cover no-repeat;
     border-radius: var(--border-radius-l);
     padding: var(--spacing);
     position: relative;
 	overflow: hidden;
+	
+    // gradient overlay
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.8),
+                rgba(0, 0, 0, 0.0)
+        );
+        border-radius: inherit;
+        pointer-events: none;
+    }
 `;
 
 const Logo = styled.img`
@@ -122,6 +136,19 @@ const Logo = styled.img`
 	position: absolute;
 	top: var(--spacing-l);
 	left: var(--spacing-l);
+    z-index: 1;
+`;
+
+const Copyrights = styled.p`
+    width:100%;
+	position: absolute;
+	bottom: var(--spacing-2xs);
+	color: var(--gray-50);
+	text-align: center;
+	font-size: var(--font-size-s);
+	left: 0;
+	right: 0;
+    z-index: 1;
 `;
 
 const RightContent = styled.div`
@@ -146,7 +173,7 @@ const RightContentContent = styled.div`
 
 const Title = styled.h1`
     width: 100%;
-    font-size: var(--font-size-5xl);
+    font-size: var(--font-size-4xl);
     font-weight: 600;
     color: var(--color-text);
 	margin: 0 0 var(--spacing-l);
