@@ -1,16 +1,10 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import MsLogo from '../../assets/images/ms-symbollockup_signin_light.svg';
-import MsLogoDark from '../../assets/images/ms-symbollockup_signin_dark.svg';
 import RafLogo from '../../assets/images/raflogo.png';
-import bgLight from '../../assets/images/background-login.jpg';
-import bgDark from '../../assets/images/background-login.jpg';
-import loginBackground from '../../assets/images/login_background.png';
+import loginBackground from '../../assets/images/login_background.jpg';
 import styled from 'styled-components';
 import {LogIn} from "lucide-react";
-import { useTheme } from "../../context/theme";
 import { useAuth } from "../../context/auth";
-import { isInMsalPopup } from "../../utils/msalPopup";
 import { useTranslation } from "react-i18next";
 import ToggleThemeSwitch from "../../components/ui/ToggleThemeSwitch";
 import LanguageSelector from "../../components/ui/LanguageSelector";
@@ -22,8 +16,8 @@ function LoginPage() {
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	const { isAuthenticated, login } = useAuth();
-    const { theme } = useTheme();
+	const { isInitialized, login, user } = useAuth();
+
 
     // Update the dir attribute to know in which direction the text should be read (R -> L / L -> R)
     useEffect(() => {
@@ -32,12 +26,12 @@ function LoginPage() {
 
 	// Redirect the user on /home if he's already in the localStorage except if he's in the MSAL popup
 	useEffect(() => {
-		if (isInMsalPopup()) return;
 		// If user is authenticated, *and* they came to /login manually (not from logout)
-		if (isAuthenticated && location.pathname === "/login" && !location.state?.fromLogout) {
-			//navigate("/home", { replace: true });
+		if (isInitialized && user) {
+			navigate("/home", { replace: true });
 		}
-	}, [isAuthenticated, navigate, location]);
+	}, [isInitialized, user, navigate, location]);
+
 
 	// Redirect to /home unless a error occurs (the error is translated)
 	const handleLogin = async () => {
@@ -49,17 +43,21 @@ function LoginPage() {
 		}
 	};
 
-    // Use a different image depending on the current theme but there is only one image as those lines are written
-    const bg = theme === 'dark' ? bgDark : bgLight;
+
+	if(!isInitialized || user) return;
 
 	return (
         <>
             <Container $bg={loginBackground}>
                 <Content>
+					<LeftContent $background={loginBackground}>
+						<Logo src={RafLogo} alt="Rafisa Logo" />
+					</LeftContent>
+
 					<RightContent>
 						<RightContentTop>
-							<LanguageSelector />
 							<ToggleThemeSwitch />
+							<LanguageSelector />
 						</RightContentTop>
 
 						<RightContentContent>
@@ -71,10 +69,6 @@ function LoginPage() {
 							</Button>
 						</RightContentContent>
 					</RightContent>
-
-					<LeftContent $background={loginBackground}>
-						<Logo src={RafLogo} alt="Rafisa Logo" />
-					</LeftContent>
                 </Content>
             </Container>
         </>
@@ -89,8 +83,9 @@ const Container = styled.div`
     align-items: center;
 	width: 100vw;
     height: 100vh;
-    background: var(--gradient-primary);
+    background: var(--gradient-background);
     //background: url(${props => props.$bg}) no-repeat center;
+	background-size: cover;
 `;
 
 const Content = styled.div`
@@ -117,12 +112,16 @@ const LeftContent = styled.div`
     border-radius: var(--border-radius-l);
     padding: var(--spacing);
     position: relative;
+	overflow: hidden;
 `;
 
 const Logo = styled.img`
-    width: 40px;
+    width: 60px;
     height: auto;
     object-fit: contain;
+	position: absolute;
+	top: var(--spacing-l);
+	left: var(--spacing-l);
 `;
 
 const RightContent = styled.div`
