@@ -2,6 +2,10 @@
   "app": {
     "name": "Rafisa App"
   },
+	"login": {
+		"description": "A fun quiz platform where apprentices learn, formateurs create, and everyone competes on the leaderboard.",
+		"sign_in": "Sign in with Microsoft"
+	},
   "nav": {
     "quiz": "Quiz",
     "results": "Results",

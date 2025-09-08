@@ -117,7 +117,7 @@ const StyledButton = styled.button`
 	line-height: var(--line-height);
 	will-change: transform;
 	outline-offset: 2px;
-	gap: var(--spacing-2xs);
+	gap: var(--spacing-xs);
 	
 	/* Size */
 	${({ size }) => sizes[size] || sizes.m}

@@ -28,6 +28,13 @@
     --color-warning-bg-hover: var(--brand-warning-600);
     --color-warning-muted: var(--brand-warning-100);
 
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, var(--brand-primary-400), var(--brand-primary-700));
+    --gradient-success: linear-gradient(135deg, var(--brand-success-400), var(--brand-success-700));
+    --gradient-error: linear-gradient(135deg, var(--brand-error-400), var(--brand-error-800));
+    --gradient-warning: linear-gradient(135deg, var(--brand-warning-400), var(--brand-warning-700));
+    --gradient-background: linear-gradient(135deg, var(--gray-200) 0%, var(--gray-300) 50%, var(--slate-400) 100%);
+
     /* Neutral / UI */
     --color-text: var(--gray-900);                      /* Primary text color (headings, paragraphs, main content) */
     --color-btn-text: var(--gray-100);                  /* Text color on dark or colored buttons */
@@ -41,6 +48,13 @@
     --color-background-input: var(--gray-200);          /* Background for input fields and form elements */
     --color-background-input-focused: #ffffff;          /* Background for input fields and form elements when focused */
     --color-border: var(--gray-300);                    /* Color for borders, dividers, and separators */
+
+    --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+
+    --liquidglass-bg: rgba(255, 255, 255, 0.5);                /* translucent white */
+    --liquidglass-blur: blur(12px);                             /* slightly stronger blur */
+    --liquidglass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);  /* soft subtle shadow */
+
 }
 
 

@@ -1,40 +1,35 @@
-import './App.css';
-import AppLayout from "./components/layout/AppLayout";
-import HomePage from './pages/homepage/HomePage';
-import SettingsPage from './pages/settings/Settings';
-import NewQuiz from './pages/quiz_editor/NewQuiz';
-import { RouterProvider, createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
-import { isInMsalPopup } from './utils/msalPopup';
-import LoginPage from "./pages/login/LoginPage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/routes/ProtectedRoute.jsx";
+import { routes } from "./routes.jsx";
+import { isInMsalPopup } from "./utils/msalPopup";
+import "./App.css";
 
-function ProtectedRoute({ children }) {
-	const user = localStorage.getItem('user');
-	if (!user) return <Navigate to="/login" replace />;
-	return children;
-}
-
-const router = createBrowserRouter([
-	{ path: "/", element: <Navigate to="/login" replace /> },
-	{ path: "/login", element: <LoginPage /> },
-	{
-		path: "/",
-		element: (
-			<ProtectedRoute>
-				<AppLayout>
-					<Outlet />
-				</AppLayout>
-			</ProtectedRoute>
-		),
-		children: [
-			{ path: "home", element: <HomePage /> },
-			{ path: "quiz/new", element: <NewQuiz /> },
-			{ path: "settings", element: <SettingsPage /> },
-			{ path: "*", element: <Navigate to="/home" replace /> }
-		],
-	},
-]);
-
-export default function App() {
+function App() {
 	if (isInMsalPopup()) return null;
-	return <RouterProvider router={router} />;
+
+	return (
+		<BrowserRouter>
+			<Routes>
+				{/* Public routes */}
+				{routes
+					.filter((r) => !r.protected)
+					.map(({ path, element }) => (
+						<Route key={path} path={path} element={element} />
+					))}
+
+				{/* Protected routes */}
+				<Route element={<ProtectedRoute />}>
+					{routes
+						.filter((r) => r.protected)
+						.map(({ path, element, layout }) => {
+							// wrap in layout if provided
+							const Component = layout ? () => layout({ children: element }) : () => element;
+							return <Route key={path} path={path} element={<Component />} />;
+						})}
+				</Route>
+			</Routes>
+		</BrowserRouter>
+	);
 }
+
+export default App;
