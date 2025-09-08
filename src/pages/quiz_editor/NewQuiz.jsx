@@ -1,5 +1,6 @@
-import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { FilePenLine, Save, Plus, Trash2, GripVertical, Edit3 } from "lucide-react";
+import React, { useMemo, useRef, useState, useEffect, useLayoutEffect } from 'react';
+import { FilePenLine, Save, Plus, Trash2, GripVertical, Edit3, Undo2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import UnsavedChangesGuard from "../../components/UnsavedChangesGuard";
@@ -9,11 +10,13 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Header from "../../components/layout/Header";
 import TextArea from "../../components/ui/TextArea";
-import ToggleThemeSwitch from "../../components/ui/ToggleThemeSwitch";
 
 export default function NewQuiz() {
 	// Translation
 	const { t } = useTranslation();
+
+	// Navigation
+	const navigate = useNavigate();
 
 	// Principal states
 	const [isDirty, setIsDirty] = useState(false);
@@ -29,6 +32,12 @@ export default function NewQuiz() {
 	const [dragOverPosition, setDragOverPosition] = useState(null);
 
 	const questionRefs = useRef({});
+
+	// Placeholder title
+	const titleRef = useRef(null);
+	const measureRef = useRef(null);
+	const [iconLeft, setIconLeft] = useState(0);
+
 
 	useEffect(() => {
 		document.body.classList.add('page-newquiz');
@@ -195,14 +204,50 @@ export default function NewQuiz() {
     setDragOverIndex(null);
     setDragOverPosition(null);
   };
+useLayoutEffect(() => {
+	const el = titleRef.current;
+	const meas = measureRef.current;
+	if (!el || !meas) return;
+
+	const recompute = () => {
+		// measured text = value or placeholder if empty
+		const text = el.value?.trim() ? el.value : (el.getAttribute("placeholder") || "");
+		meas.textContent = text;
+
+		const cs = getComputedStyle(el);
+		const paddingLeft = parseFloat(cs.paddingLeft) || 0;
+		const borderLeft = parseFloat(cs.borderLeftWidth) || 0;
+
+		const x = paddingLeft + borderLeft + meas.offsetWidth;
+		setIconLeft(x + 6); // Little 6px space between text and icon
+	};
+
+	recompute();
+	// Listens to size changes (resize, zoom, charged police…)
+	const ro = new ResizeObserver(recompute);
+	ro.observe(el);
+	window.addEventListener("resize", recompute);
+	return () => {
+		ro.disconnect();
+		window.removeEventListener("resize", recompute);
+	};
+	}, [title, t]);
 
 	return (
 		<Main>
 			<UnsavedChangesGuard when={isDirty} />
 			<DesktopHeaderWrap>
 				<Header
-					title={t("quiz.title")}
-					icon={<FilePenLine size={20} />}
+					title={
+						<TitleInline>
+						<BackIconButton onClick={() => navigate(-1)} aria-label={t("actions.back")}>
+							<Undo2 size={24} />
+						</BackIconButton>
+						<FilePenLine size={20} />
+						<span>{t("quiz.title")}</span>
+						</TitleInline>
+					}
+				  	icon={null}
 					actions={[
 					<Controls key="controls">
 					<ToggleSwitch 
@@ -213,7 +258,6 @@ export default function NewQuiz() {
 						onColor="#22c55e" 
 						offColor="#e5e7eb" 
 					/>
-<ToggleThemeSwitch />
 					<LanguageSelector />
 					<SaveButton onClick={onSave}>
 						<Save size={16} />{t("actions.saveChanges")}
@@ -224,27 +268,6 @@ export default function NewQuiz() {
 				/>
 	        
 			</DesktopHeaderWrap>
-		
-			<MobileHeader>
-				<MobileTitleRow>
-				<FilePenLine size={18} />
-				<MobileTitle>{t("quiz.title")}</MobileTitle>
-				</MobileTitleRow>
-				<MobileControlsRow>
-					<ToggleSwitch 
-						checked={active} 
-						onChange={setActive} 
-						onLabel={t("common.active")} 
-						offLabel={t("common.inactive")} 
-						onColor="#22c55e" 
-						offColor="#e5e7eb" 
-					/>
-					<LanguageSelector />
-				</MobileControlsRow>
-				<MobileSaveButton onClick={onSave}>
-				<Save size={16} />{t("actions.saveChanges")}
-				</MobileSaveButton>
-			</MobileHeader>
 			<Body>
 				<LeftPanel>
 					<LeftTitle>{t("quiz.sections.questions")}</LeftTitle>
@@ -293,12 +316,17 @@ export default function NewQuiz() {
 					<CenterInner>
 						<TitleLine>
 							
-						<TitleInput
-							value={title}
-							onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
-							placeholder={t("quiz.placeholders.title")}
-							aria-label={t("quiz.placeholders.title")}
-						/>
+						<TitleField onClick={() => titleRef.current?.focus()}>
+							<TitleInput
+								ref={titleRef}
+								value={title}
+								onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
+								placeholder={t("quiz.placeholders.title")}
+								aria-label={t("quiz.placeholders.title")}
+							/>
+							<MeasureSpan ref={measureRef} aria-hidden="true" />
+							<EditIcon style={{ left: iconLeft }} aria-hidden="true" />
+						</TitleField>
 						<EditHint aria-hidden="true"><FilePenLine size={16} /></EditHint>
 						</TitleLine>
 						<DescBlock>
@@ -355,7 +383,7 @@ export default function NewQuiz() {
 
 									<Field>
 										<FieldLabel>{t("quiz.fields.description")}</FieldLabel>
-										<TextArea
+										<MyTextArea
 											value={q.description}
 											onChange={(e) => updateQuestion(q.id, { description: e.target.value })}
 											placeholder={t("common.placeholders.typeHere")}
@@ -684,20 +712,59 @@ const TitleLine = styled.div`
 	}
 `;
 
-const TitleInput = styled.input`
-	border:none;
-	background:transparent;
-	outline:none;
-	padding:0;
-	margin:0;
-	width:100%;
-	font-weight:700;
-	line-height:1.2;
-	color:var(--color-text);
+const TitleInput = styled(Input)`
+	border: none;
+	background-color: var(--color-background);
+	outline: none;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--color-text);
 	font-size: clamp(18px, 2.8vw, 28px);
-	&::placeholder{
-		color: #64748b;
-  	}
+
+	&::placeholder { color: #64748b; }
+`;
+
+const EditIcon = styled(Edit3).attrs({ size: 18 })`
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #64748b;
+	pointer-events: none;
+	line-height: 0;
+	transition: opacity .12s ease, transform .12s ease;
+	svg { display: block; }
+`;
+
+const TitleField = styled.div`
+	position: relative;
+	display: block;
+	width: 100%;
+	cursor: text;
+
+	&:has(${TitleInput}:not(:placeholder-shown)) ${EditIcon} {
+		opacity: 0;
+		transform: translateY(-50%) scale(0.98);
+		pointer-events: none;
+	}
+`;
+
+const MeasureSpan = styled.span`
+	position: absolute;
+	left: 0;
+	top: 0;
+	visibility: hidden;
+	white-space: pre;
+	pointer-events: none;
+
+	font-weight: 700;
+	line-height: 1.2;
+	font-size: clamp(18px, 2.8vw, 28px);
+	font-family: inherit;
+
+	color: #64748b;
 `;
 
 const EditHint = styled.span`
@@ -729,6 +796,10 @@ const DescTextarea = styled(TextArea)`
 	}
 `;
 
+const MyTextArea = styled(TextArea)`
+	background-color:var(--quiz-surface);
+`;
+
 const AddDescButton = styled(Button)`
 	border:none;
 	background:transparent;
@@ -755,7 +826,7 @@ const FieldLabel = styled.label`
 
 const MyInput = styled(Input)`
 	height:38px;
-	border:1px solid var(--quiz-border);
+	border:1px solid #fff;
 	border-radius:8px;
 	padding:0 10px;
 	background-color:var(--quiz-surface);
@@ -827,18 +898,14 @@ const Badge = styled.span`
 
 const DeleteBtn = styled.button`
 	border: none;
-	background-color: var(--brand-error-500);
-	color: #000;
+	background:transparent;
+	color: var(--color-text);
 	cursor: pointer;
 	transition: background-color .15s ease;
 
 	&:hover {
 		background-color: var(--brand-error-600);
 		color: #000;
-	}
-
-	&:active {
-		background-color: var(--brand-error-700);
 	}
 `;
 
@@ -875,18 +942,14 @@ const OptionInput = styled(Input)`
 
 const RemoveOpt = styled.button`
 	border: none;
-	background-color: var(--brand-error-500);
-	color: #000;
+	background:transparent;
+	color: var(--color-text);
 	cursor: pointer;
 	transition: background-color .15s ease;
 
 	&:hover {
 		background-color: var(--brand-error-600);
 		color: #000;
-	}
-
-	&:active {
-		background-color: var(--brand-error-700);
 	}
 `;
 
@@ -918,52 +981,32 @@ const DesktopHeaderWrap = styled.div`
   }
 `;
 
-const MobileHeader = styled.div`
-	display:none;
+const TitleInline = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+`;
 
-	@media (max-width: 768px){
-		display:grid;
-		grid-template-rows:auto auto auto;
-		gap:8px;
-		padding:12px 12px 0;
-		background:var(--color-background);
+const BackIconButton = styled(Button)`
+	--size: 24px;
+	width: var(--size);
+	height: var(--size);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: none;
+	background: transparent;
+	color: var(--color-text);
+	border-radius: 8px;
+	cursor: pointer;
+	line-height: 0;
+	vertical-align: middle;
+
+	svg {
+		display: block;
 	}
-`;
 
-const MobileTitleRow = styled.div`
-	display:flex;
-	align-items:center;
-	gap:8px;
-	color:var(--color-text);
-`;
+	&:hover { background: var(--quiz-border)!important; }
+	`;
 
-const MobileTitle = styled.h1`
-	margin:0;
-	flex:1;
-	white-space:nowrap;
-	overflow:hidden;
-	text-overflow:ellipsis;
-	font-weight:700;
-	font-size:clamp(16px, 5.5vw, 20px);
-	line-height:1.2;
-`;
-
-const MobileControlsRow = styled.div`
-	display:flex;
-	align-items:center;
-	gap:10px;
-
-	@media (max-width: 420px){
-		flex-wrap:wrap;
-		gap:8px;
-	}
-`;
-
-const MobileSaveButton = styled(SaveButton)`
-	width:100%;
-	justify-content:center;
-
-	@media (max-width: 420px){
-		padding:10px 12px;
-	}
-`;

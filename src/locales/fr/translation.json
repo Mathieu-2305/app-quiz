@@ -17,7 +17,8 @@
     "confirm": "Confirmer",
     "delete": "Supprimer",
     "addQuestion": "Ajouter une question",
-    "reorder": "Réorganiser"
+    "reorder": "Réorganiser",
+    "back": "Retour"
   },
   "common": {
     "active": "Actif",
