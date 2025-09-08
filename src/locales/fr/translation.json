@@ -36,7 +36,7 @@
   "quiz": {
     "title": "Créer et éditer un quiz",
     "placeholders": {
-      "title": "Titre du quiz",
+      "title": "Titre du quiz 🖍 ",
       "categoryTitle": "Tapez le titre de la catégorie ici",
       "untitled": "Sans titre"
     },

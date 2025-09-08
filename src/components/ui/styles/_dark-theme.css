@@ -36,3 +36,11 @@ body.dark-mode {
 	--color-background-input-focused: var(--gray-800);  /* Background for input fields and form elements when focused */
 	--color-border: var(--gray-600);					/* Color for borders, dividers, and separators */
 }
+
+body.dark-mode.page-newquiz {
+  --quiz-surface: var(--gray-700);
+  --quiz-surface-muted: var(--gray-800);
+  --quiz-border: var(--gray-600);
+  --quiz-border-strong: var(--gray-600);
+  --quiz-placeholder: var(--gray-400);
+}

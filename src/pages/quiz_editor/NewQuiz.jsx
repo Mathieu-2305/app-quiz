@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { FilePenLine, Save, Plus, Trash2, GripVertical } from "lucide-react";
+import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { FilePenLine, Save, Plus, Trash2, GripVertical, Edit3 } from "lucide-react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import UnsavedChangesGuard from "../../components/UnsavedChangesGuard";
@@ -9,6 +9,7 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Header from "../../components/layout/Header";
 import TextArea from "../../components/ui/TextArea";
+import ToggleThemeSwitch from "../../components/ui/ToggleThemeSwitch";
 
 export default function NewQuiz() {
 	// Translation
@@ -20,6 +21,7 @@ export default function NewQuiz() {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [questions, setQuestions] = useState([]);
+	const [isDescEditing, setIsDescEditing] = useState(false);
 
 	// Drag and Drop State
 	const [draggingId, setDraggingId] = useState(null);
@@ -27,6 +29,11 @@ export default function NewQuiz() {
 	const [dragOverPosition, setDragOverPosition] = useState(null);
 
 	const questionRefs = useRef({});
+
+	useEffect(() => {
+		document.body.classList.add('page-newquiz');
+		return () => document.body.classList.remove('page-newquiz');
+	}, []);
 
 	// Label if there's no title
 	const untitled = useMemo(
@@ -206,6 +213,7 @@ export default function NewQuiz() {
 						onColor="#22c55e" 
 						offColor="#e5e7eb" 
 					/>
+<ToggleThemeSwitch />
 					<LanguageSelector />
 					<SaveButton onClick={onSave}>
 						<Save size={16} />{t("actions.saveChanges")}
@@ -214,6 +222,7 @@ export default function NewQuiz() {
 				]}
 				showBurger
 				/>
+	        
 			</DesktopHeaderWrap>
 		
 			<MobileHeader>
@@ -282,24 +291,38 @@ export default function NewQuiz() {
 				</LeftPanel>
 				<CenterPanel>
 					<CenterInner>
-						<EditorHeader>
-						<EditorTitle
+						<TitleLine>
+							
+						<TitleInput
 							value={title}
 							onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
 							placeholder={t("quiz.placeholders.title")}
 							aria-label={t("quiz.placeholders.title")}
 						/>
-						</EditorHeader>
-			
-						<Field>
-						<FieldLabel>{t("quiz.fields.description")}</FieldLabel>
-						<TextArea
+						<EditHint aria-hidden="true"><FilePenLine size={16} /></EditHint>
+						</TitleLine>
+						<DescBlock>
+						{description.trim() || isDescEditing ? (
+							<DescTextarea
 							value={description}
 							onChange={(e) => { setDescription(e.target.value); setIsDirty(true); }}
-							placeholder={t("common.placeholders.typeHere")}
-							rows={3}
-						/>
-						</Field>
+							placeholder={t("quiz.sections.descriptionAdd") || t("common.placeholders.typeHere")}
+							rows={2}
+							onBlur={() => {
+								if (!description.trim()) setIsDescEditing(false);
+							}}
+							/>
+						) : (
+							<AddDescButton
+							type="button"
+							onClick={() => setIsDescEditing(true)}
+							aria-label={t("quiz.sections.descriptionAdd") || "Ajouter une description"}
+							>
+							+ {t("quiz.sections.descriptionAdd") || "Ajouter une description"}
+							</AddDescButton>
+						)}
+						</DescBlock>
+
 					</CenterInner>
 
 					{questions.length === 0 ? (
@@ -356,14 +379,15 @@ export default function NewQuiz() {
 												value={opt}
 												onChange={(e) => updateOption(q.id, idx, e.target.value)}
 											/>
-
 											<RemoveOpt
 												onClick={() => removeOption(q.id, idx)}
 												title={t("actions.delete")}
 												aria-label={t("actions.delete")}
 											>
+												
 												<Trash2 size={16} />
 											</RemoveOpt>
+											
 										</OptionRow>
 									))}
 
@@ -404,7 +428,7 @@ const Controls = styled.div`
 const SaveButton = styled(Button)`
 	background-color:var(--color-success-bg);
 	&:hover{
-		background-color:#134e4a;
+		background-color: #134e4a;
 	}
 `;
 
@@ -439,7 +463,7 @@ const Body = styled.div`
 
 const LeftPanel = styled.aside`
 	grid-area: sidebar;
-	border-right:1px solid #e5e7eb;
+	border-right:1px solid var(--quiz-border);
 	padding-right:16px;
 	display:flex;
 	flex-direction:column;
@@ -451,7 +475,7 @@ const LeftPanel = styled.aside`
 
 	@media (max-width: 768px){
     	border-right:none;
-	    border-bottom:1px solid #e5e7eb;
+	    border-bottom:1px solid var(--quiz-border);
     	padding-right:0;
 	    padding-bottom:12px;
 		max-height:40vh;   
@@ -469,15 +493,15 @@ const AddQuestionButton = styled(Button)`
 	display:inline-flex;
 	align-items:center;
 	gap:8px;
-	background-color:#2563eb;
+	background-color: #2563eb;
 	border:1px solid #e5e7eb;
 	border-radius:10px;
 	padding:10px 12px;
 	cursor:pointer;
-	color:#fff;
+	color: #fff;
 	font-weight:600;
 	&:hover{
-		background-color:#1e40af;
+		background-color: #1e40af;
 	}
 
 	@media (max-width: 768px){
@@ -526,14 +550,14 @@ const LeftCard = styled(Button)`
 	grid-template-columns:28px 1fr;
 	align-items:center;
 	gap:8px;
-	border:1px solid #e5e7eb;
+	border:1px solid var(--quiz-border);
 	border-radius:10px;
-	background-color:var(--color-background-elevated);
+	background-color:var(--quiz-surface-muted);
 	color:var(--color-text);
 	padding:8px 10px;
 	cursor:pointer;
 	text-align:left;
-	   position:relative;     /* pour l'indicateur drop */
+	   position:relative;
 	   cursor:grab;
 	   &[data-dragging="true"] {
 	     opacity:0.6;
@@ -561,7 +585,7 @@ const LeftCard = styled(Button)`
 	}
 
 	@media (max-width: 768px){
-		padding:10px; /* touche plus grande */
+		padding:10px;
 	}
 `;
 
@@ -579,9 +603,9 @@ const DragDock = styled.div`
     justify-content:center;
     width:24px;
     height:32px;
-    color:#94a3b8;
+    color: #94a3b8;
     cursor:grab;
-    &:hover{ color:#64748b; }
+    &:hover{ color: #64748b; }
     &[data-dragging="true"]{
       opacity:.7;
       cursor:grabbing;
@@ -650,30 +674,71 @@ const CenterInner = styled.div `
 	}
 `;
 
-const EditorHeader = styled.div`
+const TitleLine = styled.div`
 	display:flex;
 	align-items:center;
-	justify-content:space-between;
-	gap:10px;
-	margin-bottom:12px;
+	gap:8px;
+	margin: 6px 0 2px 0;
+	&:hover ${''} svg {
+		opacity: 0.6;
+	}
 `;
 
-const EditorTitle = styled(Input)`
-	flex:1;
+const TitleInput = styled.input`
+	border:none;
+	background:transparent;
+	outline:none;
+	padding:0;
+	margin:0;
 	width:100%;
-	height:40px;
-	border:1px solid #e5e7eb;
-	border-radius: 8px;
-	padding:0 12px;
-	font-size:16px;
-	background-color:var(--color-background-elevated);
-	background-clip: padding-box;
-	-webkit-appearance: none;
-	appearance: none;
+	font-weight:700;
+	line-height:1.2;
 	color:var(--color-text);
-	&:focus{
-		outline:none;
-		box-shadow:0 0 0 2px rgba(37,99,235,0.15);
+	font-size: clamp(18px, 2.8vw, 28px);
+	&::placeholder{
+		color: #64748b;
+  	}
+`;
+
+const EditHint = styled.span`
+	display:inline-grid;
+	place-items:center;
+	width:20px;
+	height:20px;
+	color:#94a3b8;
+	opacity:0;
+	transition: opacity .12s ease;
+`;
+
+const DescBlock = styled.div`
+  	margin-top: 2px;
+`;
+
+const DescTextarea = styled(TextArea)`
+	width:100%;
+	border:none;
+	outline:none;
+	resize:vertical;
+	background:transparent;
+	color:var(--color-text);
+	line-height:1.4;
+	font-size: 14px;
+	padding: 2px 0;
+	&::placeholder{
+		color: #94a3b8;
+	}
+`;
+
+const AddDescButton = styled(Button)`
+	border:none;
+	background:transparent;
+	color: #94a3b8;
+	padding:0;
+	margin: 2px 0 0;
+	font-size:14px;
+	cursor:text;
+	&:hover{
+		color: #64748b;
 	}
 `;
 
@@ -690,21 +755,21 @@ const FieldLabel = styled.label`
 
 const MyInput = styled(Input)`
 	height:38px;
-	border:1px solid #e5e7eb;
+	border:1px solid var(--quiz-border);
 	border-radius:8px;
 	padding:0 10px;
-	background-color:var(--color-background-elevated);
+	background-color:var(--quiz-surface);
 	color:var(--color-text);
 `;
 
 const DropPlaceholder = styled.div`
 	height:160px;
-	border:2px dashed #cbd5e1;
+	border:2px dashed var(--quiz-border);
 	border-radius:12px;
 	display:grid;
 	place-items:center;
-	color:#64748b;
-	background-color:var(--color-background-elevated);
+	color: var(--quiz-placeholder);
+	background-color:var(--quiz-surface-muted);
 	width:100%;
 	max-width:var(--content-width);
 	margin:0 auto;
@@ -730,9 +795,9 @@ const QuestionList = styled.div`
 `;
 
 const QuestionCard = styled.div`
-	border:1px solid #e5e7eb;
+	border:1px solid var(--quiz-border);
 	border-radius:12px;
-	background-color:var(--color-background-elevated);
+	background-color:var(--quiz-surface-muted);
 	padding:12px;
 	width:100%;
 	max-width:var(--content-width);
@@ -760,13 +825,20 @@ const Badge = styled.span`
 	color:var(--color-text);
 `;
 
-const DeleteBtn = styled(Button)`
-	border:none;
-	background:transparent;
-	color:#6b7280;
-	cursor:pointer;
-	&:hover{
-		color:#ef4444;
+const DeleteBtn = styled.button`
+	border: none;
+	background-color: var(--brand-error-500);
+	color: #000;
+	cursor: pointer;
+	transition: background-color .15s ease;
+
+	&:hover {
+		background-color: var(--brand-error-600);
+		color: #000;
+	}
+
+	&:active {
+		background-color: var(--brand-error-700);
 	}
 `;
 
@@ -783,9 +855,9 @@ const OptionRow = styled.div`
 	align-items:center;
 	gap:8px;
 	padding:6px 8px;
-	border:1px solid #e5e7eb;
+	border:1px solid var(--quiz-border);
 	border-radius:8px;
-	background-color:var(--color-background-elevated);
+	background-color:var(--quiz-surface);
 	margin-bottom:8px;
 `;
 
@@ -801,13 +873,20 @@ const OptionInput = styled(Input)`
 	color:var(--color-text);
 `;
 
-const RemoveOpt = styled(Button)`
-	border:none;
-	background:transparent;
-	color:#6b7280;
-	cursor:pointer;
-	&:hover{
-		color:#ef4444;
+const RemoveOpt = styled.button`
+	border: none;
+	background-color: var(--brand-error-500);
+	color: #000;
+	cursor: pointer;
+	transition: background-color .15s ease;
+
+	&:hover {
+		background-color: var(--brand-error-600);
+		color: #000;
+	}
+
+	&:active {
+		background-color: var(--brand-error-700);
 	}
 `;
 
@@ -815,7 +894,7 @@ const AddOption = styled(Button)`
 	display:inline-flex;
 	align-items:center;
 	gap:6px;
-	background-color:#2563eb;
+	background-color: #2563eb;
 	border:1px solid #e5e7eb;
 	border-radius:8px;
 	padding:8px 10px;
@@ -823,14 +902,14 @@ const AddOption = styled(Button)`
 	font-weight:500;
 	color:#fff;
 	&:hover{
-		background-color:#1e40af;
+		background-color: #1e40af;
 	}
 `;
 
 const Divider = styled.hr`
 	margin:10px 0;
 	border:none;
-	border-top:1px solid #e5e7eb;
+	border-top:1px solid var(--quiz-border);
 `;
 
 const DesktopHeaderWrap = styled.div`

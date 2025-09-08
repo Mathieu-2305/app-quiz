@@ -42,3 +42,12 @@
     --color-background-input-focused: #ffffff;          /* Background for input fields and form elements when focused */
     --color-border: var(--gray-300);                    /* Color for borders, dividers, and separators */
 }
+
+
+body.page-newquiz {
+  --quiz-surface: var(--gray-100);
+  --quiz-surface-muted: var(--gray-200);
+  --quiz-border: var(--gray-300);
+  --quiz-border-strong: var(--gray-300);
+  --quiz-placeholder: var(--gray-500);
+}
