@@ -35,8 +35,6 @@ export default function ToggleSwitch({
 	);
 }
 
-// CSS
-
 const Wrap = styled.div`
     display: inline-flex;
     align-items: center;

@@ -21,7 +21,9 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "delete": "Delete",
-    "addQuestion": "Add a question"
+    "addQuestion": "Add a question",
+    "reorder": "Reorder",
+    "back": "Back"
   },
   "common": {
     "active": "Active",

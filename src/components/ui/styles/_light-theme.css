@@ -56,3 +56,12 @@
     --liquidglass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);  /* soft subtle shadow */
 
 }
+
+
+body.page-newquiz {
+  --quiz-surface: var(--gray-100);
+  --quiz-surface-muted: var(--gray-200);
+  --quiz-border: var(--gray-300);
+  --quiz-border-strong: var(--gray-400);
+  --quiz-placeholder: var(--gray-500);
+}

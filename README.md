@@ -5,11 +5,11 @@
 
 
 
-- NewQuiz.jsx, Gestion des scrollbars 
-- NewQuiz.jsx, Gerer max-width du content
-- NewQuiz.jsx, rajouter drag&drop pour la position des questions
-- NewQuiz.jsx, dans la colonne de gauche avoir title + single ou multi choice info 
-- NewQuiz.jsx, Gerer les Inputs, Textarea etc... pour en faire ou utiliser des componsants 
+- ~~NewQuiz.jsx, Gestion des scrollbars~~
+- ~~NewQuiz.jsx, Gerer max-width du content~~
+- ~~NewQuiz.jsx, rajouter drag&drop pour la position des questions~~
+- ~~NewQuiz.jsx, dans la colonne de gauche avoir title + single ou multi choice info~~
+- ~~NewQuiz.jsx, Gerer les Inputs, Textarea etc... pour en faire ou utiliser des componsants~~ 
 - NewQuiz.jsx, Harmoniser le style pour correspondre au design de base 
 
 

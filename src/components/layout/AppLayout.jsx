@@ -32,14 +32,14 @@ export default function AppLayout({ children }) {
 	};
 
 	const itemsTop = useMemo(() => ([
-		{ key: "quiz",    title: t("sidebar.quiz"),    icon: <FlaskConical size={24} />, to: "/home" },
-		{ key: "results", title: t("sidebar.results"), icon: <Award size={24} />,        to: "/results" },
-		{ key: "search",  title: t("sidebar.search"),  icon: <Search size={24} />,       to: "/search" },
+		{ key: "quiz",    title: t("nav.quiz"),    icon: <FlaskConical size={24} />, to: "/home" },
+		{ key: "results", title: t("nav.results"), icon: <Award size={24} />,        to: "/results" },
+		{ key: "search",  title: t("nav.search"),  icon: <Search size={24} />,       to: "/search" },
 	]), [t]);
 
 	const itemsBottom = useMemo(() => ([
-		{ key: "settings", title: t("sidebar.settings"), icon: <SettingsIcon size={24} />, to: "/settings" },
-		{ key: "logout",   title: t("sidebar.logout"),   icon: <LogOut size={24} color="#ef4444" />, onClick: handleLogoutClick },
+		{ key: "settings", title: t("nav.settings"), icon: <SettingsIcon size={24} />, to: "/settings" },
+		{ key: "logout",   title: t("nav.logout"),   icon: <LogOut size={24} color="#ef4444" />, onClick: handleLogoutClick },
 	]), [t]);
 
 	const avatarText =
@@ -76,7 +76,6 @@ export default function AppLayout({ children }) {
 	);
 }
 
-// Styles 
 const Container = styled.div`
     display: flex;
     height: 100vh;
