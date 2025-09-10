@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -18,25 +19,18 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
-        'role',
-        'password',
+        'user_role',
+        'password_hash',
     ];
 
     protected $hidden = [
-        'password',
+        'password_hash',
     ];
 
     public $timestamps = true;
 
-    protected function casts(): array
+    public function setPasswordHashAttribute($value)
     {
-        return [
-            'password' => 'hashed',
-        ];
-    }
-
-    public function getRememberTokenName()
-    {
-         return null;
+        $this->attributes['password_hash'] = Hash::make($value);
     }
 }
