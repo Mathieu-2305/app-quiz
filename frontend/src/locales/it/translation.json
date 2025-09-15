@@ -3,9 +3,9 @@
     "name": "Rafisa App"
   },
 	"login": {
-		"description": "Un outil web intelligent pour créer, gérer et archiver des projets en toute fluidité dans toutes les agences RAFISA.",
-		"copyright": "Project Manager © 2025. Tous droits réservés.",
-		"sign_in": "Se connecter avec Microsoft"
+		"description": "Uno strumento web intelligente per creare, gestire e archiviare progetti in modo semplice in tutte le agenzie RAFISA.",
+		"copyright": "Project Manager © 2025. Tutti i diritti riservati.",
+		"sign_in": "Accedi con Microsoft"
 	},
   "nav": {
     "quiz": "Quiz",
@@ -37,7 +37,8 @@
     "state": {
       "on": "Attivo",
       "off": "Disattivo"
-    }
+    },
+		"loading": "Caricamento..."
   },
   "quiz": {
     "title": "Crea e modifica un quiz",
@@ -77,7 +78,8 @@
       "option": "Opzione",
       "true": "Vero",
       "false": "Falso"
-    }
+    },
+		"empty": "Ancora nessun quiz."
   },
   "pages": {
     "home": {

@@ -37,7 +37,8 @@
     "state": {
       "on": "On",
       "off": "Off"
-    }
+    },
+		"loading": "Loading..."
   },
   "quiz": {
     "title": "Create and edit a quiz",
@@ -77,7 +78,8 @@
       "option": "Option",
       "true": "True",
       "false": "False"
-    }
+    },
+		"empty": "No quizzes yet."
   },
   "pages": {
     "home": {

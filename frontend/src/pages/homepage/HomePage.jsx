@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FlaskConical, Plus } from "lucide-react";
 import styled from "styled-components";
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import LanguageSelector from "../../components/ui/LanguageSelector";
 import Header from "../../components/layout/Header";
 import Button from "../../components/ui/Button";
+import { getQuizzes } from "../../services/api";
 
 export default function HomePage() {
     // Gives the navigate() function to change pages with the React Router
@@ -15,8 +16,45 @@ export default function HomePage() {
     // Translation function
 	const { t } = useTranslation();
 
+	// Data fetch related functions
+	const [quizzes, setQuizzes] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [err, setErr] = useState("");
+	
+	// The API fetches the data
+	useEffect(() => {
+    let alive = true;
+    (async () => {
+		try {
+			const data = await getQuizzes(); 
+			if (!alive) return;
+			setQuizzes(Array.isArray(data) ? data : []);
+		} catch (e) {
+			setErr(e.message || String(e));
+		} finally {
+			if (alive) setLoading(false);
+		}
+		})();
+		return () => { alive = false; };
+	}, []);
+
+	// The frontend creates a card and displays the data inside it
+	const cards = useMemo(() => {
+		const placeholderImg =
+			"https://img.freepik.com/free-vector/gradient-ui-ux-background-illustrated_23-2149050187.jpg?semt=ais_hybrid&w=740&q=80";
+		return (quizzes || []).map(q => ({
+			title: q.title ?? "Untitled",
+
+			tags: Array.isArray(q.tags) ? q.tags.map(t => t.tag_name).slice(0, 3) : [],
+			imgURL: placeholderImg,
+			date: q.created_at?.slice(0,10) ?? "",
+			modified: q.updated_at?.slice(0,10) ?? "",
+		}));
+		}, [quizzes]);
+
+
 	// Example array of items
-	const quizItems = [
+	/*const quizItems = [
 		{
 			title: "Mastering UI/UX Design for Impactful Solutions",
 			tags: ["UI/UX", "Not Urgent"],
@@ -60,36 +98,45 @@ export default function HomePage() {
 			modified: "2025-02-05",
 		},
 	];
-
+*/
 
 	return (
-		// Header
-		<Main>
-			<Header
-				title={t("pages.home.title")}
-				icon={<FlaskConical size={20} aria-hidden="true" />}
-				actions={[
-					<LanguageSelector key="lang" />,
-					<NewQuizButton
-						key="new"
-						onClick={() => navigate("/quiz/new")}
-						aria-label={t("actions.newQuiz")}
-						title={t("actions.newQuiz")}
-					>
-						<Plus size={16} aria-hidden="true" /> {t("actions.newQuiz")}
-					</NewQuizButton>,
+		<Main> 
+			<Header 
+				title={t("pages.home.title")} 
+				icon={<FlaskConical size={20} aria-hidden="true" />} 
+				actions={[ 
+				<LanguageSelector key="lang" />, 
+				<NewQuizButton 
+				key="new" 
+				onClick={() => navigate("/quiz/new")} 
+				aria-label={t("actions.newQuiz")} 
+				title={t("actions.newQuiz")} 
+			> 
+				<Plus size={16} aria-hidden="true" /> 
+			{t("actions.newQuiz")} 
+				</NewQuizButton>,
 				]}
 			/>
+
+			{/* Display the different quizzes */}
 			<Content>
+				{loading && <p>{t("common.loading")}</p>}
+				{err && <pre style={{color:"crimson",whiteSpace:"pre-wrap"}}>{err}</pre>}
+
+				{!loading && !err && (
 				<QuizGrid>
-					{quizItems.map((item, index) => (
-						<QuizCard key={index} {...item} />
-					))}
+					{cards.length === 0 ? (
+					<p>{t("quiz.empty")}</p>
+					) : (
+					cards.map((item, idx) => <QuizCard key={idx} {...item} />)
+					)}
 				</QuizGrid>
+				)}
 			</Content>
 		</Main>
 	);
-}
+	}
 
 const Main = styled.main`
   flex: 1;

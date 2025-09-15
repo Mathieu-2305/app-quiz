@@ -37,7 +37,8 @@
     "state": {
       "on": "Ein",
       "off": "Aus"
-    }
+    },
+		"loading": "Laden..."
   },
   "quiz": {
     "title": "Ein Quiz erstellen und bearbeiten",
@@ -77,7 +78,8 @@
       "option": "Option",
       "true": "Wahr",
       "false": "Falsch"
-    }
+    },
+		"empty": "Noch keine Quiz."
   },
   "pages": {
     "home": {

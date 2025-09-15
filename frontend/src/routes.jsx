@@ -3,6 +3,7 @@ import HomePage from "./pages/homepage/HomePage.jsx";
 import LoginPage from "./pages/login/LoginPage.jsx";
 import NewQuiz from "./pages/quiz_editor/NewQuiz.jsx";
 import SettingsPage from "./pages/settings/Settings.jsx";
+import Users from "./pages/users/Users.jsx";
 import AppLayout from "./components/layout/AppLayout";
 
 export const routes = [
@@ -25,6 +26,12 @@ export const routes = [
 	{
 		path: "/settings",
 		element: <SettingsPage />,
+		protected: true,
+		layout: AppLayout
+	},
+	{
+		path: "/users",
+		element: <Users/>,
 		protected: true,
 		layout: AppLayout
 	},

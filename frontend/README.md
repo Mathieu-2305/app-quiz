@@ -3,8 +3,15 @@
 
 # TODO 
 
+- Mettre un middleware (sanctum)
+- Détecter l'UUID du user et créer un compte dans la BD si inexistant
+- Gérer l'édition des quiz depuis NewQuiz.jsx
+- Rendre l'édition possible uniquement aux formateurs
+
+- Réécrire cette partie du TODO si besoin de plus de clarté
 
 
+15.09.2025
 - ~~NewQuiz.jsx, Gestion des scrollbars~~
 - ~~NewQuiz.jsx, Gerer max-width du content~~
 - ~~NewQuiz.jsx, rajouter drag&drop pour la position des questions~~
