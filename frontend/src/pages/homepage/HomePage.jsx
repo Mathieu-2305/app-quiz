@@ -40,17 +40,18 @@ export default function HomePage() {
 
 	// The frontend creates a card and displays the data inside it
 	const cards = useMemo(() => {
-		const placeholderImg =
+		const fallbackImg =
 			"https://img.freepik.com/free-vector/gradient-ui-ux-background-illustrated_23-2149050187.jpg?semt=ais_hybrid&w=740&q=80";
 		return (quizzes || []).map(q => ({
 			title: q.title ?? "Untitled",
-
 			tags: Array.isArray(q.tags) ? q.tags.map(t => t.tag_name).slice(0, 3) : [],
-			imgURL: placeholderImg,
+			imgURL: q.cover_image_url || fallbackImg,
 			date: q.created_at?.slice(0,10) ?? "",
 			modified: q.updated_at?.slice(0,10) ?? "",
+			isActive: !!q.is_active,
+			onClick: () => q.is_active && navigate(`/quizzes/${q.id}`),
 		}));
-		}, [quizzes]);
+		}, [quizzes, navigate]);
 
 
 	// Example array of items
@@ -133,10 +134,11 @@ export default function HomePage() {
 					)}
 				</QuizGrid>
 				)}
+				
 			</Content>
 		</Main>
 	);
-	}
+}
 
 const Main = styled.main`
   flex: 1;
@@ -166,4 +168,9 @@ const QuizGrid = styled.section`
 	gap:  var(--spacing);
 	width: 100%;
     padding: var(--spacing-l);
+`;
+
+const CardWrapper = styled.div`
+  opacity: ${(p) => (p["data-inactive"] ? 0.75 : 1)};
+  pointer-events: auto;
 `;

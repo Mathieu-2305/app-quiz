@@ -10,6 +10,7 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Header from "../../components/layout/Header";
 import TextArea from "../../components/ui/TextArea";
+import { createQuiz } from "../../services/api";
 
 export default function NewQuiz() {
 	// Translation
@@ -22,7 +23,7 @@ export default function NewQuiz() {
 	const [isDirty, setIsDirty] = useState(false);
 	const [active, setActive] = useState(true);
 	const [title, setTitle] = useState("");
-	const [description, setDescription] = useState("");
+	const [quiz_description, setQuizDescription] = useState("");
 	const [questions, setQuestions] = useState([]);
 	const [isDescEditing, setIsDescEditing] = useState(false);
 
@@ -37,6 +38,10 @@ export default function NewQuiz() {
 	const titleRef = useRef(null);
 	const measureRef = useRef(null);
 	const [iconLeft, setIconLeft] = useState(0);
+
+	// Data related const
+	const [coverImageFile, setCoverImageFile] = useState(null);  // File upload
+	const [coverImageUrl, setCoverImageUrl]   = useState("");    // Typed URL
 
 
 	useEffect(() => {
@@ -90,10 +95,42 @@ export default function NewQuiz() {
 		setIsDirty(true);
 	};
 
-	// Simulates the save
-	const onSave = () => {
-		console.log("tkt c'est save", { active, title, description, questions });
-		setIsDirty(false);
+	// Saves the quiz
+	const onSave = async () => {
+		try {
+			const preparedQuestions = questions.map(q => ({
+				title: q.title || "",
+				description: q.description || "",
+				options: q.options || [],
+				correctIndices: q.correctIndices || [],
+			}));
+
+			await createQuiz({
+				title,
+				quiz_description,
+				is_active: active,
+				cover_image_file: coverImageFile ?? undefined,
+				cover_image_url: coverImageUrl || undefined,
+				questions: preparedQuestions,
+			});
+
+			const created = await createQuiz({
+				title,
+				quiz_description: quiz_description,
+				is_active: active,
+				cover_image_file: coverImageFile,
+				cover_image_url: coverImageUrl || undefined,
+				questions: preparedQuestions,
+			});
+
+			console.log("Quiz créé:", created);
+			setIsDirty(false);
+			// Return to the homepage or the form
+			navigate("/");
+		}	catch (e) {
+			console.error(e);
+			alert(e.message || "Error while saving");
+		}
 	};
 
 	// Partial update of a question
@@ -330,27 +367,31 @@ useLayoutEffect(() => {
 						<EditHint aria-hidden="true"><FilePenLine size={16} /></EditHint>
 						</TitleLine>
 						<DescBlock>
-						{description.trim() || isDescEditing ? (
 							<DescTextarea
-							value={description}
-							onChange={(e) => { setDescription(e.target.value); setIsDirty(true); }}
+							value={quiz_description}
+							onChange={(e) => { setQuizDescription(e.target.value); setIsDirty(true); }}
 							placeholder={t("quiz.sections.descriptionAdd") || t("common.placeholders.typeHere")}
 							rows={2}
-							onBlur={() => {
-								if (!description.trim()) setIsDescEditing(false);
-							}}
 							/>
-						) : (
-							<AddDescButton
-							type="button"
-							onClick={() => setIsDescEditing(true)}
-							aria-label={t("quiz.sections.descriptionAdd") || "Ajouter une description"}
-							>
-							+ {t("quiz.sections.descriptionAdd") || "Ajouter une description"}
-							</AddDescButton>
-						)}
 						</DescBlock>
-
+						<Field>
+							<FieldLabel>{t("quiz.fields.coverImage") || "Image de fond (URL)"}</FieldLabel>
+							<MyInput
+								value={coverImageUrl}
+								onChange={(e) => { setCoverImageUrl(e.target.value); setCoverImageFile(null); setIsDirty(true); }}
+								placeholder="https://exemple.com/pizza.jpg"
+							/>
+							<div style={{ marginTop: 8 }}>
+								<label style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
+								{t("quiz.fields.orUpload") || "Ou téléverser un fichier"}
+								</label>
+								<input
+								type="file"
+								accept="image/*"
+								onChange={(e) => { setCoverImageFile(e.target.files?.[0] || null); setCoverImageUrl(""); setIsDirty(true); }}
+								/>
+							</div>
+						</Field>
 					</CenterInner>
 
 					{questions.length === 0 ? (
@@ -1009,4 +1050,3 @@ const BackIconButton = styled(Button)`
 
 	&:hover { background: var(--quiz-border)!important; }
 	`;
-

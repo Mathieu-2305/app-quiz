@@ -59,7 +59,9 @@
 		},
 		"fields": {
 		"title": "Intitulé",
-		"description": "Description"
+		"description": "Description",
+		"coverImage": "Image de fond (URL)",
+		"orUpload": "Ou téléverser un fichier"
 		},
 		"category": {
 		"new": "Nouvelle Catégorie"

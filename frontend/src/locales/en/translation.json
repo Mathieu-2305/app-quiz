@@ -59,7 +59,9 @@
     },
     "fields": {
       "title": "Title",
-      "description": "Description"
+      "description": "Description",
+      "coverImage": "Background image (URL)",
+      "orUpload": "Or upload a file"
     },
     "category": {
       "new": "New Category"

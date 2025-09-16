@@ -3,12 +3,14 @@
 
 # TODO 
 
-- Mettre un middleware (sanctum)
+- Mettre un middleware pour sécuriser la connexion (sanctum)
 - Détecter l'UUID du user et créer un compte dans la BD si inexistant
+- ~~Enregistrer quiz dans la BD~~
 - Gérer l'édition des quiz depuis NewQuiz.jsx
-- Rendre l'édition possible uniquement aux formateurs
 
-- Réécrire cette partie du TODO si besoin de plus de clarté
+
+# LATER
+- Rendre l'édition possible uniquement aux formateurs
 
 
 15.09.2025
