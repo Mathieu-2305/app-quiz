@@ -1,148 +1,91 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// src/services/api.js
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
-const USE_CREDENTIALS = false; 
-
-async function getJson(url, options = {}) {
-  const res = await fetch(url, {
-    credentials: USE_CREDENTIALS ? "include" : "omit",
-    headers: { Accept: "application/json", ...(options.headers || {}) },
-    ...options,
-  });
-  const text = await res.text();
-  try {
-    const data = JSON.parse(text);
+function toJsonResponse(res) {
+  return res.text().then((t) => {
+    let data = {};
+    try { data = t ? JSON.parse(t) : {}; } catch {}
     if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
     return data;
-  } catch {
-    throw new Error(`Réponse non-JSON (${res.status}): ${text.slice(0,200)}...`);
-  }
+  });
 }
 
+function hasFileInPayload(obj) {
+  if (!obj || typeof obj !== "object") return false;
+  return Object.values(obj).some((v) => v instanceof File || v instanceof Blob);
+}
 
-export async function getUsers() {
-  return getJson(`${API_URL}/api/users`);
+function buildBodyAndHeaders(payload) {
+  const useMultipart = hasFileInPayload(payload) || payload?.cover_image instanceof File;
+  if (!useMultipart) {
+    return {
+      body: JSON.stringify(payload),
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+    };
+  }
+
+  const fd = new FormData();
+  for (const [k, v] of Object.entries(payload)) {
+    if (v === undefined || v === null) continue;
+
+    if (k === "module_ids" || k === "tag_ids" || k === "new_tags") {
+      if (Array.isArray(v)) {
+        v.forEach((item) => fd.append(`${k}[]`, item));
+      }
+      continue;
+    }
+
+    if (k === "questions") {
+      fd.append(k, JSON.stringify(v));
+      continue;
+    }
+
+    if (k === "is_active") {
+      fd.append(k, v ? "1" : "0");
+      continue;
+    }
+
+    fd.append(k, v);
+  }
+  return { body: fd, headers: { Accept: "application/json" } };
 }
 
 export async function getQuizzes() {
-  return getJson(`${API_URL}/api/quizzes`);
+  const res = await fetch(`${API_URL}/api/quizzes`, { headers: { Accept: "application/json" } });
+  return toJsonResponse(res);
 }
 
 export async function getQuiz(id) {
-    const res = await fetch(`${API_URL}/api/quizzes/${id}`, {
-      credentials: "omit",
-      headers: { Accept: "application/json" },
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
-    return data;
+  const res = await fetch(`${API_URL}/api/quizzes/${id}`, { headers: { Accept: "application/json" } });
+  return toJsonResponse(res);
 }
 
-export async function createQuiz({
-    title,
-    quiz_description,
-    is_active,
-    cover_image_file,
-    cover_image_url,
-    questions,
-    module_ids = [],
-    tag_ids = [],
-    new_tags = [],
-}) {
-  const API = `${API_URL}/api/quizzes`;
-
-  const throwApiError = async (res) => {
-    let msg = "Erreur API createQuiz";
-    try {
-      const data = await res.json();
-      if (data?.message) msg = data.message;
-    } catch {}
-    throw new Error(msg);
-  };
-
-  if (cover_image_file instanceof File) {
-    const fd = new FormData();
-        fd.append("title", title);
-        fd.append("quiz_description", quiz_description ?? "");
-        fd.append("is_active", is_active ? "1" : "0");
-        fd.append("cover_image", cover_image_file);
-        if (cover_image_url) fd.append("cover_image_url", cover_image_url);
-
-        module_ids.forEach((id) => fd.append("module_ids[]", String(id)));
-        tag_ids.forEach((id) => fd.append("tag_ids[]", String(id)));
-        new_tags.forEach((name) => fd.append("new_tags[]", name));
-
-        fd.append("questions", JSON.stringify(questions || []));
-
-    const res = await fetch(API, {
-      method: "POST",
-      credentials: USE_CREDENTIALS ? "include" : "omit",
-      headers: { Accept: "application/json" },
-      body: fd,
-    });
-    if (!res.ok) return throwApiError(res);
-    return res.json();
-  }
-
-  const payload = {
-      title,
-      quiz_description: quiz_description ?? "",
-      is_active: !!is_active,
-      cover_image_url: cover_image_url || null,
-      questions: questions || [],
-      module_ids,
-      tag_ids,
-      new_tags,
-  };
-
-  const res = await fetch(API, {
-      method: "POST",
-      credentials: USE_CREDENTIALS ? "include" : "omit",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) return throwApiError(res);
-    return res.json();
+export async function createQuiz(payload) {
+  const { body, headers } = buildBodyAndHeaders(payload);
+  const res = await fetch(`${API_URL}/api/quizzes`, { method: "POST", headers, body });
+  return toJsonResponse(res);
 }
 
 export async function updateQuiz(id, payload) {
-    const hasFile = !!payload.cover_image_file;
-    const body = hasFile ? new FormData() : JSON.stringify(payload);
-
-    if (hasFile) {
-      Object.entries(payload).forEach(([k, v]) => {
-        if (v === undefined || v === null) return;
-        if (Array.isArray(v)) body.append(k, JSON.stringify(v));
-        else body.append(k, v);
-      });
-    }
-
-  const res = await fetch(`${API_URL}/api/quizzes/${id}`, {
-      method: "PUT", // ou PATCH selon ton backend
-      credentials: "omit",
-      headers: hasFile
-        ? { Accept: "application/json" }
-        : { "Content-Type": "application/json", Accept: "application/json" },
-      body,
-    });
-
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
-  return data;
+  const { body, headers } = buildBodyAndHeaders(payload);
+  const res = await fetch(`${API_URL}/api/quizzes/${id}`, { method: "PUT", headers, body });
+  return toJsonResponse(res);
 }
 
 export async function deleteQuiz(id) {
-    const res = await fetch(`${API_URL}/api/quizzes/${id}`, {
-      method: "DELETE",
-      credentials: "omit",
-      headers: { Accept: "application/json" },
-    });
-    if (!res.ok) {
-      let data = {};
-      try { data = await res.json(); } catch {}
-      throw new Error(data?.message || `HTTP ${res.status}`);
-    }
-    return true;
+  const res = await fetch(`${API_URL}/api/quizzes/${id}`, {
+    method: "DELETE",
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return true;
+}
+
+export async function getModules() {
+  const res = await fetch(`${API_URL}/api/modules`, { headers: { Accept: "application/json" } });
+  return toJsonResponse(res);
+}
+export async function getTags() {
+  const res = await fetch(`${API_URL}/api/tags`, { headers: { Accept: "application/json" } });
+  return toJsonResponse(res);
 }

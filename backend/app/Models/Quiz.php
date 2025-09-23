@@ -9,7 +9,16 @@ class Quiz extends Model
     protected $primaryKey = 'id';
     public $timestamps = true;
 
-    protected $fillable = ['title','quiz_description','cover_image_url','is_active'];
+    protected $fillable = [
+        'title',
+        'quiz_description',
+        'cover_image_url',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 
     public function modules()
     {
@@ -22,5 +31,9 @@ class Quiz extends Model
         return $this->belongsToMany(Tag::class, 'quiz_tags', 'id_quiz', 'id_tag')
                     ->withTimestamps();
     }
-}
 
+    public function questions()
+    {
+        return $this->hasMany(Question::class, 'id_quiz');
+    }
+}

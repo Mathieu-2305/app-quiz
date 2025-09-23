@@ -19,7 +19,12 @@ export const routes = [
 		layout: AppLayout
 	},
 	{
-		path: "/quiz/new",
+		path: "/quizzes/new",
+		element: <NewQuiz />,
+		protected: true,
+	},
+	{
+		path: "/quizzes/:id/edit",
 		element: <NewQuiz />,
 		protected: true,
 	},

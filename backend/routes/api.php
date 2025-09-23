@@ -13,18 +13,22 @@ Route::get('/users', [UserController::class, 'index']);
 // Quizzes
 Route::get('/quizzes', [QuizController::class, 'index']);
 Route::get('/quizzes/{id}', [QuizController::class, 'show']);
-
-// Quiz creation
 Route::post('/quizzes', [QuizController::class, 'store']);
 
-// Modules creation and fetch
+// EDIT / DELETE
+Route::put('/quizzes/{id}', [QuizController::class, 'update']);
+Route::patch('/quizzes/{id}', [QuizController::class, 'update']);
+Route::delete('/quizzes/{id}', [QuizController::class, 'destroy']);
+
+// Modules
 Route::get('/modules', [ModuleController::class, 'index']);
 Route::post('/modules', [ModuleController::class, 'store']);
 
-// Tags creation and fetch
+// Tags
 Route::get('/tags', [TagController::class, 'index']);
 Route::post('/tags', [TagController::class, 'store']);
 
+// Preflight
 Route::options('/{any}', function () {
   return response('', 204);
 })->where('any', '.*');
