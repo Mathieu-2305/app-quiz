@@ -45,13 +45,19 @@
     "placeholders": {
       "title": "Titel des Quiz",
       "categoryTitle": "Kategorie-Titel hier eingeben",
-      "untitled": "Ohne Titel"
+      "untitled": "Ohne Titel",
+      "tags": "Geben Sie ein Tag ein und dann +",
+			"module": "Entrez un nom ou numéro de module"
     },
     "sections": {
       "categories": "Kategorien",
       "options": "Optionen",
       "descriptionAdd": "Beschreibung hinzufügen",
-      "questions": "Fragen"
+      "questions": "Fragen",
+		  "tagAdd": "Neues Tag",
+		  "existingTag": "Vorhandene Tags",
+			"module": "Module",
+			"noModule": "Kein vorhandenes Modul"
     },
     "hints": {
       "dragCenter": "Ziehen und in der Mitte ablegen",

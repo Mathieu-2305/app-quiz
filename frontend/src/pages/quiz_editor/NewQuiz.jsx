@@ -13,6 +13,8 @@ import TextArea from "../../components/ui/TextArea";
 import { createQuiz } from "../../services/api";
 
 export default function NewQuiz() {
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 	// Translation
 	const { t } = useTranslation();
 
@@ -42,12 +44,56 @@ export default function NewQuiz() {
 	// Data related const
 	const [coverImageFile, setCoverImageFile] = useState(null);  // File upload
 	const [coverImageUrl, setCoverImageUrl]   = useState("");    // Typed URL
+	const [modules, setModules] = useState([]);
+	const [tags, setTags] = useState([]);
+	const [selectedModuleIds, setSelectedModuleIds] = useState([]);
+	const [selectedTagIds, setSelectedTagIds] = useState([]);
+	const [newTagInput, setNewTagInput] = useState("");
+	const [newTags, setNewTags] = useState([]);
+	const [newModuleInput, setNewModuleInput] = useState("");
+	const [creatingModule, setCreatingModule] = useState(false);
 
 
 	useEffect(() => {
 		document.body.classList.add('page-newquiz');
 		return () => document.body.classList.remove('page-newquiz');
 	}, []);
+
+	useEffect(() => {
+		const getJson = async (url) => {
+			const res = await fetch(url, {
+				credentials: "omit",
+				headers: { Accept: "application/json" }
+			});
+
+			const text = await res.text();
+			try {
+				const data = JSON.parse(text);
+			if (!res.ok) {
+				throw new Error(data?.message || `HTTP ${res.status}`);
+			}
+			return data;
+			} catch {
+				console.error(`Réponse non-JSON pour ${url}:`, res.status, res.statusText, text.slice(0, 200));
+				throw new Error(`Réponse non-JSON (${res.status}) sur ${url}`);
+			}
+		};
+
+  const load = async () => {
+    try {
+      const [mods, tgs] = await Promise.all([
+        getJson(`${API_URL}/api/modules`),
+        getJson(`${API_URL}/api/tags`),
+      ]);
+      setModules(mods || []);
+      setTags(tgs || []);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  load();
+}, []);
+
 
 	// Label if there's no title
 	const untitled = useMemo(
@@ -61,7 +107,7 @@ export default function NewQuiz() {
 		const baseLabel = t("quiz.defaults.option");
 		return {
 			id,
-			type: "single", // kept for compatibility, display type is derived from correctIndices length
+			type: "single",
 			title: "",
 			description: "",
 			required: false,
@@ -98,40 +144,34 @@ export default function NewQuiz() {
 	// Saves the quiz
 	const onSave = async () => {
 		try {
-			const preparedQuestions = questions.map(q => ({
-				title: q.title || "",
-				description: q.description || "",
-				options: q.options || [],
-				correctIndices: q.correctIndices || [],
-			}));
+		const preparedQuestions = questions.map(q => ({
+			title: q.title || "",
+			description: q.description || "",
+			options: q.options || [],
+			correctIndices: q.correctIndices || [],
+		}));
 
-			await createQuiz({
-				title,
-				quiz_description,
-				is_active: active,
-				cover_image_file: coverImageFile ?? undefined,
-				cover_image_url: coverImageUrl || undefined,
-				questions: preparedQuestions,
-			});
+		const created = await createQuiz({
+			title,
+			quiz_description,
+			is_active: active,
+			cover_image_file: coverImageFile ?? undefined,
+			cover_image_url: coverImageUrl || undefined,
+			questions: preparedQuestions,
+	        module_ids: selectedModuleIds,
+	        tag_ids: selectedTagIds,
+	        new_tags: newTags,
+		});
 
-			const created = await createQuiz({
-				title,
-				quiz_description: quiz_description,
-				is_active: active,
-				cover_image_file: coverImageFile,
-				cover_image_url: coverImageUrl || undefined,
-				questions: preparedQuestions,
-			});
+      console.log("Quiz créé:", created);
+      setIsDirty(false);
+      navigate("/");
+    } catch (e) {
+      console.error(e);
+      alert(e.message || "Error while saving");
+    }
+  };
 
-			console.log("Quiz créé:", created);
-			setIsDirty(false);
-			// Return to the homepage or the form
-			navigate("/");
-		}	catch (e) {
-			console.error(e);
-			alert(e.message || "Error while saving");
-		}
-	};
 
 	// Partial update of a question
 	const updateQuestion = (id, patch) => {
@@ -270,6 +310,79 @@ useLayoutEffect(() => {
 	};
 	}, [title, t]);
 
+	// toggle
+	const toggleId = (id, list, setter) => {
+		setter(list.includes(id) ? list.filter(x => x !== id) : [...list, id]);
+		setIsDirty(true);
+	};
+
+	// Add a new tag 
+	const addNewTag = () => {
+	const name = newTagInput.trim();
+	if (!name) return;
+
+	// si existe déjà en BD -> sélectionne l'id existant
+	const exists = tags.find(t => t.tag_name.toLowerCase() === name.toLowerCase());
+	if (exists) {
+		if (!selectedTagIds.includes(exists.id)) {
+		setSelectedTagIds(prev => [...prev, exists.id]);
+		setIsDirty(true);
+		}
+	} else if (!newTags.some(n => n.toLowerCase() === name.toLowerCase())) {
+		setNewTags(prev => [...prev, name]);
+		setIsDirty(true);
+	}
+	setNewTagInput("");
+};
+
+	const createModuleInline = async () => {
+		const name = newModuleInput.trim();
+		if (!name) return;
+
+		// Si le module existe déjà côté client, on le sélectionne
+		const exists = modules.find(m => m.module_name.toLowerCase() === name.toLowerCase());
+		if (exists) {
+			if (!selectedModuleIds.includes(exists.id)) {
+			setSelectedModuleIds(prev => [...prev, exists.id]);
+			setIsDirty(true);
+			}
+			setNewModuleInput("");
+			return;
+		}
+
+		try {
+			setCreatingModule(true);
+			const res = await fetch(`${API_URL}/api/modules`, {
+			method: "POST",
+			// Tant que Sanctum n'est pas configuré, PAS de cookies:
+			credentials: "omit",
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+			},
+			body: JSON.stringify({ module_name: name }),
+			});
+			const data = await res.json().catch(() => ({}));
+			if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
+
+			// data = { id, module_name, ... }
+			setModules(prev =>
+			[...prev, data].sort((a, b) => a.module_name.localeCompare(b.module_name))
+			);
+			setSelectedModuleIds(prev =>
+			prev.includes(data.id) ? prev : [...prev, data.id]
+			);
+			setNewModuleInput("");
+			setIsDirty(true);
+		} catch (e) {
+			console.error(e);
+			alert(e.message || "Erreur lors de la création du module");
+		} finally {
+			setCreatingModule(false);
+		}
+	};
+
+
 	return (
 		<Main>
 			<UnsavedChangesGuard when={isDirty} />
@@ -374,6 +487,91 @@ useLayoutEffect(() => {
 							rows={2}
 							/>
 						</DescBlock>
+
+						<Field>
+						<FieldLabel>{t("quiz.sections.module")}</FieldLabel>
+						<ChipsWrap>
+							{modules.map(m => (
+							<Chip
+								key={m.id}
+								data-active={selectedModuleIds.includes(m.id) ? "1" : undefined}
+								type="button"
+								onClick={() => toggleId(m.id, selectedModuleIds, setSelectedModuleIds)}
+								title={m.module_name}
+							>
+								{m.module_name}
+							</Chip>
+							))}
+							{modules.length === 0 && <Hint>{t("quiz.sections.noModule")}</Hint>}
+						</ChipsWrap>
+						</Field>
+
+						<Field>
+						<FieldLabel>{t("quiz.sections.existingTag")}</FieldLabel>
+						<ChipsWrap>
+							{tags.map(t => (
+							<Chip
+								key={t.id}
+								data-active={selectedTagIds.includes(t.id) ? "1" : undefined}
+								type="button"
+								onClick={() => toggleId(t.id, selectedTagIds, setSelectedTagIds)}
+								title={t.tag_name}
+							>
+								{t.tag_name}
+							</Chip>
+							))}
+							{tags.length === 0 && <Hint>{t("quiz.sections.noTag")}</Hint>}
+						</ChipsWrap>
+						</Field>
+
+						<Field>
+						<FieldLabel>{t("quiz.sections.tagAdd")}</FieldLabel>
+						<div style={{ display: "flex", gap: 8 }}>
+							<MyInput
+							value={newTagInput}
+							onChange={e => setNewTagInput(e.target.value)}
+							placeholder={t("quiz.placeholders.tags")}
+							onKeyDown={e => {
+								if (e.key === "Enter") {
+								e.preventDefault();
+								addNewTag();
+								}
+							}}
+							/>
+							<Button type="button" onClick={addNewTag}>+</Button>
+						</div>
+
+						{!!newTags.length && (
+							<ChipsWrap style={{ marginTop: 8 }}>
+							{newTags.map(name => (
+								<Chip key={name} data-active="1">
+								{name}
+								<ChipClose onClick={() => { setNewTags(prev => prev.filter(n => n !== name)); setIsDirty(true); }}>✕</ChipClose>
+								</Chip>
+							))}
+							</ChipsWrap>
+						)}
+						</Field>
+						<Field>
+						<FieldLabel>{t("quiz.sections.moduleAdd")}</FieldLabel>
+						<div style={{ display: "flex", gap: 8 }}>
+							<MyInput
+							value={newModuleInput}
+							onChange={e => setNewModuleInput(e.target.value)}
+							placeholder={t("quiz.placeholders.module")}
+							onKeyDown={e => {
+								if (e.key === "Enter") {
+								e.preventDefault();
+								createModuleInline();
+								}
+							}}
+							/>
+								
+								<Button type="button" onClick={createModuleInline} disabled={creatingModule}>
+									{creatingModule ? "Ajout..." : "+"}
+								</Button>
+							</div>
+						</Field>
 						<Field>
 							<FieldLabel>{t("quiz.fields.coverImage") || "Image de fond (URL)"}</FieldLabel>
 							<MyInput
@@ -1017,15 +1215,15 @@ const Divider = styled.hr`
 `;
 
 const DesktopHeaderWrap = styled.div`
-  @media (max-width: 768px){
-    display:none;
-  }
+	@media (max-width: 768px){
+		display:none;
+	}
 `;
 
 const TitleInline = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
 `;
 
 const BackIconButton = styled(Button)`
@@ -1050,3 +1248,45 @@ const BackIconButton = styled(Button)`
 
 	&:hover { background: var(--quiz-border)!important; }
 	`;
+
+const ChipsWrap = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+`;
+
+const Chip = styled.button`
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	border: 1px solid var(--quiz-border);
+	border-radius: 999px;
+	padding: 6px 10px;
+	background: var(--quiz-surface);
+	color: var(--color-text);
+	cursor: pointer;
+	font-size: 13px;
+	&[data-active="1"]{
+		background: #059b19ff;
+		color: #fff;
+		border-color: #059b19ff;
+	}
+	&:hover { filter: brightness(0.98); }
+`;
+
+const ChipClose = styled.span`
+	display: inline-grid;
+	place-items: center;
+	width: 16px;
+	height: 16px;
+	border-radius: 999px;
+	cursor: pointer;
+	line-height: 0;
+	background: transparent;
+	&:hover { background: rgba(255, 255, 255, 0.2); }
+`;
+
+const Hint = styled.span`
+	font-size: 12px;
+	color: #94a3b8;
+`;

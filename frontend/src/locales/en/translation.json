@@ -45,13 +45,19 @@
     "placeholders": {
       "title": "Quiz title",
       "categoryTitle": "Type the category title here",
-      "untitled": "Untitled"
+      "untitled": "Untitled",
+      "tags": "Type a tag then Enter or +",
+			"module": "Enter a module's name or number"
     },
     "sections": {
       "categories": "Categories",
       "options": "Options",
       "descriptionAdd": "Add a description",
-      "questions": "Questions"
+      "questions": "Questions",
+		  "tagAdd": "New tag",
+		  "existingTag": "Existing tags",
+			"module": "Modules",
+			"noModule": "No existing module"
     },
     "hints": {
       "dragCenter": "Drag and drop in the center",

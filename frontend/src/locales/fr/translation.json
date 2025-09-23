@@ -43,15 +43,21 @@
 	"quiz": {
 		"title": "Créer et éditer un quiz",
 		"placeholders": {
-		"title": "Titre du quiz",
-		"categoryTitle": "Tapez le titre de la catégorie ici",
-		"untitled": "Sans titre"
+			"title": "Titre du quiz",
+			"categoryTitle": "Tapez le titre de la catégorie ici",
+			"untitled": "Sans titre",
+			"tags": "Tapez un tag puis Enter ou +",
+			"module": "Entrez un nom ou numéro de module"
 		},
 		"sections": {
-		"categories": "Catégories",
-		"options": "Options",
-		"descriptionAdd": "Ajouter une description",
-		"questions": "Questions"
+			"categories": "Catégories",
+			"options": "Options",
+			"descriptionAdd": "Ajouter une description",
+			"questions": "Questions",
+			"tagAdd": "Nouveau tag",
+			"existingTag": "Tags existants",
+			"module": "Modules",
+			"noModule": "Pas de module existant"
 		},
 		"hints": {
 		"dragCenter": "Glissez-déposez au centre",

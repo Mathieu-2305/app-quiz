@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import LanguageSelector from "../../components/ui/LanguageSelector";
 import Header from "../../components/layout/Header";
 import Button from "../../components/ui/Button";
-import { getQuizzes } from "../../services/api";
+import { getQuizzes, deleteQuiz } from "../../services/api";
 
 export default function HomePage() {
     // Gives the navigate() function to change pages with the React Router
@@ -38,18 +38,38 @@ export default function HomePage() {
 		return () => { alive = false; };
 	}, []);
 
-	// The frontend creates a card and displays the data inside it
+
+	const handleEdit = (id) => {
+    navigate(`/quiz/${id}/edit`);
+  };
+ 
+  	const handleDelete = async (id) => {
+		const confirmText = t("quiz.confirmDelete") || "Supprimer ce quiz ? Cette action est définitive.";
+		if (!window.confirm(confirmText)) return;
+		try {
+		await deleteQuiz(id);
+		
+		setQuizzes((prev) => prev.filter((q) => q.id !== id));
+		} catch (e) {
+		alert(e.message || "Erreur lors de la suppression");
+		}
+	};
+
 	const cards = useMemo(() => {
 		const fallbackImg =
 			"https://img.freepik.com/free-vector/gradient-ui-ux-background-illustrated_23-2149050187.jpg?semt=ais_hybrid&w=740&q=80";
 		return (quizzes || []).map(q => ({
+			id: q.id,
 			title: q.title ?? "Untitled",
+			modules: Array.isArray(q.modules) ? q.modules.map(m => m.module_name).slice(0, 3) : [],
 			tags: Array.isArray(q.tags) ? q.tags.map(t => t.tag_name).slice(0, 3) : [],
 			imgURL: q.cover_image_url || fallbackImg,
 			date: q.created_at?.slice(0,10) ?? "",
 			modified: q.updated_at?.slice(0,10) ?? "",
 			isActive: !!q.is_active,
 			onClick: () => q.is_active && navigate(`/quizzes/${q.id}`),
+			onEdit: handleEdit,
+			onDelete: handleDelete,
 		}));
 		}, [quizzes, navigate]);
 

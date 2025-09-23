@@ -4,17 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tag extends Model
+class Module extends Model
 {
-    protected $table = 'tags';
+    protected $table = 'modules';
     protected $primaryKey = 'id';
     public $timestamps = true;
 
-    protected $fillable = ['tag_name'];
+    protected $fillable = ['module_name'];
 
     public function quizzes()
     {
-        return $this->belongsToMany(Quiz::class, 'quiz_tags', 'id_tag', 'id_quiz')
+        return $this->belongsToMany(Quiz::class, 'quiz_modules', 'id_module', 'id_quiz')
                     ->withTimestamps();
     }
 }

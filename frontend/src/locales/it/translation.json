@@ -45,13 +45,19 @@
     "placeholders": {
       "title": "Titolo del quiz",
       "categoryTitle": "Scrivi qui il titolo della categoria",
-      "untitled": "Senza titolo"
+      "untitled": "Senza titolo",
+      "tags": "Digita un tag, quindi INVIO o +",
+	  "module": "Entrez un nom ou numéro de module"
     },
     "sections": {
-      "categories": "Categorie",
-      "options": "Opzioni",
-      "descriptionAdd": "Aggiungi una descrizione",
-      "questions": "Domande"
+     	"categories": "Categorie",
+      	"options": "Opzioni",
+      	"descriptionAdd": "Aggiungi una descrizione",
+      	"questions": "Domande",
+		"tagAdd": "Nuovo tag",
+		"existingTag": "Tag esistenti",
+		"module": "Modulo",
+		"noModule": "Nessun modulo esistente"
     },
     "hints": {
       "dragCenter": "Trascina e rilascia al centro",
