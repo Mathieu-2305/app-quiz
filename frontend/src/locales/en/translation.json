@@ -5,7 +5,7 @@
 	"login": {
 		"description": "A smart web-based tool to create, manage, and archive projects seamlessly across all RAFISA branches.",
 		"copyright": "Project Manager © 2025. All rights reserved.",
-		"sign_in": "Sign in with Microsoft"
+		"sign_in": "Sign in"
 	},
   "nav": {
     "quiz": "Quiz",

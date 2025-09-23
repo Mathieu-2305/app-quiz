@@ -1,74 +1,75 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
 import Flag from 'react-world-flags';
-import { FiChevronDown } from 'react-icons/fi';
+import styled, {css} from "styled-components";
+import {FiChevronDown} from "react-icons/fi";
 
 const languages = [
-    { code: 'en', label: 'English', countryCode: 'US' },
-    { code: 'fr', label: 'Français', countryCode: 'FR' },
-    { code: 'de', label: 'Deutsch', countryCode: 'DE' },
-    { code: 'it', label: 'Italiano', countryCode: 'IT' },
-    // add more languages here
+	{ code: 'en', label: 'English', labelShort: 'EN', countryCode: 'GB' },
+	{ code: 'fr', label: 'Français', labelShort: 'FR', countryCode: 'FR' },
+	{ code: 'de', label: 'Deutsch', labelShort: 'DE', countryCode: 'DE' },
+	{ code: 'it', label: 'Italiano', labelShort: 'IT', countryCode: 'IT' },
+	// add more languages here
 ];
 
-const LanguageDropdown = () => {
-    const { i18n } = useTranslation();
-    const [isOpen, setIsOpen] = useState(false);
-    const ref = useRef();
+const LanguageDropdown = ({ short = false, width, align = 'left', widthList = 'var(--spacing-6xl)' }) => {
+	const { i18n } = useTranslation();
+	const [isOpen, setIsOpen] = useState(false);
+	const ref = useRef();
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (ref.current && !ref.current.contains(event.target)) {
-                setIsOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+	const containerWidth = width ?? (short ? 'auto' : 'var(--spacing-6xl)');
 
-    const currentLang = languages.find(lang => lang.code === i18n.language) || languages[0];
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (ref.current && !ref.current.contains(event.target)) {
+				setIsOpen(false);
+			}
+		};
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, []);
 
-    const toggleDropdown = () => setIsOpen(prev => !prev);
+	const currentLang = languages.find(lang => lang.code === i18n.language) || languages[0];
 
-    const selectLanguage = (code) => {
-        if (code !== currentLang.code) {
-            i18n.changeLanguage(code);
-            setIsOpen(false);
-        }
-    };
+	const toggleDropdown = () => setIsOpen(prev => !prev);
 
-    return (
-        <DropdownContainer ref={ref}>
-            <DropdownHeader onClick={toggleDropdown}>
-                <Flag code={currentLang.countryCode} style={{ width: 20, height: 15 }} />
-                {currentLang.label}
-                <ChevronIcon $isopen={isOpen.toString()} />
-            </DropdownHeader>
+	const selectLanguage = (code) => {
+		if (code !== currentLang.code) {
+			i18n.changeLanguage(code);
+			setIsOpen(false);
+		}
+	};
 
-            <DropdownList $isopen={isOpen.toString()}>
-                {languages.map(({ code, label, countryCode }) => (
-                    <DropdownItem
-                        key={code}
-                        disabled={code === currentLang.code}
-                        onClick={() => selectLanguage(code)}
-                    >
-                        <Flag code={countryCode} style={{ width: 20, height: 15 }} />
-                        {label}
-                    </DropdownItem>
-                ))}
-            </DropdownList>
-        </DropdownContainer>
-    );
+	return (
+		<DropdownContainer ref={ref} $width={containerWidth}>
+			<DropdownHeader onClick={toggleDropdown}>
+				<Flag code={currentLang.countryCode} style={{ width: 20, height: 15 }} />
+				{short ? currentLang.labelShort : currentLang.label}
+				<ChevronIcon $isopen={isOpen.toString()} />
+			</DropdownHeader>
+
+			<DropdownList $isopen={isOpen.toString()} $align={align} $containerWidth={widthList}>
+				{languages.map(({ code, label, labelShort, countryCode }) => (
+					<DropdownItem
+						key={code}
+						disabled={code === currentLang.code}
+						onClick={() => selectLanguage(code)}
+					>
+						<Flag code={countryCode} style={{ width: 20, height: 15 }} />
+						{short ? labelShort : label}
+					</DropdownItem>
+				))}
+			</DropdownList>
+		</DropdownContainer>
+	);
 };
 
 export default LanguageDropdown;
 
 const DropdownContainer = styled.div`
     position: relative;
-    width: var(--spacing-6xl);
+    width: ${({ $width }) => $width};
     user-select: none;
-    color: var(--color-text);
 `;
 
 const DropdownHeader = styled.div`
@@ -92,14 +93,13 @@ const ChevronIcon = styled(FiChevronDown)`
 `;
 
 const DropdownList = styled.ul`
-    width: var(--spacing-6xl);
+    width: ${({ $containerWidth }) => $containerWidth || 'var(--spacing-6xl)'};
     border-radius: var(--border-radius);
     background-color: var(--color-background-surface);
     position: absolute;
     top: calc(100% + var(--spacing-2xs));
+    ${({ $align }) => $align === 'right' ? 'right: 0; left: auto;' : 'left: 0; right: auto;'}
     transform: ${({ $isopen }) => ($isopen === "true" ? 'scale(1)' : 'scale(0.85)')};
-    left: 0;
-    right: 0;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -107,6 +107,7 @@ const DropdownList = styled.ul`
     max-height: ${({ $isopen }) => ($isopen === "true" ? '200px' : '0')};
     opacity: ${({ $isopen }) => ($isopen === "true" ? 1 : 0)};
     overflow: hidden;
+    box-shadow: var(--box-shadow);
     transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.25s ease-in-out;
     z-index: 1000;
 `;
@@ -121,6 +122,7 @@ const DropdownItem = styled.li`
     align-items: center;
     gap: var(--spacing-xs);
     font-size: var(--font-size);
+
     &:hover {
         background-color: ${({ disabled }) => (disabled ? 'inherit' : 'var(--color-primary-bg-hover)')};
     }

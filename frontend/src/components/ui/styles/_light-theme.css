@@ -49,7 +49,11 @@
     --color-background-input-focused: #ffffff;          /* Background for input fields and form elements when focused */
     --color-border: var(--gray-300);                    /* Color for borders, dividers, and separators */
 
-    --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --box-shadow-xs: 0 0 0 1px rgba(0, 0, 0, 0.05);
+    --box-shadow-s: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --box-shadow-l: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --box-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
     --liquidglass-bg: rgba(255, 255, 255, 0.5);                /* translucent white */
     --liquidglass-blur: blur(12px);                             /* slightly stronger blur */

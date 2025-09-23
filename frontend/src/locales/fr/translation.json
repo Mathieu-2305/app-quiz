@@ -5,7 +5,7 @@
 		"login": {
 			"description": "Un outil web intelligent pour créer, gérer et archiver des projets en toute fluidité dans toutes les agences RAFISA.",
 			"copyright": "Project Manager © 2025. Tous droits réservés.",
-			"sign_in": "Se connecter avec Microsoft"
+			"sign_in": "Se connecter"
 		},
 	"nav": {
 		"quiz": "Quiz",

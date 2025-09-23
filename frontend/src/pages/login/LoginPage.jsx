@@ -9,6 +9,8 @@ import { useTranslation } from "react-i18next";
 import ToggleThemeSwitch from "../../components/ui/ToggleThemeSwitch";
 import LanguageSelector from "../../components/ui/LanguageSelector";
 import Button from "../../components/ui/Button";
+import breakpoints from "../../context/theme/breakpoints.js";
+import {useMediaQuery} from "react-responsive";
 
 function LoginPage() {
 
@@ -16,6 +18,7 @@ function LoginPage() {
 	const navigate = useNavigate();
 	const location = useLocation();
 
+	const isTablet = useMediaQuery({ query: `(max-width: ${breakpoints.tablet})` });
 	const { isInitialized, login, user } = useAuth();
 
 
@@ -47,32 +50,35 @@ function LoginPage() {
 	if(!isInitialized || user) return;
 
 	return (
-        <>
-            <Container $bg={loginBackground}>
-                <Content>
+		<>
+			<Container $bg={loginBackground}>
+				<Content>
 					<LeftContent $background={loginBackground}>
-						<Logo src={RafLogo} alt={t("app.name")} />
+						<LogoDesktop src={RafLogo} alt={t("app.name")} />
 						<Copyrights>{t("login.copyright")}</Copyrights>
 					</LeftContent>
 
 					<RightContent>
 						<RightContentTop>
+							{
+								isTablet && (<Logo src={RafLogo} alt={t("app.name")} />)
+							}
 							<ToggleThemeSwitch />
-							<LanguageSelector />
+							<LanguageSelector short align={"right"}/>
 						</RightContentTop>
 
 						<RightContentContent>
 							<Title>{t("app.name")}</Title>
 							<Subtitle>{t("login.description")}</Subtitle>
-							<Button variant={"tertiary"} onClick={handleLogin} style={{marginLeft: "auto"}}>
+							<Button onClick={handleLogin} style={{marginLeft: "auto"}}>
 								<LogIn size={24} />
 								{t("login.sign_in")}
 							</Button>
 						</RightContentContent>
 					</RightContent>
-                </Content>
-            </Container>
-        </>
+				</Content>
+			</Container>
+		</>
 	);
 }
 
@@ -82,11 +88,11 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-	width: 100vw;
+    width: 100vw;
     height: 100vh;
     background: var(--gradient-background);
-    //background: url(${props => props.$bg}) no-repeat center;
-	background-size: cover;
+        //background: url(${props => props.$bg}) no-repeat center;
+    background-size: cover;
 `;
 
 const Content = styled.div`
@@ -96,13 +102,25 @@ const Content = styled.div`
     padding: var(--spacing-s);
     border-radius: var(--border-radius-xl);
     width: var(--spacing-12xl);
-	max-height: 90vh;
-	gap: var(--spacing-s);
+    min-width: 320px;
+    min-height: 600px;
+    max-height: 90vh;
+    gap: var(--spacing-s);
     background: var(--liquidglass-bg);
     backdrop-filter: var(--liquidglass-blur);
     -webkit-backdrop-filter: var(--liquidglass-blur);
     box-shadow: var(--liquidglass-shadow);
-    min-height: 600px;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        flex-direction: column;
+        max-width: 470px;
+    }
+
+    @media (max-width: ${breakpoints.mobile}) {
+        width: 100%;
+        border-radius: 0;
+        min-height: 100vh;
+    }
 `;
 
 const LeftContent = styled.div`
@@ -112,8 +130,8 @@ const LeftContent = styled.div`
     border-radius: var(--border-radius-l);
     padding: var(--spacing);
     position: relative;
-	overflow: hidden;
-	
+    overflow: hidden;
+
     // gradient overlay
     &::after {
         content: "";
@@ -127,48 +145,86 @@ const LeftContent = styled.div`
         border-radius: inherit;
         pointer-events: none;
     }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
+        flex: 0;
+        order: 1;
+        background: transparent;
+
+        & img {
+            display: none;
+        }
+
+        & p {
+            color: var(--color-text);
+        }
+
+        &::after {
+            display: none;
+        }
+    }
 `;
 
-const Logo = styled.img`
+const LogoDesktop = styled.img`
     width: 60px;
     height: auto;
     object-fit: contain;
-	position: absolute;
-	top: var(--spacing-l);
-	left: var(--spacing-l);
+    position: absolute;
+    top: var(--spacing-l);
+    left: var(--spacing-l);
+    z-index: 1;
+`;
+
+const Logo = styled.img`
+    width: 50px;
+    height: auto;
+    object-fit: contain;
+    position: absolute;
+    top: var(--spacing);
+    left: var(--spacing);
     z-index: 1;
 `;
 
 const Copyrights = styled.p`
     width:100%;
-	position: absolute;
-	bottom: var(--spacing-2xs);
-	color: var(--gray-50);
-	text-align: center;
-	font-size: var(--font-size-s);
-	left: 0;
-	right: 0;
+    position: absolute;
+    bottom: var(--spacing);
+    color: var(--gray-50);
+    text-align: center;
+    font-size: var(--font-size-s);
+    left: 0;
+    right: 0;
     z-index: 1;
 `;
 
 const RightContent = styled.div`
-	width: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	position: relative;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
+        flex: 1;
+    }
 `;
 
 const RightContentContent = styled.div`
-	width: 100%;
+    width: 100%;
     padding: var(--spacing-3xl);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	position: relative;
-	flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    flex: 1;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        padding: var(--spacing-xl);
+    }
 `;
 
 const Title = styled.h1`
@@ -176,25 +232,25 @@ const Title = styled.h1`
     font-size: var(--font-size-4xl);
     font-weight: 600;
     color: var(--color-text);
-	margin: 0 0 var(--spacing-l);
+    margin: 0 0 var(--spacing-l);
 `;
 
-const Subtitle = styled.h2`
+const Subtitle = styled.p`
     width: 100%;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--color-text);
     font-size: var(--font-size);
-	line-height: var(--line-height-l);
-    margin-bottom: var(--spacing-l);
+    line-height: var(--line-height-l);
+    margin-bottom: var(--spacing-xl);
 `;
 
 const RightContentTop = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
-	justify-content: flex-end;
-	bottom: 0;
-	right: 0;
-	gap: var(--spacing-xs);
-	padding: var(--spacing-xs);
+    justify-content: flex-end;
+    bottom: 0;
+    right: 0;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs);
 `;
