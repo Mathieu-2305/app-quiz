@@ -6,10 +6,10 @@
 	"private": true,
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev:back": "cd backend && php artisan serve --host=127.0.0.1 --port=8000",
+		"dev:back": "cd backend && php artisan serve",
 		"dev:front": "cd frontend && npx vite",
 		"dev": "concurrently -k -p \"[{name}]\" -n back,front -c green,cyan \"npm:dev:back\" \"npm:dev:front\"",
-		"setup": "concurrently -k -p \"[{name}]\" -n root,back,front -c magenta,green,cyan \"npm install --yes\" \"cd backend && composer install --no-interaction\" \"cd frontend && npm install --yes\""
+		"setup": "concurrently --names ROOT,BACKEND,FRONTEND --prefix-colors bgMagenta.bold,bgBlue.bold,bgGreen.bold \"npm install --yes\" \"cd backend && composer install --no-interaction\" \"cd frontend && npm install --yes\""
 	},
 	"repository": {
 		"type": "git",

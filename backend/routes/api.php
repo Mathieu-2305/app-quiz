@@ -1,11 +1,15 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\TagController;
-use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
+
+
+Route::get('/ping', function () {
+    return response()->json(['message' => 'API is working!']);
+});
 
 // Users
 Route::get('/users', [UserController::class, 'index']);
@@ -26,5 +30,5 @@ Route::get('/tags', [TagController::class, 'index']);
 Route::post('/tags', [TagController::class, 'store']);
 
 Route::options('/{any}', function () {
-  return response('', 204);
+    return response('', 204);
 })->where('any', '.*');
