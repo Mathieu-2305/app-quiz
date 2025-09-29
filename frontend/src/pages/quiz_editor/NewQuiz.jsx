@@ -11,6 +11,8 @@ import Input from "../../components/ui/Input";
 import Header from "../../components/layout/Header";
 import TextArea from "../../components/ui/TextArea";
 import { createQuiz, getQuiz, updateQuiz, getModules, getTags } from "../../services/api";
+import FaviconTitle from "../../components/layout/Icon.jsx";
+import faviconUrl from "../../assets/images/favicon.ico?url";
 
 export default function NewQuiz() {
   const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
@@ -326,264 +328,267 @@ export default function NewQuiz() {
   };
 
   return (
-    <Main>
-      <UnsavedChangesGuard when={isDirty} />
+    <>
+		<FaviconTitle title={t("pages.homePage")} iconHref={faviconUrl} />
+			<Main>
+				<UnsavedChangesGuard when={isDirty} />
 
-      <DesktopHeaderWrap>
-        <Header
-          title={
-            <TitleInline>
-              <BackIconButton onClick={() => navigate(-1)} aria-label={t("actions.back")}>
-                <Undo2 size={24} />
-              </BackIconButton>
-              <FilePenLine size={20} />
-              <span>{isEdit ? (t("quiz.editTitle") || "Éditer le quiz") : t("quiz.title")}</span>
-            </TitleInline>
-          }
-          icon={null}
-          actions={[
-            <Controls key="controls">
-              <ToggleSwitch
-                checked={active}
-                onChange={(v) => { setActive(v); setIsDirty(true); }}
-                onLabel={t("common.active")}
-                offLabel={t("common.inactive")}
-                onColor="#22c55e"
-                offColor="#e5e7eb"
-              />
-              <LanguageSelector />
-              <SaveButton onClick={onSave}>
-                <Save size={16} />{t("actions.saveChanges")}
-              </SaveButton>
-            </Controls>
-          ]}
-          showBurger
-        />
-      </DesktopHeaderWrap>
+				<DesktopHeaderWrap>
+				<Header
+					title={
+					<TitleInline>
+						<BackIconButton onClick={() => navigate(-1)} aria-label={t("actions.back")}>
+						<Undo2 size={24} />
+						</BackIconButton>
+						<FilePenLine size={20} />
+						<span>{isEdit ? (t("quiz.editTitle") || "Éditer le quiz") : t("quiz.title")}</span>
+					</TitleInline>
+					}
+					icon={null}
+					actions={[
+					<Controls key="controls">
+						<ToggleSwitch
+						checked={active}
+						onChange={(v) => { setActive(v); setIsDirty(true); }}
+						onLabel={t("common.active")}
+						offLabel={t("common.inactive")}
+						onColor="#22c55e"
+						offColor="#e5e7eb"
+						/>
+						<LanguageSelector />
+						<SaveButton onClick={onSave}>
+						<Save size={16} />{t("actions.saveChanges")}
+						</SaveButton>
+					</Controls>
+					]}
+					showBurger
+				/>
+				</DesktopHeaderWrap>
 
-      <Body>
-        <LeftPanel>
-          <LeftTitle>{t("quiz.sections.questions")}</LeftTitle>
+				<Body>
+				<LeftPanel>
+					<LeftTitle>{t("quiz.sections.questions")}</LeftTitle>
 
-          <AddQuestionButton type="button" onClick={addSingleQuestion}>
-            <Plus size={16} /> {t("actions.addQuestion") || "Ajouter une question"}
-          </AddQuestionButton>
+					<AddQuestionButton type="button" onClick={addSingleQuestion}>
+					<Plus size={16} /> {t("actions.addQuestion") || "Ajouter une question"}
+					</AddQuestionButton>
 
-          <LeftList>
-            {questions.map((q, idx) => (
-              <LeftRow
-                key={q.id}
-                onDragOver={handleDragOver(idx)}
-                onDrop={handleDrop(idx)}
-                data-drop-pos={dragOverIndex === idx ? dragOverPosition : undefined}
-              >
-                <DragDock
-                  draggable
-                  onDragStart={handleDragStart(q.id)}
-                  onDragEnd={handleDragEnd}
-                  onClick={(e) => e.stopPropagation()}
-                  aria-label={t("actions.reorder")}
-                  title={t("actions.reorder")}
-                  data-dragging={draggingId === q.id ? "true" : undefined}
-                >
-                  <GripVertical size={16} />
-                </DragDock>
+					<LeftList>
+					{questions.map((q, idx) => (
+						<LeftRow
+						key={q.id}
+						onDragOver={handleDragOver(idx)}
+						onDrop={handleDrop(idx)}
+						data-drop-pos={dragOverIndex === idx ? dragOverPosition : undefined}
+						>
+						<DragDock
+							draggable
+							onDragStart={handleDragStart(q.id)}
+							onDragEnd={handleDragEnd}
+							onClick={(e) => e.stopPropagation()}
+							aria-label={t("actions.reorder")}
+							title={t("actions.reorder")}
+							data-dragging={draggingId === q.id ? "true" : undefined}
+						>
+							<GripVertical size={16} />
+						</DragDock>
 
-                <LeftCard onClick={() => scrollToQuestion(q.id)} title={t("quiz.hints.goToQuestion") || "Aller à la question"}>
-                  <LeftCardIndex>{idx + 1}</LeftCardIndex>
-                  <LeftCardMain>
-                    <LeftCardTitle>{q.title?.trim() ? q.title : untitled}</LeftCardTitle>
-                    <TypePill>{(q.correctIndices?.length ?? 0) > 1 ? t("quiz.types.multi") : t("quiz.types.single")}</TypePill>
-                  </LeftCardMain>
-                </LeftCard>
-              </LeftRow>
-            ))}
-          </LeftList>
-        </LeftPanel>
+						<LeftCard onClick={() => scrollToQuestion(q.id)} title={t("quiz.hints.goToQuestion") || "Aller à la question"}>
+							<LeftCardIndex>{idx + 1}</LeftCardIndex>
+							<LeftCardMain>
+							<LeftCardTitle>{q.title?.trim() ? q.title : untitled}</LeftCardTitle>
+							<TypePill>{(q.correctIndices?.length ?? 0) > 1 ? t("quiz.types.multi") : t("quiz.types.single")}</TypePill>
+							</LeftCardMain>
+						</LeftCard>
+						</LeftRow>
+					))}
+					</LeftList>
+				</LeftPanel>
 
-        <CenterPanel>
-          <CenterInner>
-            <TitleLine>
-              <TitleField onClick={() => titleRef.current?.focus()}>
-                <TitleInput
-                  ref={titleRef}
-                  value={title}
-                  onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
-                  placeholder={t("quiz.placeholders.title")}
-                  aria-label={t("quiz.placeholders.title")}
-                />
-                <MeasureSpan ref={measureRef} aria-hidden="true" />
-                <EditIcon style={{ left: iconLeft }} aria-hidden="true" />
-              </TitleField>
-              <EditHint aria-hidden="true"><FilePenLine size={16} /></EditHint>
-            </TitleLine>
+				<CenterPanel>
+					<CenterInner>
+					<TitleLine>
+						<TitleField onClick={() => titleRef.current?.focus()}>
+						<TitleInput
+							ref={titleRef}
+							value={title}
+							onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
+							placeholder={t("quiz.placeholders.title")}
+							aria-label={t("quiz.placeholders.title")}
+						/>
+						<MeasureSpan ref={measureRef} aria-hidden="true" />
+						<EditIcon style={{ left: iconLeft }} aria-hidden="true" />
+						</TitleField>
+						<EditHint aria-hidden="true"><FilePenLine size={16} /></EditHint>
+					</TitleLine>
 
-            <DescBlock>
-              <DescTextarea
-                value={quiz_description}
-                onChange={(e) => { setQuizDescription(e.target.value); setIsDirty(true); }}
-                placeholder={t("quiz.sections.descriptionAdd") || t("common.placeholders.typeHere")}
-                rows={2}
-              />
-            </DescBlock>
+					<DescBlock>
+						<DescTextarea
+						value={quiz_description}
+						onChange={(e) => { setQuizDescription(e.target.value); setIsDirty(true); }}
+						placeholder={t("quiz.sections.descriptionAdd") || t("common.placeholders.typeHere")}
+						rows={2}
+						/>
+					</DescBlock>
 
-            <Field>
-              <FieldLabel>{t("quiz.sections.module")}</FieldLabel>
-              <ChipsWrap>
-                {modules.map(m => (
-                  <Chip
-                    key={m.id}
-                    data-active={selectedModuleIds.includes(m.id) ? "1" : undefined}
-                    type="button"
-                    onClick={() => toggleId(m.id, selectedModuleIds, setSelectedModuleIds)}
-                    title={m.module_name}
-                  >
-                    {m.module_name}
-                  </Chip>
-                ))}
-                {modules.length === 0 && <Hint>{t("quiz.sections.noModule")}</Hint>}
-              </ChipsWrap>
-            </Field>
+					<Field>
+						<FieldLabel>{t("quiz.sections.module")}</FieldLabel>
+						<ChipsWrap>
+						{modules.map(m => (
+							<Chip
+							key={m.id}
+							data-active={selectedModuleIds.includes(m.id) ? "1" : undefined}
+							type="button"
+							onClick={() => toggleId(m.id, selectedModuleIds, setSelectedModuleIds)}
+							title={m.module_name}
+							>
+							{m.module_name}
+							</Chip>
+						))}
+						{modules.length === 0 && <Hint>{t("quiz.sections.noModule")}</Hint>}
+						</ChipsWrap>
+					</Field>
 
-            <Field>
-              <FieldLabel>{t("quiz.sections.existingTag")}</FieldLabel>
-              <ChipsWrap>
-                {tags.map(tg => (
-                  <Chip
-                    key={tg.id}
-                    data-active={selectedTagIds.includes(tg.id) ? "1" : undefined}
-                    type="button"
-                    onClick={() => toggleId(tg.id, selectedTagIds, setSelectedTagIds)}
-                    title={tg.tag_name}
-                  >
-                    {tg.tag_name}
-                  </Chip>
-                ))}
-                {tags.length === 0 && <Hint>{t("quiz.sections.noTag")}</Hint>}
-              </ChipsWrap>
-            </Field>
+					<Field>
+						<FieldLabel>{t("quiz.sections.existingTag")}</FieldLabel>
+						<ChipsWrap>
+						{tags.map(tg => (
+							<Chip
+							key={tg.id}
+							data-active={selectedTagIds.includes(tg.id) ? "1" : undefined}
+							type="button"
+							onClick={() => toggleId(tg.id, selectedTagIds, setSelectedTagIds)}
+							title={tg.tag_name}
+							>
+							{tg.tag_name}
+							</Chip>
+						))}
+						{tags.length === 0 && <Hint>{t("quiz.sections.noTag")}</Hint>}
+						</ChipsWrap>
+					</Field>
 
-            <Field>
-              <FieldLabel>{t("quiz.sections.tagAdd")}</FieldLabel>
-              <div style={{ display: "flex", gap: 8 }}>
-                <MyInput
-                  value={newTagInput}
-                  onChange={e => setNewTagInput(e.target.value)}
-                  placeholder={t("quiz.placeholders.tags")}
-                  onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addNewTag(); } }}
-                />
-                <Button type="button" onClick={addNewTag}>+</Button>
-              </div>
+					<Field>
+						<FieldLabel>{t("quiz.sections.tagAdd")}</FieldLabel>
+						<div style={{ display: "flex", gap: 8 }}>
+						<MyInput
+							value={newTagInput}
+							onChange={e => setNewTagInput(e.target.value)}
+							placeholder={t("quiz.placeholders.tags")}
+							onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addNewTag(); } }}
+						/>
+						<Button type="button" onClick={addNewTag}>+</Button>
+						</div>
 
-              {!!newTags.length && (
-                <ChipsWrap style={{ marginTop: 8 }}>
-                  {newTags.map(name => (
-                    <Chip key={name} data-active="1">
-                      {name}
-                      <ChipClose onClick={() => { setNewTags(prev => prev.filter(n => n !== name)); setIsDirty(true); }}>✕</ChipClose>
-                    </Chip>
-                  ))}
-                </ChipsWrap>
-              )}
-            </Field>
+						{!!newTags.length && (
+						<ChipsWrap style={{ marginTop: 8 }}>
+							{newTags.map(name => (
+							<Chip key={name} data-active="1">
+								{name}
+								<ChipClose onClick={() => { setNewTags(prev => prev.filter(n => n !== name)); setIsDirty(true); }}>✕</ChipClose>
+							</Chip>
+							))}
+						</ChipsWrap>
+						)}
+					</Field>
 
-            <Field>
-              <FieldLabel>{t("quiz.sections.moduleAdd")}</FieldLabel>
-              <div style={{ display: "flex", gap: 8 }}>
-                <MyInput
-                  value={newModuleInput}
-                  onChange={e => setNewModuleInput(e.target.value)}
-                  placeholder={t("quiz.placeholders.module")}
-                  onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); createModuleInline(); } }}
-                />
-                <Button type="button" onClick={createModuleInline} disabled={creatingModule}>
-                  {creatingModule ? "Ajout..." : "+"}
-                </Button>
-              </div>
-            </Field>
+					<Field>
+						<FieldLabel>{t("quiz.sections.moduleAdd")}</FieldLabel>
+						<div style={{ display: "flex", gap: 8 }}>
+						<MyInput
+							value={newModuleInput}
+							onChange={e => setNewModuleInput(e.target.value)}
+							placeholder={t("quiz.placeholders.module")}
+							onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); createModuleInline(); } }}
+						/>
+						<Button type="button" onClick={createModuleInline} disabled={creatingModule}>
+							{creatingModule ? "Ajout..." : "+"}
+						</Button>
+						</div>
+					</Field>
 
-            <Field>
-              <FieldLabel>{t("quiz.fields.coverImage") || "Image de fond (URL)"}</FieldLabel>
-              <MyInput
-                value={coverImageUrl}
-                onChange={(e) => { setCoverImageUrl(e.target.value); setCoverImageFile(null); setIsDirty(true); }}
-                placeholder="https://exemple.com/pizza.jpg"
-              />
-              <div style={{ marginTop: 8 }}>
-                <label style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
-                  {t("quiz.fields.orUpload") || "Ou téléverser un fichier"}
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => { setCoverImageFile(e.target.files?.[0] || null); setCoverImageUrl(""); setIsDirty(true); }}
-                />
-              </div>
-            </Field>
-          </CenterInner>
+					<Field>
+						<FieldLabel>{t("quiz.fields.coverImage") || "Image de fond (URL)"}</FieldLabel>
+						<MyInput
+						value={coverImageUrl}
+						onChange={(e) => { setCoverImageUrl(e.target.value); setCoverImageFile(null); setIsDirty(true); }}
+						placeholder="https://exemple.com/pizza.jpg"
+						/>
+						<div style={{ marginTop: 8 }}>
+						<label style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
+							{t("quiz.fields.orUpload") || "Ou téléverser un fichier"}
+						</label>
+						<input
+							type="file"
+							accept="image/*"
+							onChange={(e) => { setCoverImageFile(e.target.files?.[0] || null); setCoverImageUrl(""); setIsDirty(true); }}
+						/>
+						</div>
+					</Field>
+					</CenterInner>
 
-          {questions.length === 0 ? (
-            <DropPlaceholder>
-              {t("quiz.hints.emptyDrop") || "Ajoutez votre première question avec le bouton à gauche."}
-            </DropPlaceholder>
-          ) : (
-            <QuestionList>
-              {questions.map((q) => (
-                <QuestionCard key={q.id} ref={(el) => (questionRefs.current[q.id] = el)}>
-                  <QuestionHeader>
-                    <Badge>{(q.correctIndices?.length ?? 0) > 1 ? t("quiz.types.multi") : t("quiz.types.single")}</Badge>
-                    <DeleteBtn onClick={() => removeQuestion(q.id)} title={t("actions.delete")} aria-label={t("actions.delete")}>
-                      <Trash2 size={16} />
-                    </DeleteBtn>
-                  </QuestionHeader>
+					{questions.length === 0 ? (
+					<DropPlaceholder>
+						{t("quiz.hints.emptyDrop") || "Ajoutez votre première question avec le bouton à gauche."}
+					</DropPlaceholder>
+					) : (
+					<QuestionList>
+						{questions.map((q) => (
+						<QuestionCard key={q.id} ref={(el) => (questionRefs.current[q.id] = el)}>
+							<QuestionHeader>
+							<Badge>{(q.correctIndices?.length ?? 0) > 1 ? t("quiz.types.multi") : t("quiz.types.single")}</Badge>
+							<DeleteBtn onClick={() => removeQuestion(q.id)} title={t("actions.delete")} aria-label={t("actions.delete")}>
+								<Trash2 size={16} />
+							</DeleteBtn>
+							</QuestionHeader>
 
-                  <Field>
-                    <FieldLabel>{t("quiz.fields.title")}</FieldLabel>
-                    <MyInput
-                      value={q.title}
-                      onChange={(e) => updateQuestion(q.id, { title: e.target.value })}
-                      placeholder={t("common.placeholders.typeHere")}
-                    />
-                  </Field>
+							<Field>
+							<FieldLabel>{t("quiz.fields.title")}</FieldLabel>
+							<MyInput
+								value={q.title}
+								onChange={(e) => updateQuestion(q.id, { title: e.target.value })}
+								placeholder={t("common.placeholders.typeHere")}
+							/>
+							</Field>
 
-                  <Field>
-                    <FieldLabel>{t("quiz.fields.description")}</FieldLabel>
-                    <MyTextArea
-                      value={q.description}
-                      onChange={(e) => updateQuestion(q.id, { description: e.target.value })}
-                      placeholder={t("common.placeholders.typeHere")}
-                      rows={3}
-                    />
-                  </Field>
+							<Field>
+							<FieldLabel>{t("quiz.fields.description")}</FieldLabel>
+							<MyTextArea
+								value={q.description}
+								onChange={(e) => updateQuestion(q.id, { description: e.target.value })}
+								placeholder={t("common.placeholders.typeHere")}
+								rows={3}
+							/>
+							</Field>
 
-                  <Divider />
-                  <OptionsHeader>{t("quiz.sections.options")}</OptionsHeader>
+							<Divider />
+							<OptionsHeader>{t("quiz.sections.options")}</OptionsHeader>
 
-                  {(q.options || []).map((opt, idx) => (
-                    <OptionRow key={idx}>
-                      <FakeCheck
-                        type="checkbox"
-                        checked={(q.correctIndices ?? []).includes(idx)}
-                        onChange={() => toggleCorrect(q.id, idx)}
-                        aria-label={`${t("quiz.sections.options")} #${idx + 1}`}
-                      />
-                      <OptionInput value={opt} onChange={(e) => updateOption(q.id, idx, e.target.value)} />
-                      <RemoveOpt onClick={() => removeOption(q.id, idx)} title={t("actions.delete")} aria-label={t("actions.delete")}>
-                        <Trash2 size={16} />
-                      </RemoveOpt>
-                    </OptionRow>
-                  ))}
+							{(q.options || []).map((opt, idx) => (
+							<OptionRow key={idx}>
+								<FakeCheck
+								type="checkbox"
+								checked={(q.correctIndices ?? []).includes(idx)}
+								onChange={() => toggleCorrect(q.id, idx)}
+								aria-label={`${t("quiz.sections.options")} #${idx + 1}`}
+								/>
+								<OptionInput value={opt} onChange={(e) => updateOption(q.id, idx, e.target.value)} />
+								<RemoveOpt onClick={() => removeOption(q.id, idx)} title={t("actions.delete")} aria-label={t("actions.delete")}>
+								<Trash2 size={16} />
+								</RemoveOpt>
+							</OptionRow>
+							))}
 
-                  <AddOption type="button" onClick={() => addOption(q.id)}>
-                    <Plus size={16} /> {t("quiz.options.new")}
-                  </AddOption>
-                </QuestionCard>
-              ))}
-            </QuestionList>
-          )}
-        </CenterPanel>
-      </Body>
-    </Main>
+							<AddOption type="button" onClick={() => addOption(q.id)}>
+							<Plus size={16} /> {t("quiz.options.new")}
+							</AddOption>
+						</QuestionCard>
+						))}
+					</QuestionList>
+					)}
+				</CenterPanel>
+				</Body>
+			</Main>
+    </>
   );
 }
 

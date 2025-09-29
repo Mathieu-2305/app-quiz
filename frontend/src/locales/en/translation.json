@@ -106,13 +106,13 @@
       "error": "Login failed"
     },
       "homePage": "Home - Rafisa Quiz",
-      "createPage": "",
-      "editPage": "",
-      "settingsPage": "",
-      "resultsPage": "",
-      "searchPage": "",
-      "loginPage": "",
-      "accountPage": ""
+      "createPage": "Quiz Creation - Rafisa Quiz",
+      "editPage": "Quiz edition - Rafisa Quiz",
+      "settingsPage": "Settings - Rafisa Quiz",
+      "resultsPage": "Results - Rafisa Quiz",
+      "searchPage": "Search - Rafisa Quiz",
+      "loginPage": "Login - Rafisa Quiz",
+      "accountPage": "Account - Rafisa Quiz"
   },
   "modals": {
     "logout": {

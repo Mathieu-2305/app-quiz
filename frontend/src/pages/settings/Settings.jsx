@@ -4,23 +4,28 @@ import { Settings } from "lucide-react"
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "../../components/ui/LanguageSelector";
 import Header from "../../components/layout/Header";
+import FaviconTitle from "../../components/layout/Icon.jsx";
+import faviconUrl from "../../assets/images/favicon.ico?url";
 
 export default function SettingsPage() {
     // Translation function
     const { t } = useTranslation();
   return (
-    <Main>
-      <Header 
-        title ={t("pages.settings.title")}
-        icon ={<Settings size={20}/>}
-        actions={[
-          <LanguageSelector key="lang" />
-        ]}
-      />
-      <Content>
-        <ToggleThemeSwitch />
-      </Content>
-    </Main>
+    <>
+		<FaviconTitle title={t("pages.settingsPage")} iconHref={faviconUrl} />
+			<Main>
+			<Header 
+				title ={t("pages.settings.title")}
+				icon ={<Settings size={20}/>}
+				actions={[
+				<LanguageSelector key="lang" />
+				]}
+			/>
+			<Content>
+				<ToggleThemeSwitch />
+			</Content>
+			</Main>
+    </>
   );
 }
 

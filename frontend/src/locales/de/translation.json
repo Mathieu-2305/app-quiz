@@ -105,14 +105,14 @@
       "microsoftAlt": "Microsoft-Anmeldung",
       "error": "Anmeldung fehlgeschlagen"
     },
-    "homePage": "",
-		"createPage": "",
-		"editPage": "",
-		"settingsPage": "",
-		"resultsPage": "",
-		"searchPage": "",
-		"loginPage": "",
-		"accountPage": ""
+    "homePage": "Startseite - Rafisa Quiz",
+		"createPage": "Quiz erstellen - Rafisa Quiz",
+		"editPage": "Quiz-Ausgabe - Rafisa Quiz",
+		"settingsPage": "Einstellungen - Rafisa Quiz",
+		"resultsPage": "Ergebnisse - Rafisa Quiz",
+		"searchPage": "Forschung - Rafisa Quiz",
+		"loginPage": "Verbindung - Rafisa Quiz",
+		"accountPage": "Konto - Rafisa Quiz"
   },
   "modals": {
     "logout": {
