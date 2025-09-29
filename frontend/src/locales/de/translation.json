@@ -23,7 +23,8 @@
     "delete": "Löschen",
     "addQuestion": "Fügen Sie eine Frage hinzu",
     "reorder": "Reorganisieren",
-    "back": "Zurück"
+    "back": "Zurück",
+		"edit": "Zu ändern"
   },
   "common": {
     "active": "Aktiv",
@@ -42,6 +43,7 @@
   },
   "quiz": {
     "title": "Ein Quiz erstellen und bearbeiten",
+    "editTitle": "Ein Quiz bearbeiten",
     "placeholders": {
       "title": "Titel des Quiz",
       "categoryTitle": "Kategorie-Titel hier eingeben",
@@ -87,7 +89,8 @@
       "true": "Wahr",
       "false": "Falsch"
     },
-		"empty": "Noch keine Quiz."
+		"empty": "Noch keine Quiz.",
+		"confirmDelete": "Möchten Sie dieses Quiz wirklich löschen?"
   },
   "pages": {
     "home": {
@@ -101,7 +104,15 @@
       "microsoftSignIn": "Mit Microsoft anmelden",
       "microsoftAlt": "Microsoft-Anmeldung",
       "error": "Anmeldung fehlgeschlagen"
-    }
+    },
+    "homePage": "",
+		"createPage": "",
+		"editPage": "",
+		"settingsPage": "",
+		"resultsPage": "",
+		"searchPage": "",
+		"loginPage": "",
+		"accountPage": ""
   },
   "modals": {
     "logout": {

@@ -23,7 +23,8 @@
     "delete": "Elimina",
     "addQuestion": "Aggiungi una domanda",
     "reorder": "Riorganizzare",
-    "back": "Indietro"
+    "back": "Indietro",
+		"edit": "Per modificare"
   },
   "common": {
     "active": "Attivo",
@@ -42,6 +43,7 @@
   },
   "quiz": {
     "title": "Crea e modifica un quiz",
+    "editTitle": "Modifica un quiz",
     "placeholders": {
       "title": "Titolo del quiz",
       "categoryTitle": "Scrivi qui il titolo della categoria",
@@ -87,7 +89,8 @@
       "true": "Vero",
       "false": "Falso"
     },
-		"empty": "Ancora nessun quiz."
+		"empty": "Ancora nessun quiz.",
+		"confirmDelete": "Vuoi davvero eliminare questo quiz?"
   },
   "pages": {
     "home": {
@@ -101,7 +104,15 @@
       "microsoftSignIn": "Accedi con Microsoft",
       "microsoftAlt": "Accesso Microsoft",
       "error": "Accesso non riuscito"
-    }
+    },
+    "homePage": "",
+		"createPage": "",
+		"editPage": "",
+		"settingsPage": "",
+		"resultsPage": "",
+		"searchPage": "",
+		"loginPage": "",
+		"accountPage": ""
   },
   "modals": {
     "logout": {

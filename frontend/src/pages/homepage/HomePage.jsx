@@ -8,6 +8,8 @@ import LanguageSelector from "../../components/ui/LanguageSelector";
 import Header from "../../components/layout/Header";
 import Button from "../../components/ui/Button";
 import { getQuizzes, deleteQuiz } from "../../services/api";
+import FaviconTitle from "../../components/layout/Icon.jsx";
+import faviconUrl from "../../assets/images/favicon.ico?url";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -33,13 +35,13 @@ export default function HomePage() {
     return () => { alive = false; };
   }, []);
 
-  // Ouvre l'éditeur (route corrigée)
+  // Open the editor
   const handleEdit = (id) => {
     navigate(`/quizzes/${id}/edit`);
   };
 
   const handleDelete = async (id) => {
-    const confirmText = t("quiz.confirmDelete") || "Supprimer ce quiz ? Cette action est définitive.";
+    const confirmText = t("quiz.confirmDelete");
     if (!window.confirm(confirmText)) return;
     try {
       await deleteQuiz(id);
@@ -61,46 +63,49 @@ export default function HomePage() {
       date: q.created_at?.slice(0, 10) ?? "",
       modified: q.updated_at?.slice(0, 10) ?? "",
       isActive: !!q.is_active,
-      onClick: () => q.is_active && navigate(`/quizzes/${q.id}`), // détail si actif
+      onClick: () => q.is_active && navigate(`/quizzes/${q.id}`),
       onEdit: handleEdit,
       onDelete: handleDelete,
     }));
   }, [quizzes, navigate]);
 
-  return (
-    <Main>
-      <Header
-        title={t("pages.home.title")}
-        icon={<FlaskConical size={20} aria-hidden="true" />}
-        actions={[
-          <LanguageSelector key="lang" />,
-          <NewQuizButton
-            key="new"
-            onClick={() => navigate("/quizzes/new")} // route corrigée
-            aria-label={t("actions.newQuiz")}
-            title={t("actions.newQuiz")}
-          >
-            <Plus size={16} aria-hidden="true" />
-            {t("actions.newQuiz")}
-          </NewQuizButton>,
-        ]}
-      />
+	return (
+   	<>
+    	<FaviconTitle title={t("pages.homePage")} iconHref={faviconUrl} />
+			<Main>
+			<Header
+				title={t("pages.home.title")}
+				icon={<FlaskConical size={20} aria-hidden="true" />}
+				actions={[
+				<LanguageSelector key="lang" />,
+				<NewQuizButton
+					key="new"
+					onClick={() => navigate("/quizzes/new")}
+					aria-label={t("actions.newQuiz")}
+					title={t("actions.newQuiz")}
+				>
+					<Plus size={16} aria-hidden="true" />
+					{t("actions.newQuiz")}
+				</NewQuizButton>,
+				]}
+			/>
 
-      <Content>
-        {loading && <p>{t("common.loading")}</p>}
-        {err && <pre style={{ color: "crimson", whiteSpace: "pre-wrap" }}>{err}</pre>}
+			<Content>
+				{loading && <p>{t("common.loading")}</p>}
+				{err && <pre style={{ color: "crimson", whiteSpace: "pre-wrap" }}>{err}</pre>}
 
-        {!loading && !err && (
-          <QuizGrid>
-            {cards.length === 0 ? (
-              <p>{t("quiz.empty")}</p>
-            ) : (
-              cards.map((item) => <QuizCard key={item.id} {...item} />)
-            )}
-          </QuizGrid>
-        )}
-      </Content>
-    </Main>
+				{!loading && !err && (
+				<QuizGrid>
+					{cards.length === 0 ? (
+					<p>{t("quiz.empty")}</p>
+					) : (
+					cards.map((item) => <QuizCard key={item.id} {...item} />)
+					)}
+				</QuizGrid>
+				)}
+			</Content>
+			</Main>
+    </>
   );
 }
 

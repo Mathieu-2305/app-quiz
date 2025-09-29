@@ -23,7 +23,8 @@
     "delete": "Delete",
     "addQuestion": "Add a question",
     "reorder": "Reorder",
-    "back": "Back"
+    "back": "Back",
+		"edit": "Edit"
   },
   "common": {
     "active": "Active",
@@ -42,6 +43,7 @@
   },
   "quiz": {
     "title": "Create and edit a quiz",
+    "editTitle": "Edit a quiz",
     "placeholders": {
       "title": "Quiz title",
       "categoryTitle": "Type the category title here",
@@ -87,7 +89,8 @@
       "true": "True",
       "false": "False"
     },
-		"empty": "No quizzes yet."
+		"empty": "No quizzes yet.",
+		"confirmDelete": "Do you really want to delete this quiz?"
   },
   "pages": {
     "home": {
@@ -101,7 +104,15 @@
       "microsoftSignIn": "Sign in with Microsoft",
       "microsoftAlt": "Microsoft login",
       "error": "Login failed"
-    }
+    },
+      "homePage": "Home - Rafisa Quiz",
+      "createPage": "",
+      "editPage": "",
+      "settingsPage": "",
+      "resultsPage": "",
+      "searchPage": "",
+      "loginPage": "",
+      "accountPage": ""
   },
   "modals": {
     "logout": {

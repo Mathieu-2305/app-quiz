@@ -2,8 +2,10 @@ import styled from "styled-components";
 import { createTimestamp } from "../utils/dateUtils";
 import Tag from "./ui/Tag";
 import { SquareArrowOutUpRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function QuizCard(props) {
+  const { t } = useTranslation();
   const { id, title, modules, tags, imgURL, date, modified, isActive = true, onClick, onEdit, onDelete } = props;
 
   const safeClick = () => {
@@ -40,10 +42,10 @@ export default function QuizCard(props) {
                 e.stopPropagation();
                 onEdit?.(id);
               }}
-              title="Éditer"
-              aria-label="Éditer"
+              title={t("actions.edit")}
+              aria-label={t("actions.edit")}
             >
-              Éditer
+              {t("actions.edit")}
             </OverlayBtn>
             <OverlayBtn
               type="button"
@@ -51,15 +53,15 @@ export default function QuizCard(props) {
                 e.stopPropagation();
                 onDelete?.(id);
               }}
-              title="Supprimer"
-              aria-label="Supprimer"
+              title={t("actions.delete")}
+              aria-label={t("actions.delete")}
               data-variant="danger"
             >
-              Supprimer
+              {t("actions.delete")}
             </OverlayBtn>
           </OverlayActions>
         </Overlay>
-        {!isActive && <Ribbon>Inactif</Ribbon>}
+        {!isActive && <Ribbon>{t("common.inactive")}</Ribbon>}
       </ImageWrapper>
 
       <Section>
