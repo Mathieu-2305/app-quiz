@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { FlaskConical, Plus } from "lucide-react";
 import styled from "styled-components";
@@ -11,11 +11,13 @@ import { getQuizzes, deleteQuiz } from "../../services/api";
 import FaviconTitle from "../../components/layout/Icon.jsx";
 import faviconUrl from "../../assets/images/favicon.ico?url";
 
+const NUM_PLACEHOLDERS = 10;
+
 export default function HomePage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const [quizzes, setQuizzes] = useState([]);
+  const [quizzes, setQuizzes] = useState(["", "", "" , ""]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
 
@@ -29,45 +31,61 @@ export default function HomePage() {
       } catch (e) {
         setErr(e.message || String(e));
       } finally {
-        if (alive) setLoading(false);
+        if (alive) {
+			setTimeout(() => {
+				setLoading(false);
+			}, 200)
+		}
       }
     })();
     return () => { alive = false; };
   }, []);
 
   // Open the editor
-  const handleEdit = (id) => {
-    navigate(`/quizzes/${id}/edit`);
-  };
+	const handleEdit = useCallback(
+		(id) => {
+			navigate(`/quizzes/${id}/edit`);
+		},
+		[navigate] // dependency on navigate only
+	);
 
-  const handleDelete = async (id) => {
-    const confirmText = t("quiz.confirmDelete");
-    if (!window.confirm(confirmText)) return;
-    try {
-      await deleteQuiz(id);
-      setQuizzes((prev) => prev.filter((q) => q.id !== id));
-    } catch (e) {
-      alert(e.message || "Erreur lors de la suppression");
-    }
-  };
+	const handleDelete = useCallback(
+		async (id) => {
+			const confirmText = t("quiz.confirmDelete");
+			if (!window.confirm(confirmText)) return;
+			try {
+				await deleteQuiz(id);
+				setQuizzes((prev) => prev.filter((q) => q.id !== id));
+			} catch (e) {
+				alert(e.message || "Erreur lors de la suppression");
+			}
+		},
+		[t] // dependencies: only `t` because `setQuizzes` is stable
+	);
 
-  const cards = useMemo(() => {
-    const fallbackImg =
-      "https://img.freepik.com/free-vector/gradient-ui-ux-background-illustrated_23-2149050187.jpg?semt=ais_hybrid&w=740&q=80";
-    return (quizzes || []).map((q) => ({
-      id: q.id,
-      title: q.title ?? "Untitled",
-      modules: Array.isArray(q.modules) ? q.modules.map((m) => m.module_name).slice(0, 3) : [],
-      tags: Array.isArray(q.tags) ? q.tags.map((t) => t.tag_name).slice(0, 3) : [],
-      imgURL: q.cover_image_url || fallbackImg,
-      date: q.created_at?.slice(0, 10) ?? "",
-      modified: q.updated_at?.slice(0, 10) ?? "",
-      isActive: !!q.is_active,
-      onClick: () => q.is_active && navigate(`/quizzes/${q.id}`),
-      onEdit: handleEdit,
-      onDelete: handleDelete,
-    }));
-  }, [quizzes, navigate]);
+	const cards = useMemo(() => {
+		const fallbackImg =
+			"https://img.freepik.com/free-vector/gradient-ui-ux-background-illustrated_23-2149050187.jpg?semt=ais_hybrid&w=740&q=80";
+
+		if (loading) {
+			// Return an array of skeleton placeholders
+			return Array.from({ length: NUM_PLACEHOLDERS }, (_, i) => ({ id: `skeleton-${i}`, loading: true }));
+		}
+
+		return quizzes.map((q) => ({
+			id: q.id,
+			title: q.title ?? "Untitled",
+			modules: Array.isArray(q.modules) ? q.modules.map((m) => m.module_name).slice(0, 3) : [],
+			tags: Array.isArray(q.tags) ? q.tags.map((t) => t.tag_name).slice(0, 3) : [],
+			imgURL: q.cover_image_url || fallbackImg,
+			date: q.created_at?.slice(0, 10) ?? "",
+			modified: q.updated_at?.slice(0, 10) ?? "",
+			isActive: !!q.is_active,
+			onClick: () => q.is_active && navigate(`/quizzes/${q.id}`),
+			onEdit: handleEdit,
+			onDelete: handleDelete,
+		}));
+	}, [loading, quizzes, handleEdit, handleDelete, navigate]);
 
 	return (
    	<>
@@ -91,17 +109,16 @@ export default function HomePage() {
 			/>
 
 			<Content>
-				{loading && <p>{t("common.loading")}</p>}
 				{err && <pre style={{ color: "crimson", whiteSpace: "pre-wrap" }}>{err}</pre>}
 
-				{!loading && !err && (
-				<QuizGrid>
-					{cards.length === 0 ? (
-					<p>{t("quiz.empty")}</p>
-					) : (
-					cards.map((item) => <QuizCard key={item.id} {...item} />)
-					)}
-				</QuizGrid>
+				{!err && (
+					<QuizGrid>
+						{cards.length === 0 ? (
+							<p>{t("quiz.empty")}</p>
+						) : (
+							cards.map((item) => <QuizCard key={item.id} {...item} />)
+						)}
+					</QuizGrid>
 				)}
 			</Content>
 			</Main>

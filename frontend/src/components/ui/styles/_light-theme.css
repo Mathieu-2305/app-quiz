@@ -49,6 +49,9 @@
     --color-background-input-focused: #ffffff;          /* Background for input fields and form elements when focused */
     --color-border: var(--gray-300);                    /* Color for borders, dividers, and separators */
 
+    --color-skeleton-base: var(--gray-300);
+    --color-skeleton-highlight: var(--gray-200);
+
     --box-shadow-xs: 0 0 0 1px rgba(0, 0, 0, 0.05);
     --box-shadow-s: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);

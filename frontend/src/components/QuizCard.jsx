@@ -3,93 +3,123 @@ import { createTimestamp } from "../utils/dateUtils";
 import Tag from "./ui/Tag";
 import { SquareArrowOutUpRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import Skeleton from "react-loading-skeleton";
 
 export default function QuizCard(props) {
-  const { t } = useTranslation();
-  const { id, title, modules, tags, imgURL, date, modified, isActive = true, onClick, onEdit, onDelete } = props;
 
-  const safeClick = () => {
-    if (!isActive) return; // désactive l’ouverture plein cadre si inactif
-    onClick?.();
-  };
+	const { t } = useTranslation();
+	const { id, title, modules, tags, imgURL, date, modified, isActive = true, onClick, onEdit, onDelete, loading } = props;
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
-  const resolvedImg = imgURL?.startsWith("/") ? `${API_URL}${imgURL}` : imgURL;
+	const safeClick = () => {
+		if (!isActive) return; // désactive l’ouverture plein cadre si inactif
+		onClick?.();
+	};
 
-  const safeModules = Array.isArray(modules)
-    ? modules
-        .map((m) => (typeof m === "string" ? m : m?.module_name ?? m?.name ?? ""))
-        .filter(Boolean)
-    : [];
+	const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+	const resolvedImg = imgURL?.startsWith("/") ? `${API_URL}${imgURL}` : imgURL;
 
-  const safeTags = Array.isArray(tags)
-    ? tags
-        .map((t) => (typeof t === "string" ? t : t?.tag_name ?? t?.name ?? ""))
-        .filter(Boolean)
-    : [];
+	const safeModules = Array.isArray(modules)
+		? modules
+			.map((m) => (typeof m === "string" ? m : m?.module_name ?? m?.name ?? ""))
+			.filter(Boolean)
+		: [];
 
-  return (
-    <Container data-inactive={!isActive} onClick={safeClick}>
-      <ImageWrapper>
-        <Image style={{ backgroundImage: `url(${resolvedImg})` }} data-inactive={!isActive} />
-        <Overlay>
-          <SquareArrowOutUpRight size={32} color="var(--gray-50)" strokeWidth={2} />
-          <OverlayTitle>{title}</OverlayTitle>
-          <OverlayActions>
-            <OverlayBtn
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit?.(id);
-              }}
-              title={t("actions.edit")}
-              aria-label={t("actions.edit")}
-            >
-              {t("actions.edit")}
-            </OverlayBtn>
-            <OverlayBtn
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete?.(id);
-              }}
-              title={t("actions.delete")}
-              aria-label={t("actions.delete")}
-              data-variant="danger"
-            >
-              {t("actions.delete")}
-            </OverlayBtn>
-          </OverlayActions>
-        </Overlay>
-        {!isActive && <Ribbon>{t("common.inactive")}</Ribbon>}
-      </ImageWrapper>
+	const safeTags = Array.isArray(tags)
+		? tags
+			.map((t) => (typeof t === "string" ? t : t?.tag_name ?? t?.name ?? ""))
+			.filter(Boolean)
+		: [];
 
-      <Section>
-        <Title>{title}</Title>
 
-        {safeModules.length > 0 && (
-          <ModulesRow>
-            {safeModules.slice(0, 3).map((mod, i) => (
-              <Tag key={i} variant="primary">
-                {mod}
-              </Tag>
-            ))}
-            {safeModules.length > 3 && <Tag variant="primary">+{safeModules.length - 3}</Tag>}
-          </ModulesRow>
-        )}
+	return (
+		<Container data-inactive={!isActive} $loading={loading} onClick={safeClick}>
+			<ImageWrapper $loading={loading}>
+				{
+					loading ?
+						<Skeleton width={"100%"} height={"100%"} /> :
+						<>
+							<Image style={{ backgroundImage: `url(${resolvedImg})` }} data-inactive={!isActive} />
+							<Overlay>
+								<SquareArrowOutUpRight size={32} color="var(--gray-50)" strokeWidth={2} />
+								<OverlayTitle>{title}</OverlayTitle>
+								<OverlayActions>
+									<OverlayBtn
+										type="button"
+										onClick={(e) => {
+											e.stopPropagation();
+											onEdit?.(id);
+										}}
+										title={t("actions.edit")}
+										aria-label={t("actions.edit")}
+									>
+										{t("actions.edit")}
+									</OverlayBtn>
+									<OverlayBtn
+										type="button"
+										onClick={(e) => {
+											e.stopPropagation();
+											onDelete?.(id);
+										}}
+										title={t("actions.delete")}
+										aria-label={t("actions.delete")}
+										data-variant="danger"
+									>
+										{t("actions.delete")}
+									</OverlayBtn>
+								</OverlayActions>
+							</Overlay>
+						</>
+				}
 
-        <TagsRow>
-          {safeTags.map((tag, index) => (
-            <Tag key={index} variant="secondary">
-              {tag}
-            </Tag>
-          ))}
-        </TagsRow>
+				{!isActive && !loading && <Ribbon>{t("common.inactive")}</Ribbon>}
+			</ImageWrapper>
 
-        <Timestamp>{createTimestamp(date, modified)}</Timestamp>
-      </Section>
-    </Container>
-  );
+			<Section>
+				<Title>
+					{
+						title || <Skeleton width={"70%"} height={"var(--font-size)"}/>
+					}
+				</Title>
+
+				{loading ? (
+					<ModulesRow>
+						{Array.from({ length: 2 }).map((_, i) => (
+							<Skeleton key={i} width={100} height={24} style={{ borderRadius: 4 }} />
+						))}
+					</ModulesRow>
+				) : (
+					safeModules.length > 0 && (
+						<ModulesRow>
+							{safeModules.slice(0, 3).map((mod, i) => (
+								<Tag key={i} variant="primary">
+									{mod}
+								</Tag>
+							))}
+							{safeModules.length > 3 && <Tag variant="primary">+{safeModules.length - 3}</Tag>}
+						</ModulesRow>
+					)
+				)}
+
+				{loading ? (
+					<TagsRow>
+						{Array.from({ length: 3 }).map((_, i) => (
+							<Skeleton key={i} width={80} height={24} style={{ borderRadius: 4 }} />
+						))}
+					</TagsRow>
+				) : (
+					<TagsRow>
+						{safeTags.map((tag, index) => (
+							<Tag key={index} variant="secondary">
+								{tag}
+							</Tag>
+						))}
+					</TagsRow>
+				)}
+
+				<Timestamp>{(date && modified && createTimestamp(date, modified)) || <Skeleton width={"50%"} height={"var(--font-size-xs)"}/>}</Timestamp>
+			</Section>
+		</Container>
+	);
 }
 
 const ImageWrapper = styled.div`
@@ -100,7 +130,11 @@ const ImageWrapper = styled.div`
   border-radius: var(--border-radius);
   overflow: hidden;
   transition: height 0.3s ease-in-out;
+
+  /* Disable pointer events if loading */
+  pointer-events: ${(props) => (props.$loading ? 'none' : 'auto')};
 `;
+
 
 const Section = styled.div`
   flex: 1;
@@ -151,41 +185,38 @@ const Container = styled.div`
   transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
   cursor: pointer;
 
+  /* Disable hover if loading */
   &:hover {
-    transform: scale(1.05);
-    z-index: 1000;
+    transform: ${(props) => (props.$loading ? 'none' : 'scale(1.05)')};
+    z-index: ${(props) => (props.$loading ? 'auto' : '1000')};
   }
   &:hover ${ImageWrapper} {
-    height: 100%;
+    height: ${(props) => (props.$loading ? 'var(--spacing-5xl)' : '100%')};
   }
   &:hover ${Section} {
-    opacity: 0;
-    visibility: hidden;
-    height: 0;
-    padding: 0;
-    flex: 0;
+    opacity: ${(props) => (props.$loading ? '1' : '0')};
+    visibility: ${(props) => (props.$loading ? 'visible' : 'hidden')};
+    height: ${(props) => (props.$loading ? 'auto' : '0')};
+    padding: ${(props) => (props.$loading ? '0 var(--spacing-s) var(--spacing-s)' : '0')};
+    flex: ${(props) => (props.$loading ? '1' : '0')};
   }
   &:hover ${Overlay} {
-    opacity: 1;
-    visibility: visible;
+    opacity: ${(props) => (props.$loading ? '0' : '1')};
+    visibility: ${(props) => (props.$loading ? 'hidden' : 'visible')};
   }
   &:hover ${OverlayTitle} {
-    opacity: 1;
-    transform: scale(1);
+    opacity: ${(props) => (props.$loading ? '0' : '1')};
+    transform: ${(props) => (props.$loading ? 'scale(0.96)' : 'scale(1)')};
     transition-delay: 0.1s;
   }
 
-  /* État inactif : on bloque le clic plein cadre et l’animation de scale,
-     MAIS on laisse l’overlay s’afficher pour permettre Éditer/Supprimer. */
   &[data-inactive="true"] {
     cursor: not-allowed;
     opacity: 0.9;
   }
   &[data-inactive="true"]:hover {
-    transform: none; /* pas d’agrandissement */
+    transform: none;
   }
-  /* On garde la section visible par défaut pour l’inactif,
-     mais si l’overlay s’affiche au survol, il sera au-dessus (z-index). */
 `;
 
 const Ribbon = styled.div`
