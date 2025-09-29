@@ -7,7 +7,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev:back": "cd backend && php artisan serve",
-		"dev:front": "cd frontend && npx vite",
+		"dev:front": "cd frontend && npx vite --port 5173",
 		"dev": "concurrently -k -p \"[{name}]\" -n back,front -c green,cyan \"npm:dev:back\" \"npm:dev:front\"",
 		"setup": "concurrently --names ROOT,BACKEND,FRONTEND --prefix-colors bgMagenta.bold,bgBlue.bold,bgGreen.bold \"npm install --yes\" \"cd backend && composer install --no-interaction\" \"cd frontend && npm install --yes\""
 	},
