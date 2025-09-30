@@ -10,20 +10,21 @@ import faviconUrl from "../../assets/images/favicon.ico?url";
 export default function SettingsPage() {
     // Translation function
     const { t } = useTranslation();
+    
   return (
     <>
 		<FaviconTitle title={t("pages.settingsPage")} iconHref={faviconUrl} />
 			<Main>
-			<Header 
-				title ={t("pages.settings.title")}
-				icon ={<Settings size={20}/>}
-				actions={[
-				<LanguageSelector key="lang" />
-				]}
-			/>
-			<Content>
-				<ToggleThemeSwitch />
-			</Content>
+				<Header 
+					title ={t("pages.settings.title")}
+					icon ={<Settings size={20}/>}
+					actions={[
+					<LanguageSelector key="lang" />
+					]}
+				/>
+				<Content>
+					<ToggleThemeSwitch />
+				</Content>
 			</Main>
     </>
   );
