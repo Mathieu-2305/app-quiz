@@ -7,7 +7,7 @@
 - Détecter l'UUID du user et créer un compte dans la BD si inexistant
 - ~~Enregistrer quiz dans la BD~~
 - ~~Gérer l'édition des quiz depuis NewQuiz.jsx~~
-- Changer favicon
+- ~~Changer favicon~~
 
 
 # LATER

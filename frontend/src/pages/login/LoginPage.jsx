@@ -11,6 +11,8 @@ import LanguageSelector from "../../components/ui/LanguageSelector";
 import Button from "../../components/ui/Button";
 import breakpoints from "../../context/theme/breakpoints.js";
 import {useMediaQuery} from "react-responsive";
+import FaviconTitle from "../../components/layout/Icon.jsx";
+import faviconUrl from "../../assets/images/favicon.ico?url";
 
 function LoginPage() {
 
@@ -51,33 +53,34 @@ function LoginPage() {
 
 	return (
 		<>
-			<Container $bg={loginBackground}>
-				<Content>
-					<LeftContent $background={loginBackground}>
-						<LogoDesktop src={RafLogo} alt={t("app.name")} />
-						<Copyrights>{t("login.copyright")}</Copyrights>
-					</LeftContent>
+            <FaviconTitle title={t("pages.loginPage")} iconHref={faviconUrl} />
+                <Container $bg={loginBackground}>
+                    <Content>
+                        <LeftContent $background={loginBackground}>
+                            <LogoDesktop src={RafLogo} alt={t("app.name")} />
+                            <Copyrights>{t("login.copyright")}</Copyrights>
+                        </LeftContent>
 
-					<RightContent>
-						<RightContentTop>
-							{
-								isTablet && (<Logo src={RafLogo} alt={t("app.name")} />)
-							}
-							<ToggleThemeSwitch />
-							<LanguageSelector short align={"right"}/>
-						</RightContentTop>
+                        <RightContent>
+                            <RightContentTop>
+                                {
+                                    isTablet && (<Logo src={RafLogo} alt={t("app.name")} />)
+                                }
+                                <ToggleThemeSwitch />
+                                <LanguageSelector short align={"right"}/>
+                            </RightContentTop>
 
-						<RightContentContent>
-							<Title>{t("app.name")}</Title>
-							<Subtitle>{t("login.description")}</Subtitle>
-							<Button onClick={handleLogin} style={{marginLeft: "auto"}}>
-								<LogIn size={24} />
-								{t("login.sign_in")}
-							</Button>
-						</RightContentContent>
-					</RightContent>
-				</Content>
-			</Container>
+                            <RightContentContent>
+                                <Title>{t("app.name")}</Title>
+                                <Subtitle>{t("login.description")}</Subtitle>
+                                <Button onClick={handleLogin} style={{marginLeft: "auto"}}>
+                                    <LogIn size={24} />
+                                    {t("login.sign_in")}
+                                </Button>
+                            </RightContentContent>
+                        </RightContent>
+                    </Content>
+                </Container>
 		</>
 	);
 }

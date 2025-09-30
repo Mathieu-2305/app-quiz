@@ -105,14 +105,14 @@
       "microsoftAlt": "Accesso Microsoft",
       "error": "Accesso non riuscito"
     },
-    "homePage": "",
-		"createPage": "",
-		"editPage": "",
-		"settingsPage": "",
-		"resultsPage": "",
-		"searchPage": "",
-		"loginPage": "",
-		"accountPage": ""
+    "homePage": "Pagina iniziale- Rafisa Quiz",
+		"createPage": "Creazione di quiz - Rafisa Quiz",
+		"editPage": "Edizione quiz - Rafisa Quiz",
+		"settingsPage": "Impostazioni - Rafisa Quiz",
+		"resultsPage": "Risultati - Rafisa Quiz",
+		"searchPage": "Ricerca - Rafisa Quiz",
+		"loginPage": "Connessione - Rafisa Quiz",
+		"accountPage": "Account - Rafisa Quiz"
   },
   "modals": {
     "logout": {
