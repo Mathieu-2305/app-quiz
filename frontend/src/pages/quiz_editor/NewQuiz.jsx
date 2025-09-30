@@ -11,6 +11,15 @@ import Input from "../../components/ui/Input";
 import Header from "../../components/layout/Header";
 import TextArea from "../../components/ui/TextArea";
 import { createQuiz, getQuiz, updateQuiz, getModules, getTags } from "../../services/api";
+import TagInput from "../../components/ui/TagInput";
+import CheckboxGroup from "../../components/ui/CheckboxGroup";
+
+const suggestions = [
+	{ id: 1, tag_name: "React" },
+	{ id: 2, tag_name: "Vue" },
+	{ id: 3, tag_name: "Angular" },
+	{ id: 4, tag_name: "Svelte" },
+];
 
 export default function NewQuiz() {
   const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
@@ -45,12 +54,15 @@ export default function NewQuiz() {
   const [coverImageUrl, setCoverImageUrl]   = useState("");
   const [modules, setModules] = useState([]);
   const [tags, setTags] = useState([]);
+	const [tags2, setTags2] = useState([{ id: 1, tag_name: "React" }]);
   const [selectedModuleIds, setSelectedModuleIds] = useState([]);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [newTagInput, setNewTagInput] = useState("");
   const [newTags, setNewTags] = useState([]);
   const [newModuleInput, setNewModuleInput] = useState("");
   const [creatingModule, setCreatingModule] = useState(false);
+
+	const [selected, setSelected] = useState([]);
 
   useEffect(() => {
     document.body.classList.add('page-newquiz');
@@ -427,6 +439,7 @@ export default function NewQuiz() {
               />
             </DescBlock>
 
+
             <Field>
               <FieldLabel>{t("quiz.sections.module")}</FieldLabel>
               <ChipsWrap>
@@ -444,6 +457,29 @@ export default function NewQuiz() {
                 {modules.length === 0 && <Hint>{t("quiz.sections.noModule")}</Hint>}
               </ChipsWrap>
             </Field>
+
+
+			  <CheckboxGroup
+				  label="Choisissez vos options"
+				  options={[
+					  { id: "1", label: "Option A" },
+					  { id: "2", label: "Option B" },
+					  { id: "3", label: "Option C" },
+				  ]}
+				  value={selected}
+				  onChange={setSelected}
+				  direction="row"
+			  />
+
+			  <TagInput
+				  label="Tags"
+				  placeholder ="Ajouter un tag..."
+				  prefixAdd ="Ajouter"
+				  allowNew={true}
+				  value={tags2}
+				  onChange={setTags2}
+				  width={"100%"}
+			  />
 
             <Field>
               <FieldLabel>{t("quiz.sections.existingTag")}</FieldLabel>

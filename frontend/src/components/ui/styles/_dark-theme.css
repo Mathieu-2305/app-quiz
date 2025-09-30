@@ -40,14 +40,15 @@ body.dark-mode {
 	--color-btn-text: var(--gray-100);					/* Text color on dark or colored buttons */
 	--color-placeholder: var(--gray-400);				/* Placeholder text color in input fields */
 
-	--color-background: var(--gray-900);				/* General app background color (main page or container background) */
-	--color-background-surface: var(--gray-900);		/* Background for secondary surfaces, like section backgrounds or less prominent areas */
-	--color-surface: var(--gray-800);					/* Background for primary surfaces (cards, modals, main containers that are white) */
-	--color-background-elevated: var(--gray-800);		/* Background for elevated elements relative to the base background, e.g. dropdowns, tooltips, floating menus */
-	--color-background-overlay: rgba(0, 0, 0, 0.6);		/* Semi-transparent overlay background (modals, menus that block the background) */
-	--color-background-input: var(--gray-700);			/* Background for input fields and form elements */
-	--color-background-input-focused: var(--gray-800);  /* Background for input fields and form elements when focused */
-	--color-border: var(--gray-600);					/* Color for borders, dividers, and separators */
+    --color-background: var(--gray-900);				/* General app background color (main page or container background) */
+    --color-background-surface: var(--gray-900);		/* Background for secondary surfaces, like section backgrounds or less prominent areas */
+    --color-surface: var(--gray-800);					/* Background for primary surfaces (cards, modals, main containers that are white) */
+    --color-background-elevated: var(--gray-800);		/* Background for elevated elements relative to the base background, e.g. dropdowns, tooltips, floating menus */
+    --color-background-overlay: rgba(0, 0, 0, 0.6);		/* Semi-transparent overlay background (modals, menus that block the background) */
+    --color-background-input: var(--gray-700);			/* Background for input fields and form elements */
+    --color-background-input-focused: var(--gray-800);  /* Background for input fields and form elements when focused */
+    --color-border: var(--gray-600);                    /* Color for borders, dividers, and separators */
+    --color-separator: var(--gray-600);
 
     --color-skeleton-base: var(--gray-600);
     --color-skeleton-highlight: var(--gray-700);
