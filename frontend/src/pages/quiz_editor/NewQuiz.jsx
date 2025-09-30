@@ -11,8 +11,15 @@ import Input from "../../components/ui/Input";
 import Header from "../../components/layout/Header";
 import TextArea from "../../components/ui/TextArea";
 import { createQuiz, getQuiz, updateQuiz, getModules, getTags } from "../../services/api";
-import FaviconTitle from "../../components/layout/Icon.jsx";
-import faviconUrl from "../../assets/images/favicon.ico?url";
+import TagInput from "../../components/ui/TagInput";
+import CheckboxGroup from "../../components/ui/CheckboxGroup";
+
+const suggestions = [
+	{ id: 1, tag_name: "React" },
+	{ id: 2, tag_name: "Vue" },
+	{ id: 3, tag_name: "Angular" },
+	{ id: 4, tag_name: "Svelte" },
+];
 
 export default function NewQuiz() {
   const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
@@ -47,12 +54,15 @@ export default function NewQuiz() {
   const [coverImageUrl, setCoverImageUrl]   = useState("");
   const [modules, setModules] = useState([]);
   const [tags, setTags] = useState([]);
+	const [tags2, setTags2] = useState([{ id: 1, tag_name: "React" }]);
   const [selectedModuleIds, setSelectedModuleIds] = useState([]);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [newTagInput, setNewTagInput] = useState("");
   const [newTags, setNewTags] = useState([]);
   const [newModuleInput, setNewModuleInput] = useState("");
   const [creatingModule, setCreatingModule] = useState(false);
+
+	const [selected, setSelected] = useState([]);
 
   useEffect(() => {
     document.body.classList.add('page-newquiz');
@@ -422,14 +432,15 @@ export default function NewQuiz() {
 						<EditHint aria-hidden="true"><FilePenLine size={16} /></EditHint>
 					</TitleLine>
 
-					<DescBlock>
-						<DescTextarea
-						value={quiz_description}
-						onChange={(e) => { setQuizDescription(e.target.value); setIsDirty(true); }}
-						placeholder={t("quiz.sections.descriptionAdd") || t("common.placeholders.typeHere")}
-						rows={2}
-						/>
-					</DescBlock>
+            <DescBlock>
+              <DescTextarea
+                value={quiz_description}
+                onChange={(e) => { setQuizDescription(e.target.value); setIsDirty(true); }}
+                placeholder={t("quiz.sections.descriptionAdd") || t("common.placeholders.typeHere")}
+                rows={2}
+              />
+            </DescBlock>
+
 
 					<Field>
 						<FieldLabel>{t("quiz.sections.module")}</FieldLabel>
@@ -449,23 +460,46 @@ export default function NewQuiz() {
 						</ChipsWrap>
 					</Field>
 
-					<Field>
-						<FieldLabel>{t("quiz.sections.existingTag")}</FieldLabel>
-						<ChipsWrap>
-						{tags.map(tg => (
-							<Chip
-							key={tg.id}
-							data-active={selectedTagIds.includes(tg.id) ? "1" : undefined}
-							type="button"
-							onClick={() => toggleId(tg.id, selectedTagIds, setSelectedTagIds)}
-							title={tg.tag_name}
-							>
-							{tg.tag_name}
-							</Chip>
-						))}
-						{tags.length === 0 && <Hint>{t("quiz.sections.noTag")}</Hint>}
-						</ChipsWrap>
-					</Field>
+
+			  <CheckboxGroup
+				  label="Choisissez vos options"
+				  options={[
+					  { id: "1", label: "Option A" },
+					  { id: "2", label: "Option B" },
+					  { id: "3", label: "Option C" },
+				  ]}
+				  value={selected}
+				  onChange={setSelected}
+				  direction="row"
+			  />
+
+			  <TagInput
+				  label="Tags"
+				  placeholder ="Ajouter un tag..."
+				  prefixAdd ="Ajouter"
+				  allowNew={true}
+				  value={tags2}
+				  onChange={setTags2}
+				  width={"100%"}
+			  />
+
+            <Field>
+              <FieldLabel>{t("quiz.sections.existingTag")}</FieldLabel>
+              <ChipsWrap>
+                {tags.map(tg => (
+                  <Chip
+                    key={tg.id}
+                    data-active={selectedTagIds.includes(tg.id) ? "1" : undefined}
+                    type="button"
+                    onClick={() => toggleId(tg.id, selectedTagIds, setSelectedTagIds)}
+                    title={tg.tag_name}
+                  >
+                    {tg.tag_name}
+                  </Chip>
+                ))}
+                {tags.length === 0 && <Hint>{t("quiz.sections.noTag")}</Hint>}
+              </ChipsWrap>
+            </Field>
 
 					<Field>
 						<FieldLabel>{t("quiz.sections.tagAdd")}</FieldLabel>

@@ -10,7 +10,7 @@ const Input = ({
                    width = 'fit-content',
                    size = 'm',
                    icon = null,
-                   textAlign,          // new prop
+                   textAlign,
                    wrapperStyle,
                    labelStyle,
                    inputStyle,
