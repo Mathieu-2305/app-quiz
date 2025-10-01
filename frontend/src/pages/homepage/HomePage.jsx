@@ -14,34 +14,34 @@ import faviconUrl from "../../assets/images/favicon.ico?url";
 const NUM_PLACEHOLDERS = 10;
 
 export default function HomePage() {
-  const navigate = useNavigate();
-  const { t } = useTranslation();
+	const navigate = useNavigate();
+	const { t } = useTranslation();
 
-  const [quizzes, setQuizzes] = useState(["", "", "" , ""]);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState("");
+	const [quizzes, setQuizzes] = useState(["", "", "" , ""]);
+	const [loading, setLoading] = useState(true);
+	const [err, setErr] = useState("");
 
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const data = await getQuizzes();
-        if (!alive) return;
-        setQuizzes(Array.isArray(data) ? data : []);
-      } catch (e) {
-        setErr(e.message || String(e));
-      } finally {
-        if (alive) {
-			setTimeout(() => {
-				setLoading(false);
-			}, 200)
+	useEffect(() => {
+		let alive = true;
+		(async () => {
+		try {
+			const data = await getQuizzes();
+			if (!alive) return;
+			setQuizzes(Array.isArray(data) ? data : []);
+		} catch (e) {
+			setErr(e.message || String(e));
+		} finally {
+			if (alive) {
+				setTimeout(() => {
+					setLoading(false);
+				}, 200)
+			}
 		}
-      }
-    })();
-    return () => { alive = false; };
-  }, []);
+		})();
+		return () => { alive = false; };
+	}, []);
 
-  // Open the editor
+  	// Open the editor
 	const handleEdit = useCallback(
 		(id) => {
 			navigate(`/quizzes/${id}/edit`);
@@ -77,6 +77,7 @@ export default function HomePage() {
 			title: q.title ?? "Untitled",
 			modules: Array.isArray(q.modules) ? q.modules.map((m) => m.module_name).slice(0, 3) : [],
 			tags: Array.isArray(q.tags) ? q.tags.map((t) => t.tag_name).slice(0, 3) : [],
+			tagsTotal: Array.isArray(q.tags) ? q.tags.length : 0,
 			imgURL: q.cover_image_url || fallbackImg,
 			date: q.created_at?.slice(0, 10) ?? "",
 			modified: q.updated_at?.slice(0, 10) ?? "",

@@ -8,6 +8,7 @@
 - ~~Enregistrer quiz dans la BD~~
 - ~~Gérer l'édition des quiz depuis NewQuiz.jsx~~
 - ~~Changer favicon~~
+- Modifier la source des modules et tags
 
 
 # LATER

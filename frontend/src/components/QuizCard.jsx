@@ -8,7 +8,7 @@ import Skeleton from "react-loading-skeleton";
 export default function QuizCard(props) {
 
 	const { t } = useTranslation();
-	const { id, title, modules, tags, imgURL, date, modified, isActive = true, onClick, onEdit, onDelete, loading } = props;
+	const { id, title, modules, tags, tagsTotal, imgURL, date, modified, isActive = true, onClick, onEdit, onDelete, loading } = props;
 
 	const safeClick = () => {
 		if (!isActive) return; // désactive l’ouverture plein cadre si inactif
@@ -113,6 +113,9 @@ export default function QuizCard(props) {
 								{tag}
 							</Tag>
 						))}
+						{typeof tagsTotal === "number" && tagsTotal > 3 && (
+							<Tag variant="secondary">+{tagsTotal - 3}</Tag>
+						)}
 					</TagsRow>
 				)}
 
@@ -123,177 +126,177 @@ export default function QuizCard(props) {
 }
 
 const ImageWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  height: var(--spacing-5xl);
-  min-height: 128px;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  transition: height 0.3s ease-in-out;
+	position: relative;
+	width: 100%;
+	height: var(--spacing-5xl);
+	min-height: 128px;
+	border-radius: var(--border-radius);
+	overflow: hidden;
+	transition: height 0.3s ease-in-out;
 
-  /* Disable pointer events if loading */
-  pointer-events: ${(props) => (props.$loading ? 'none' : 'auto')};
+	/* Disable pointer events if loading */
+	pointer-events: ${(props) => (props.$loading ? 'none' : 'auto')};
 `;
 
 
 const Section = styled.div`
-  flex: 1;
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-  padding: 0 var(--spacing-s) var(--spacing-s);
-  transition: height 0.3s ease-in-out, opacity 0.2s ease, visibility 0.2s ease, padding 0.2s ease;
+	flex: 1;
+	background: transparent;
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-xs);
+	padding: 0 var(--spacing-s) var(--spacing-s);
+	transition: height 0.3s ease-in-out, opacity 0.2s ease, visibility 0.2s ease, padding 0.2s ease;
 `;
 
 const Overlay = styled.div`
-  position: absolute;
-  inset: 0;
-  background: var(--color-background-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  padding: var(--spacing);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 1;
+	position: absolute;
+	inset: 0;
+	background: var(--color-background-overlay);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	padding: var(--spacing);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s ease, visibility 0.3s ease;
+	z-index: 1;
 `;
 
 const OverlayTitle = styled.h3`
-  margin-top: var(--spacing);
-  color: var(--gray-50);
-  font-size: var(--font-size-xl);
-  line-height: var(--line-height-l);
-  font-weight: 600;
-  text-align: center;
-  opacity: 0;
-  transform: scale(0.96);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  transition-delay: 0s;
+	margin-top: var(--spacing);
+	color: var(--gray-50);
+	font-size: var(--font-size-xl);
+	line-height: var(--line-height-l);
+	font-weight: 600;
+	text-align: center;
+	opacity: 0;
+	transform: scale(0.96);
+	transition: opacity 0.4s ease, transform 0.4s ease;
+	transition-delay: 0s;
 `;
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: var(--spacing-2xs);
-  height: 100%;
-  min-height: 280px;
-  border-radius: var(--border-radius-l);
-  border: 1px solid var(--color-border);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-  cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	padding: var(--spacing-2xs);
+	height: 100%;
+	min-height: 280px;
+	border-radius: var(--border-radius-l);
+	border: 1px solid var(--color-border);
+	transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+	cursor: pointer;
 
-  /* Disable hover if loading */
-  &:hover {
-    transform: ${(props) => (props.$loading ? 'none' : 'scale(1.05)')};
-    z-index: ${(props) => (props.$loading ? 'auto' : '1000')};
-  }
-  &:hover ${ImageWrapper} {
-    height: ${(props) => (props.$loading ? 'var(--spacing-5xl)' : '100%')};
-  }
-  &:hover ${Section} {
-    opacity: ${(props) => (props.$loading ? '1' : '0')};
-    visibility: ${(props) => (props.$loading ? 'visible' : 'hidden')};
-    height: ${(props) => (props.$loading ? 'auto' : '0')};
-    padding: ${(props) => (props.$loading ? '0 var(--spacing-s) var(--spacing-s)' : '0')};
-    flex: ${(props) => (props.$loading ? '1' : '0')};
-  }
-  &:hover ${Overlay} {
-    opacity: ${(props) => (props.$loading ? '0' : '1')};
-    visibility: ${(props) => (props.$loading ? 'hidden' : 'visible')};
-  }
-  &:hover ${OverlayTitle} {
-    opacity: ${(props) => (props.$loading ? '0' : '1')};
-    transform: ${(props) => (props.$loading ? 'scale(0.96)' : 'scale(1)')};
-    transition-delay: 0.1s;
-  }
+	/* Disable hover if loading */
+	&:hover {
+		transform: ${(props) => (props.$loading ? 'none' : 'scale(1.05)')};
+		z-index: ${(props) => (props.$loading ? 'auto' : '1000')};
+	}
+	&:hover ${ImageWrapper} {
+		height: ${(props) => (props.$loading ? 'var(--spacing-5xl)' : '100%')};
+	}
+	&:hover ${Section} {
+		opacity: ${(props) => (props.$loading ? '1' : '0')};
+		visibility: ${(props) => (props.$loading ? 'visible' : 'hidden')};
+		height: ${(props) => (props.$loading ? 'auto' : '0')};
+		padding: ${(props) => (props.$loading ? '0 var(--spacing-s) var(--spacing-s)' : '0')};
+		flex: ${(props) => (props.$loading ? '1' : '0')};
+	}
+	&:hover ${Overlay} {
+		opacity: ${(props) => (props.$loading ? '0' : '1')};
+		visibility: ${(props) => (props.$loading ? 'hidden' : 'visible')};
+	}
+	&:hover ${OverlayTitle} {
+		opacity: ${(props) => (props.$loading ? '0' : '1')};
+		transform: ${(props) => (props.$loading ? 'scale(0.96)' : 'scale(1)')};
+		transition-delay: 0.1s;
+	}
 
-  &[data-inactive="true"] {
-    cursor: not-allowed;
-    opacity: 0.9;
-  }
-  &[data-inactive="true"]:hover {
-    transform: none;
-  }
+	&[data-inactive="true"] {
+		cursor: not-allowed;
+		opacity: 0.9;
+	}
+	&[data-inactive="true"]:hover {
+		transform: none;
+	}
 `;
 
 const Ribbon = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #111827cc;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 999px;
-  z-index: 2;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	background: #111827cc;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 700;
+	padding: 4px 8px;
+	border-radius: 999px;
+	z-index: 2;
 `;
 
 const Image = styled.div`
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
+	width: 100%;
+	height: 100%;
+	background-size: cover;
+	background-position: center;
 
-  &[data-inactive="true"] {
-    filter: grayscale(1) brightness(0.85);
-  }
+	&[data-inactive="true"] {
+		filter: grayscale(1) brightness(0.85);
+	}
 `;
 
 const Title = styled.p`
-  height: 40px;
-  font-size: var(--font-size);
-  line-height: var(--line-height-l);
-  font-weight: 500;
-  margin: var(--spacing-s) 0 var(--spacing-xs);
-  color: var(--color-text);
+	height: 40px;
+	font-size: var(--font-size);
+	line-height: var(--line-height-l);
+	font-weight: 500;
+	margin: var(--spacing-s) 0 var(--spacing-xs);
+	color: var(--color-text);
 `;
 
 const TagsRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: var(--spacing-2xs);
-  margin-bottom: var(--spacing);
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: var(--spacing-2xs);
+	margin-bottom: var(--spacing);
 `;
 
 const Timestamp = styled.div`
-  font-size: var(--font-size-xs);
-  color: var(--color-placeholder);
-  margin-top: auto;
-  width: 100%;
+	font-size: var(--font-size-xs);
+	color: var(--color-placeholder);
+	margin-top: auto;
+	width: 100%;
 `;
 
 const ModulesRow = styled(TagsRow)`
-  margin-bottom: 0;
+  	margin-bottom: 0;
 `;
 
 const OverlayActions = styled.div`
-  display: flex;
-  gap: 8px;
-  margin-top: var(--spacing);
-  flex-wrap: wrap;
-  justify-content: center;
+	display: flex;
+	gap: 8px;
+	margin-top: var(--spacing);
+	flex-wrap: wrap;
+	justify-content: center;
 `;
 
 const OverlayBtn = styled.button`
-  border: 1px solid #ffffff55;
-  background: #ffffff22;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 12px;
-  cursor: pointer;
+	border: 1px solid #ffffff55;
+	background: #ffffff22;
+	color: #fff;
+	padding: 6px 10px;
+	border-radius: 8px;
+	font-size: 12px;
+	cursor: pointer;
 
-  &:hover {
-    background: #ffffff35;
-  }
+	&:hover {
+		background: #ffffff35;
+	}
 
-  &[data-variant="danger"] {
-    border-color: #ef444455;
-    background: #ef444422;
-  }
+	&[data-variant="danger"] {
+		border-color: #ef444455;
+		background: #ef444422;
+	}
 `;
