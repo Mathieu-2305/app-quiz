@@ -42,7 +42,7 @@ export default function NewQuiz() {
 	const [quiz_description, setQuizDescription] = useState("");
 	const [questions, setQuestions] = useState([]);
 
-	// Drag and Drop
+	// Drag and Drop for questions
 	const [draggingId, setDraggingId] = useState(null);
 	const [dragOverIndex, setDragOverIndex] = useState(null);
 	const [dragOverPosition, setDragOverPosition] = useState(null);
@@ -56,6 +56,9 @@ export default function NewQuiz() {
 	// Data
 	const [coverImageFile, setCoverImageFile] = useState(null);
 	const [coverImageUrl, setCoverImageUrl]   = useState("");
+	// Aperçu local quand un fichier est choisi
+	const [coverPreview, setCoverPreview] = useState("");
+
 	const [modules, setModules] = useState([]);
 	const [tags, setTags] = useState([]);
 	const [selectedTags, setSelectedTags] = useState([]);
@@ -72,6 +75,17 @@ export default function NewQuiz() {
 		document.body.classList.add('page-newquiz');
 		return () => document.body.classList.remove('page-newquiz');
 	}, []);
+
+	// Gère l'aperçu local de l'image choisie
+	useEffect(() => {
+		if (coverImageFile) {
+			const url = URL.createObjectURL(coverImageFile);
+			setCoverPreview(url);
+			return () => URL.revokeObjectURL(url);
+		} else {
+			setCoverPreview("");
+		}
+	}, [coverImageFile]);
 
 	useEffect(() => {
 		let alive = true;
@@ -528,24 +542,27 @@ export default function NewQuiz() {
 						</div>
 					</Field>
 
+					{/* --- NOUVELLE ZONE D'IMAGE : Drag & Drop + Choisir un fichier --- */}
 					<Field>
-						<FieldLabel>{t("quiz.fields.coverImage") || "Image de fond (URL)"}</FieldLabel>
-						<MyInput
-						value={coverImageUrl}
-						onChange={(e) => { setCoverImageUrl(e.target.value); setCoverImageFile(null); setIsDirty(true); }}
-						placeholder="https://exemple.com/pizza.jpg"
+						<FieldLabel>{t("quiz.fields.coverImage") || "Image de couverture"}</FieldLabel>
+
+						<CoverDropzone
+							previewUrl={coverPreview}
+							existingUrl={coverImageFile ? "" : (coverImageUrl || "")}
+							onPickFile={(file) => {
+								setCoverImageFile(file);
+								setCoverImageUrl("");
+								setIsDirty(true);
+							}}
+							onClear={() => {
+								setCoverImageFile(null);
+								setCoverImageUrl("");
+								setIsDirty(true);
+							}}
+							t={t}
 						/>
-						<div style={{ marginTop: 8 }}>
-						<label style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
-							{t("quiz.fields.orUpload") || "Ou téléverser un fichier"}
-						</label>
-						<input
-							type="file"
-							accept="image/*"
-							onChange={(e) => { setCoverImageFile(e.target.files?.[0] || null); setCoverImageUrl(""); setIsDirty(true); }}
-						/>
-						</div>
 					</Field>
+					{/* --- FIN ZONE D'IMAGE --- */}
 					</CenterInner>
 
 					{questions.length === 0 ? (
@@ -612,6 +629,80 @@ export default function NewQuiz() {
 		</Main>
     </>
   );
+}
+
+	function CoverDropzone({
+	previewUrl,
+	existingUrl,
+	onPickFile,
+	onClear,
+	t,
+	}) {
+	const inputRef = useRef(null);
+	const [isOver, setIsOver] = useState(false);
+
+	const openPicker = () => inputRef.current?.click();
+
+	const handleFiles = (files) => {
+		const file = files?.[0];
+		if (!file) return;
+		if (!file.type?.startsWith("image/")) {
+		alert("Veuillez sélectionner une image.");
+		return;
+		}
+		onPickFile(file);
+	};
+
+	const onDrop = (e) => {
+		e.preventDefault();
+		setIsOver(false);
+		handleFiles(e.dataTransfer.files);
+	};
+
+	return (
+		<DropZone
+		role="button"
+		tabIndex={0}
+		onClick={openPicker}
+		onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && openPicker()}
+		onDragOver={(e) => { e.preventDefault(); setIsOver(true); }}
+		onDragLeave={() => setIsOver(false)}
+		onDrop={onDrop}
+		data-over={isOver ? "1" : undefined}
+		title={t("quiz.fields.coverImage") || "Image de couverture"}
+		>
+		{(previewUrl || existingUrl) ? (
+			<PreviewWrap>
+			<PreviewImg src={previewUrl || existingUrl} alt="aperçu" />
+			<PreviewActions>
+				<SmallButton type="button" onClick={openPicker}>
+				Remplacer
+				</SmallButton>
+				<SmallDanger type="button" onClick={onClear}>
+				Supprimer
+				</SmallDanger>
+			</PreviewActions>
+			</PreviewWrap>
+		) : (
+			<DropInner>
+			<span style={{ fontWeight: 600 }}>
+				Glissez-déposez une image ici
+			</span>
+			<span style={{ fontSize: 12, opacity: 0.9 }}>
+				ou cliquez pour choisir un fichier
+			</span>
+			</DropInner>
+		)}
+
+		<input
+			ref={inputRef}
+			type="file"
+			accept="image/*"
+			style={{ display: "none" }}
+			onChange={(e) => handleFiles(e.target.files)}
+		/>
+		</DropZone>
+	);
 }
 
 const Main = styled.main`
@@ -1225,4 +1316,67 @@ const ChipClose = styled.span`
 const Hint = styled.span`
 	font-size: 12px;
 	color: #94a3b8;
+`;
+
+const DropZone = styled.div`
+	border: 2px dashed var(--quiz-border);
+	background: var(--quiz-surface-muted);
+	border-radius: 12px;
+	padding: 14px;
+	min-height: 140px;
+	display: grid;
+	place-items: center;
+	cursor: pointer;
+	outline: none;
+	transition: border-color .15s ease, background-color .15s ease, transform .05s ease;
+
+	&[data-over="1"]{
+		border-color: #3b82f6;
+		background: rgba(59,130,246,.08);
+		transform: scale(0.999);
+	}
+`;
+
+const DropInner = styled.div`
+	display: grid;
+	gap: 6px;
+	text-align: center;
+	color: var(--color-text);
+`;
+
+const PreviewWrap = styled.div`
+	width: 100%;
+	display: grid;
+	gap: 10px;
+`;
+
+const PreviewImg = styled.img`
+	width: 100%;
+	max-height: 280px;
+	object-fit: cover;
+	border-radius: 10px;
+	border: 1px solid var(--quiz-border);
+	background: #000;
+`;
+
+const PreviewActions = styled.div`
+  	display: flex;
+  	gap: 8px;
+  	justify-content: flex-end;
+`;
+
+const SmallButton = styled(Button)`
+	padding: 6px 10px;
+	border-radius: 8px;
+	background: #2563eb;
+	color: #fff;
+	&:hover { background: #1e40af; }
+`;
+
+const SmallDanger = styled(Button)`
+	padding: 6px 10px;
+	border-radius: 8px;
+	background: var(--brand-error-600);
+	color: #000;
+	&:hover { filter: brightness(0.95); }
 `;
